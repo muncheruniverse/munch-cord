@@ -9,7 +9,7 @@
     "deploy": "node deploy-commands",
     "start": "node .",
     "lint": "./node_modules/.bin/eslint \"./**/*.js\" --fix",
-    "format:write": "prettier --write ."
+    "prettier": "prettier --write ."
   },
   "keywords": [],
   "author": "",
