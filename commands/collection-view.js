@@ -21,7 +21,7 @@ module.exports = {
           },
         })
 
-        const embed = successEmbed('View Collections', 'Collections and the associated role.').setColor(0x0099ff)
+        const embed = successEmbed('View Collections', 'Collections and their associated role.').setColor(0x0099ff)
 
         collections.forEach((collection) => {
           embed.addFields({
