@@ -11,6 +11,7 @@
   },
   "rules": {
     "comma-dangle": "off",
-    "space-before-function-paren": ["error", { "anonymous": "always", "named": "never", "asyncArrow": "always" }]
+    "space-before-function-paren": ["error", { "anonymous": "always", "named": "never", "asyncArrow": "always" }],
+    "capitalized-comments": ["error", "always", { "ignoreConsecutiveComments": true, "ignoreInlineComments": true }]
   }
 }

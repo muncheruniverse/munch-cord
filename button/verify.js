@@ -6,7 +6,7 @@ const MODAL_ID = 'verifyNFTModal'
 const SIGNATURE_ID = 'signatureInput'
 const INS_ID_ID = 'insIdInput'
 
-const BIP_MESSAGE = 'much much'
+const BIP_MESSAGE = 'munch munch'
 
 module.exports = {
   async execute(interaction) {
@@ -17,27 +17,29 @@ module.exports = {
         },
       })
       if (channelId) {
-        const modal = new ModalBuilder().setCustomId(MODAL_ID).setTitle('Input NFT Info')
+        const modal = new ModalBuilder().setCustomId(MODAL_ID).setTitle('Verify Your Ownership')
 
         const insIdInput = new TextInputBuilder()
           .setCustomId(INS_ID_ID)
-          .setLabel('Inscription Id')
+          .setLabel('Inscription ID')
           .setStyle(TextInputStyle.Short)
+          .setMaxLength(70)
 
         const signatureInput = new TextInputBuilder()
           .setCustomId(SIGNATURE_ID)
           .setLabel('BIP-322 signature')
           .setStyle(TextInputStyle.Short)
+          .setMaxLength(120)
 
         const bipMessage = new TextInputBuilder()
           .setCustomId('bipMessage')
           .setLabel('BIP-322 message')
           .setStyle(TextInputStyle.Short)
           .setValue(BIP_MESSAGE)
+          .setRequired(false)
 
         const insIdActionRow = new ActionRowBuilder().addComponents(insIdInput)
         const signatureActionRow = new ActionRowBuilder().addComponents(signatureInput)
-
         const bipMessageActionRow = new ActionRowBuilder().addComponents(bipMessage)
 
         modal.addComponents(insIdActionRow, signatureActionRow, bipMessageActionRow)
@@ -48,11 +50,11 @@ module.exports = {
           return
         }
       } else {
-        const embed = errorEmbed('Discord bot is not available in this channel')
+        const embed = errorEmbed('Discord bot is not available in this channel.')
         return interaction.reply({ embeds: [embed], ephemeral: true })
       }
     } catch (error) {
-      const embed = errorEmbed('Error happened')
+      const embed = errorEmbed('Error happened.')
       return interaction.reply({ embeds: [embed], ephemeral: true })
     }
   },

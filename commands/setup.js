@@ -13,7 +13,7 @@ module.exports = {
         })
 
         const row = new ActionRowBuilder().addComponents(
-          new ButtonBuilder().setCustomId('verifyNFT').setLabel('verify').setStyle(ButtonStyle.Primary)
+          new ButtonBuilder().setCustomId('verifyNFT').setLabel('Verify').setStyle(ButtonStyle.Primary)
         )
 
         await interaction.channel.send({

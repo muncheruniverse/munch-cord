@@ -1,11 +1,12 @@
 const Sequelize = require('sequelize')
+require('dotenv').config()
 
 const sequelize = new Sequelize('database', 'user', 'password', {
-  host: 'localhost',
+  // SQLite only
+  storage: process.env.DB_STORAGE,
+  host: process.env.DB_HOST,
   dialect: 'sqlite',
   logging: false,
-  // SQLite only
-  storage: 'database.sqlite',
 })
 
 module.exports = sequelize
