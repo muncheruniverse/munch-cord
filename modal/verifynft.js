@@ -54,7 +54,7 @@ module.exports = {
             return interaction.reply({ embeds: [embed], ephemeral: true })
           }
         } catch (error) {
-          const embed = errorEmbed('Error happened.')
+          const embed = errorEmbed(error)
           return interaction.reply({ embeds: [embed], ephemeral: true })
         }
       }
@@ -62,7 +62,7 @@ module.exports = {
       const embed = warningEmbed('Verify Problem', "Your signature couldn't be verified.")
       return interaction.reply({ embeds: [embed], ephemeral: true })
     } catch (error) {
-      const embed = errorEmbed('Error happened.')
+      const embed = errorEmbed(error)
       return interaction.reply({ embeds: [embed], ephemeral: true })
     }
   },
