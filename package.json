@@ -1,0 +1,34 @@
+{
+  "name": "munchcord-bot",
+  "version": "1.0.0",
+  "description": "The MunchCord Bot aims to be a multipurpose bot that can add Ordinal/Inscription functionality to any discord server.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "node deploy-commands && node .",
+    "deploy": "node deploy-commands",
+    "start": "node .",
+    "lint": "./node_modules/.bin/eslint \"./**/*.js\" --fix",
+    "format:write": "prettier --write ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.3.4",
+    "discord.js": "^14.8.0",
+    "dotenv": "^16.0.3",
+    "sequelize": "^6.29.3",
+    "sqlite3": "^5.1.6"
+  },
+  "devDependencies": {
+    "eslint": "^8.36.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-config-standard": "^17.0.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-n": "^15.6.1",
+    "eslint-plugin-promise": "^6.1.1",
+    "prettier": "^2.8.7"
+  }
+}
