@@ -3,6 +3,7 @@ const errorEmbed = require('../embed/errorEmbed')
 const successEmbed = require('../embed/successEmbed')
 const warningEmbed = require('../embed/warningEmbed')
 const ManageChannels = require('../db/ManageChannels')
+const { COMMON_ERROR } = require('../embed/errorMessages')
 
 module.exports = {
   data: new SlashCommandBuilder().setName('channel-remove').setDescription('Remove the verify bot from this channel'),
@@ -23,10 +24,10 @@ module.exports = {
 
         return interaction.reply({ embeds: [embed], ephemeral: true })
       }
-      const embed = errorEmbed('You are not owner of this server or this channel is not registered for the bot.')
+      const embed = errorEmbed(COMMON_ERROR)
       return interaction.reply({ embeds: [embed], ephemeral: true })
     } catch (error) {
-      const embed = errorEmbed('Error happened.')
+      const embed = errorEmbed(error)
       return interaction.reply({ embeds: [embed], ephemeral: true })
     }
   },

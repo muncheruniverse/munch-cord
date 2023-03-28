@@ -4,6 +4,7 @@ const successEmbed = require('../embed/successEmbed')
 const infoEmbed = require('../embed/infoEmbed')
 const warningEmbed = require('../embed/warningEmbed')
 const ManageChannels = require('../db/ManageChannels')
+const { COMMON_ERROR } = require('../embed/errorMessages')
 
 module.exports = {
   data: new SlashCommandBuilder().setName('channel-add').setDescription('Add the verify bot to this channel.'),
@@ -36,7 +37,7 @@ module.exports = {
           ephemeral: true,
         })
       }
-      const embed = errorEmbed('You are not owner of this server or this channel is not registered for the bot.')
+      const embed = errorEmbed(COMMON_ERROR)
       return interaction.reply({ embeds: [embed], ephemeral: true })
     } catch (error) {
       if (error.name === 'SequelizeUniqueConstraintError') {
@@ -44,7 +45,7 @@ module.exports = {
         return interaction.reply({ embeds: [embed], ephemeral: true })
       }
 
-      const embed = errorEmbed('Error happened.')
+      const embed = errorEmbed(error)
       return interaction.reply({ embeds: [embed], ephemeral: true })
     }
   },

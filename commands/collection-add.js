@@ -1,6 +1,7 @@
 const { ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, SlashCommandBuilder } = require('discord.js')
 const errorEmbed = require('../embed/errorEmbed')
 const ManageChannels = require('../db/ManageChannels')
+const { COMMON_ERROR } = require('../embed/errorMessages')
 
 const MODAL_ID = 'addcollectionModal'
 const COLLACTION_NAME_ID = 'collectName'
@@ -41,11 +42,11 @@ module.exports = {
           return
         }
       } else {
-        const embed = errorEmbed('You are not owner of this server or this channel is not registered for the bot.')
+        const embed = errorEmbed(COMMON_ERROR)
         return interaction.reply({ embeds: [embed], ephemeral: true })
       }
     } catch (error) {
-      const embed = errorEmbed('Error happened.')
+      const embed = errorEmbed(error)
       return interaction.reply({ embeds: [embed], ephemeral: true })
     }
   },
