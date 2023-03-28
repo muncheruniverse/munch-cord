@@ -3,6 +3,7 @@ const errorEmbed = require('../embed/errorEmbed')
 const successEmbed = require('../embed/successEmbed')
 const Collections = require('../db/Collections')
 const ManageChannels = require('../db/ManageChannels')
+const { COMMON_ERROR } = require('../embed/errorMessages')
 
 module.exports = {
   data: new SlashCommandBuilder().setName('collection-view').setDescription('View all collections'),
@@ -33,7 +34,7 @@ module.exports = {
 
         interaction.reply({ embeds: [embed], ephemeral: true })
       } else {
-        const embed = errorEmbed('You are not owner of this server or this channel is not registered for the bot.')
+        const embed = errorEmbed(COMMON_ERROR)
         return interaction.reply({ embeds: [embed], ephemeral: true })
       }
     } catch (error) {
