@@ -29,7 +29,7 @@ module.exports = {
 
       const embed = successEmbed(
         'Add Collection',
-        `You successfully added the *${collection.collectionName}* collection which will allocate the *${selected}* role.`
+        `You successfully added the **${collection.collectionName}** collection which will allocate the **${selected}** role.`
       )
 
       return interaction.update({
