@@ -22,11 +22,13 @@ module.exports = {
           .setCustomId(COLLACTION_NAME_ID)
           .setLabel('Collection Name')
           .setStyle(TextInputStyle.Short)
+          .setMaxLength(30)
 
         const insIdsInput = new TextInputBuilder()
           .setCustomId(INS_IDS_ID)
           .setLabel('Inscription IDs')
           .setStyle(TextInputStyle.Paragraph)
+          .setMaxLength(4000)
 
         const nameActionRow = new ActionRowBuilder().addComponents(nameInput)
         const insActionRow = new ActionRowBuilder().addComponents(insIdsInput)

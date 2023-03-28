@@ -53,6 +53,8 @@ npm run format:write
 - `RPC_PORT`: Port for the RPC
 - `RPC_USERNAME`: Username for auth
 - `RPC_PASSWORD`: Password for auth
+- `DB_HOST`: Hostname for sqlite
+- `DB_STORAGE`: Path to sqlite (it will autocreate)
 
 4.  Install dependencies with `npm i`
 5.  Deploy commands with `npm run deploy`
