@@ -46,19 +46,22 @@ module.exports = {
           const role = interaction.member.guild.roles.cache.find((roleItem) => roleItem.name === collection.role)
           if (role) {
             await interaction.member.roles.add(role)
-            const embed = successEmbed('Successfully verified', `Successfly verified and your got a ${role.name} role`)
+            const embed = successEmbed(
+              'Successfully verified',
+              `Your signature was validated and you were assigned the ${role.name} role.`
+            )
             return interaction.reply({ embeds: [embed], ephemeral: true })
           }
         } catch (error) {
-          const embed = errorEmbed('Error happened')
+          const embed = errorEmbed('Error happened.')
           return interaction.reply({ embeds: [embed], ephemeral: true })
         }
       }
 
-      const embed = errorEmbed("Can't not find that id")
+      const embed = errorEmbed("Your signature couldn't be verified.")
       return interaction.reply({ embeds: [embed], ephemeral: true })
     } catch (error) {
-      const embed = errorEmbed('Error happened')
+      const embed = errorEmbed('Error happened.')
       return interaction.reply({ embeds: [embed], ephemeral: true })
     }
   },

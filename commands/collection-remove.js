@@ -7,7 +7,7 @@ const ManageChannels = require('../db/ManageChannels')
 const REMOVE_COLLECTION_SELECTOR = 'removeCollectionSelector'
 
 module.exports = {
-  data: new SlashCommandBuilder().setName('removecollection').setDescription('Remove nft collection'),
+  data: new SlashCommandBuilder().setName('collection-remove').setDescription('Remove a collection from the server'),
   async execute(interaction) {
     try {
       const channelId = await ManageChannels.findOne({
@@ -35,11 +35,11 @@ module.exports = {
         const row = new ActionRowBuilder().addComponents(
           new StringSelectMenuBuilder()
             .setCustomId(REMOVE_COLLECTION_SELECTOR)
-            .setPlaceholder('Please select a collect to delete')
+            .setPlaceholder('Select a collection')
             .addOptions(selectList)
         )
 
-        const embed = successEmbed('Remove Collection', 'Pick from the dropdown to remove the collection')
+        const embed = successEmbed('Remove Collection', 'Choose the collection you want to remove.')
 
         interaction.reply({
           embeds: [embed],
@@ -47,11 +47,11 @@ module.exports = {
           ephemeral: true,
         })
       } else {
-        const embed = errorEmbed('You are not owner of this server or this channel is not registered for bot')
+        const embed = errorEmbed('You are not owner of this server or this channel is not registered for the bot.')
         return interaction.reply({ embeds: [embed], ephemeral: true })
       }
     } catch (error) {
-      const embed = errorEmbed('Error happened')
+      const embed = errorEmbed('Error happened,')
       return interaction.reply({ embeds: [embed], ephemeral: true })
     }
   },

@@ -4,7 +4,7 @@ const errorEmbed = (error) => {
   const embed = new EmbedBuilder()
     .setColor(0xff4000)
     .setTitle('Whoops')
-    .setDescription("This doesn't happen ordinarily. the bot responded with:")
+    .setDescription("This doesn't happen ordinarily, the bot responded with:")
     .addFields({
       name: ' ',
       value: `*${error}*`,

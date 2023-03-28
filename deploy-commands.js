@@ -14,24 +14,23 @@ for (const file of commandFiles) {
   commands.push(command.data.toJSON())
 }
 
-// Construct and prepare an instance of the REST module
-const rest = new REST({ version: '10' }).setToken(process.env.TOKEN)(
-  // and deploy your commands!
-  async () => {
-    try {
-      console.log(`Started refreshing ${commands.length} application (/) commands.`)
+// Construct and prepare an instance of the REST module, and deploy the commands
+const rest = new REST({ version: '10' }).setToken(process.env.TOKEN)
+// The put method is used to fully refresh all commands in the guild with the current set
+;(async () => {
+  try {
+    console.log(`Started refreshing ${commands.length} application (/) commands.`)
 
-      const registedCommand = await rest.get(Routes.applicationCommands(process.env.APPLICATION_ID))
-      for (const command of registedCommand) {
-        await rest.delete(Routes.applicationCommand(process.env.APPLICATION_ID, command.id))
-      }
-      // The put method is used to fully refresh all commands in the guild with the current set
-      const data = await rest.put(Routes.applicationCommands(process.env.APPLICATION_ID), { body: commands })
-
-      console.log(`Successfully reloaded ${data.length} application (/) commands.`)
-    } catch (error) {
-      // And of course, make sure you catch and log any errors!
-      console.error(error)
+    const registeredCommand = await rest.get(Routes.applicationCommands(process.env.APPLICATION_ID))
+    for (const command of registeredCommand) {
+      await rest.delete(Routes.applicationCommand(process.env.APPLICATION_ID, command.id))
     }
+
+    const data = await rest.put(Routes.applicationCommands(process.env.APPLICATION_ID), { body: commands })
+
+    console.log(`Successfully reloaded ${data.length} application (/) commands.`)
+  } catch (error) {
+    // And of course, make sure you catch and log any errors
+    console.error(error)
   }
-)()
+})()

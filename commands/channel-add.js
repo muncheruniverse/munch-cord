@@ -4,7 +4,7 @@ const successEmbed = require('../embed/successEmbed')
 const ManageChannels = require('../db/ManageChannels')
 
 module.exports = {
-  data: new SlashCommandBuilder().setName('setup').setDescription('Add discrod bot for this channel'),
+  data: new SlashCommandBuilder().setName('channel-add').setDescription('Add the verify bot to this channel.'),
   async execute(interaction) {
     try {
       if (interaction.user.id === interaction.member.guild.ownerId) {
@@ -13,7 +13,7 @@ module.exports = {
         })
 
         const row = new ActionRowBuilder().addComponents(
-          new ButtonBuilder().setCustomId('verifyNFT').setLabel('verify').setStyle(ButtonStyle.Primary)
+          new ButtonBuilder().setCustomId('verifyNFT').setLabel('Verify').setStyle(ButtonStyle.Primary)
         )
 
         await interaction.channel.send({

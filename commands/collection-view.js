@@ -5,7 +5,7 @@ const Collections = require('../db/Collections')
 const ManageChannels = require('../db/ManageChannels')
 
 module.exports = {
-  data: new SlashCommandBuilder().setName('viewcollections').setDescription('View nft collections'),
+  data: new SlashCommandBuilder().setName('collection-view').setDescription('View all collections'),
   async execute(interaction) {
     try {
       const channelId = await ManageChannels.findOne({
@@ -21,7 +21,7 @@ module.exports = {
           },
         })
 
-        const embed = successEmbed('View Collections', 'NFT collection view name and role').setColor(0x0099ff)
+        const embed = successEmbed('View Collections', 'Collections and their associated role.').setColor(0x0099ff)
 
         collections.forEach((collection) => {
           embed.addFields({
@@ -33,11 +33,11 @@ module.exports = {
 
         interaction.reply({ embeds: [embed], ephemeral: true })
       } else {
-        const embed = errorEmbed('You are not owner of this server or this channel is not registered for bot')
+        const embed = errorEmbed('You are not owner of this server or this channel is not registered for the bot.')
         return interaction.reply({ embeds: [embed], ephemeral: true })
       }
     } catch (error) {
-      const embed = errorEmbed('Error happened')
+      const embed = errorEmbed('Error happened.')
       return interaction.reply({ embeds: [embed], ephemeral: true })
     }
   },
