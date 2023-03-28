@@ -9,6 +9,7 @@ const { MODAL_ID, SIGNATURE_ID, INS_ID_ID } = require('../button/verify')
 module.exports = {
   data: MODAL_ID,
   async execute(interaction) {
+    const warning = warningEmbed('Verify Problem', "Your signature couldn't be verified.")
     try {
       const signature = interaction.fields.getTextInputValue(SIGNATURE_ID)
       const insId = interaction.fields.getTextInputValue(INS_ID_ID)
@@ -42,7 +43,7 @@ module.exports = {
 
           const res = await axios.post(`http://${process.env.RPC_HOST}:${process.env.RPC_PORT}/`, data, config)
 
-          if (!res.data.result) return await interaction.reply('Error')
+          if (!res.data.result) return await interaction.reply({ embeds: [warning], ephemeral: true })
 
           const role = interaction.member.guild.roles.cache.find((roleItem) => roleItem.name === collection.role)
           if (role) {
@@ -59,8 +60,7 @@ module.exports = {
         }
       }
 
-      const embed = warningEmbed('Verify Problem', "Your signature couldn't be verified.")
-      return interaction.reply({ embeds: [embed], ephemeral: true })
+      return interaction.reply({ embeds: [warning], ephemeral: true })
     } catch (error) {
       const embed = errorEmbed(error)
       return interaction.reply({ embeds: [embed], ephemeral: true })
