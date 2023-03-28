@@ -4,7 +4,7 @@ const successEmbed = require('../embed/successEmbed')
 const ManageChannels = require('../db/ManageChannels')
 
 module.exports = {
-  data: new SlashCommandBuilder().setName('setup').setDescription('Add discrod bot for this channel'),
+  data: new SlashCommandBuilder().setName('channel-add').setDescription('Add the verify bot to this channel.'),
   async execute(interaction) {
     try {
       if (interaction.user.id === interaction.member.guild.ownerId) {

@@ -28,20 +28,17 @@ module.exports = {
       })
 
       const row = new ActionRowBuilder().addComponents(
-        new StringSelectMenuBuilder()
-          .setCustomId(ROLE_SELECT_ID)
-          .setPlaceholder('Please select a role')
-          .addOptions(roleNames)
+        new StringSelectMenuBuilder().setCustomId(ROLE_SELECT_ID).setPlaceholder('Select a role').addOptions(roleNames)
       )
 
-      const embed = successEmbed('Add Collection', 'Pick the role that you would like to award from this collection')
+      const embed = successEmbed('Add Collection', 'Pick the role that you would like to award for this collection.')
       return interaction.reply({
         embeds: [embed],
         components: [row],
         ephemeral: true,
       })
     } catch (error) {
-      const embed = errorEmbed('Error happened')
+      const embed = errorEmbed('Error happened.')
       return interaction.reply({ embeds: [embed], ephemeral: true })
     }
   },
