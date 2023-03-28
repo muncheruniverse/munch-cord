@@ -39,7 +39,7 @@ module.exports = {
           return
         }
       } else {
-        const embed = errorEmbed('You are not owner of this server or this channel is not registered forthe bot.')
+        const embed = errorEmbed('You are not owner of this server or this channel is not registered for the bot.')
         return interaction.reply({ embeds: [embed], ephemeral: true })
       }
     } catch (error) {

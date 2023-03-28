@@ -1,6 +1,8 @@
 const { SlashCommandBuilder, ButtonBuilder, ActionRowBuilder, ButtonStyle } = require('discord.js')
 const errorEmbed = require('../embed/errorEmbed')
 const successEmbed = require('../embed/successEmbed')
+const infoEmbed = require('../embed/infoEmbed')
+const warningEmbed = require('../embed/warningEmbed')
 const ManageChannels = require('../db/ManageChannels')
 
 module.exports = {
@@ -16,30 +18,38 @@ module.exports = {
           new ButtonBuilder().setCustomId('verifyNFT').setLabel('Verify').setStyle(ButtonStyle.Primary)
         )
 
-        await interaction.channel.send({
-          content: 'Welcome to the server, get a holder role by verifying with a BIP-322 signature',
-          components: [row],
-          ephemeral: true,
+        const info = infoEmbed(
+          'Verify your ownership',
+          'Use a BIP-322 signature to prove that you own an inscription to receive a special holder role.'
+        )
+
+        interaction.channel.send({
+          embeds: [info],
         })
 
-        const embed = successEmbed('Set discrod bot this channel', 'Successfully added bot to this channel')
+        await interaction.channel.send({
+          message: '',
+          components: [row],
+        })
+
+        const embed = successEmbed('Add verify bot', 'Successfully added the bot to this channel.')
 
         return interaction.reply({
           embeds: [embed],
           ephemeral: true,
         })
       }
-      const embed = errorEmbed('You are not owner of this server or this channel is not registered for bot')
+      const embed = errorEmbed('You are not owner of this server or this channel is not registered for the bot.')
       return interaction.reply({ embeds: [embed], ephemeral: true })
     } catch (error) {
       if (error.name === 'SequelizeUniqueConstraintError') {
-        const embed = errorEmbed('Discord bot already exists.')
+        const embed = warningEmbed('Add verify bot', 'The bot is already in the channel.')
         return interaction.reply({ embeds: [embed], ephemeral: true })
       }
 
       console.log(error)
 
-      const embed = errorEmbed('Error happened')
+      const embed = errorEmbed('Error happened.')
       return interaction.reply({ embeds: [embed], ephemeral: true })
     }
   },
