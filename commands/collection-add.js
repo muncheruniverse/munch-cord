@@ -7,7 +7,7 @@ const COLLACTION_NAME_ID = 'collectName'
 const INS_IDS_ID = 'insIds'
 
 module.exports = {
-  data: new SlashCommandBuilder().setName('addcollection').setDescription('Add nft collection'),
+  data: new SlashCommandBuilder().setName('collection-add').setDescription('Add collection details and assign role'),
   async execute(interaction) {
     try {
       const channelId = await ManageChannels.findOne({
@@ -25,7 +25,7 @@ module.exports = {
 
         const insIdsInput = new TextInputBuilder()
           .setCustomId(INS_IDS_ID)
-          .setLabel('Inscription Ids')
+          .setLabel('Inscription IDs')
           .setStyle(TextInputStyle.Paragraph)
 
         const nameActionRow = new ActionRowBuilder().addComponents(nameInput)
@@ -39,11 +39,11 @@ module.exports = {
           return
         }
       } else {
-        const embed = errorEmbed('You are not owner of this server or this channel is not registered for bot')
+        const embed = errorEmbed('You are not owner of this server or this channel is not registered forthe bot.')
         return interaction.reply({ embeds: [embed], ephemeral: true })
       }
     } catch (error) {
-      const embed = errorEmbed('Error happened')
+      const embed = errorEmbed('Error happened.')
       return interaction.reply({ embeds: [embed], ephemeral: true })
     }
   },
