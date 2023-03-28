@@ -2,6 +2,7 @@ const { Op } = require('sequelize')
 const axios = require('axios')
 const errorEmbed = require('../embed/errorEmbed')
 const successEmbed = require('../embed/successEmbed')
+const warningEmbed = require('../embed/warningEmbed')
 const Collections = require('../db/Collections')
 const { MODAL_ID, SIGNATURE_ID, INS_ID_ID } = require('../button/verify')
 
@@ -58,7 +59,7 @@ module.exports = {
         }
       }
 
-      const embed = errorEmbed("Your signature couldn't be verified.")
+      const embed = warningEmbed('Verify Problem', "Your signature couldn't be verified.")
       return interaction.reply({ embeds: [embed], ephemeral: true })
     } catch (error) {
       const embed = errorEmbed('Error happened.')

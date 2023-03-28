@@ -1,6 +1,7 @@
 const { SlashCommandBuilder } = require('discord.js')
 const errorEmbed = require('../embed/errorEmbed')
 const successEmbed = require('../embed/successEmbed')
+const warningEmbed = require('../embed/warningEmbed')
 const ManageChannels = require('../db/ManageChannels')
 
 module.exports = {
@@ -14,7 +15,7 @@ module.exports = {
           },
         })
         if (!rowCount) {
-          const embed = errorEmbed("The bot doesn't exist in this channel.")
+          const embed = warningEmbed('Remove Bot', "The bot doesn't exist in this channel.")
           return interaction.reply({ embeds: [embed], ephemeral: true })
         }
 

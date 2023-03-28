@@ -11,7 +11,7 @@ const errorEmbed = (error) => {
       inline: false,
     })
     .setFooter({
-      text: 'munchverse',
+      text: 'muncherverse',
       iconURL: 'https://www.freepnglogos.com/uploads/twitter-logo-png/twitter-logo-vector-png-clipart-1.png',
     })
 

@@ -1,6 +1,7 @@
 const { SlashCommandBuilder } = require('discord.js')
 const errorEmbed = require('../embed/errorEmbed')
 const successEmbed = require('../embed/successEmbed')
+const warningEmbed = require('../embed/warningEmbed')
 const ManageChannels = require('../db/ManageChannels')
 
 module.exports = {
@@ -22,7 +23,7 @@ module.exports = {
             ephemeral: true,
           })
         }
-        const embed = successEmbed('Check channel', 'The bot *is not available* in this channel.')
+        const embed = warningEmbed('Check channel', 'The bot *is not available* in this channel.')
         return interaction.reply({
           embeds: [embed],
           ephemeral: true,
