@@ -23,13 +23,10 @@ module.exports = {
           'Use a BIP-322 signature to prove that you own an inscription to receive a special holder role.'
         )
 
-        interaction.channel.send({
-          embeds: [info],
-        })
-
         await interaction.channel.send({
           message: '',
           components: [row],
+          embeds: [info],
         })
 
         const embed = successEmbed('Add verify bot', 'Successfully added the bot to this channel.')
@@ -46,8 +43,6 @@ module.exports = {
         const embed = warningEmbed('Add verify bot', 'The bot is already in the channel.')
         return interaction.reply({ embeds: [embed], ephemeral: true })
       }
-
-      console.log(error)
 
       const embed = errorEmbed('Error happened.')
       return interaction.reply({ embeds: [embed], ephemeral: true })
