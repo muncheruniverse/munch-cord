@@ -16,11 +16,9 @@ That's it, you're good to go!
 
 We've been careful to ensure we use as few permissions as possible, you won't find any Admin access requirements with this bot, all it requires is:
 
-```
-Manage role
-Slash command
-Send Messages
-```
+- Manage Role
+- Send Messages
+- Use Application Commands
 
 ## Important Notes
 
