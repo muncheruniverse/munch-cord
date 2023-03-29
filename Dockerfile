@@ -7,3 +7,7 @@ COPY package*.json ./
 RUN npm i
 
 COPY . .
+
+USER node
+
+CMD ["npm", "start"]
