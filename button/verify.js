@@ -6,8 +6,6 @@ const MODAL_ID = 'verifyNFTModal'
 const SIGNATURE_ID = 'signatureInput'
 const INS_ID_ID = 'insIdInput'
 
-const BIP_MESSAGE = 'munch munch'
-
 module.exports = {
   async execute(interaction) {
     try {
@@ -31,11 +29,16 @@ module.exports = {
           .setStyle(TextInputStyle.Short)
           .setMaxLength(120)
 
+        const randomMessage = !process.env.BIP322_MESSAGE
+          ? 'Munch' +
+            [...Array(20)].map(() => 'abcdefghijklmnopqrstuvwxyz0123456789'[Math.floor(Math.random() * 36)]).join('')
+          : process.env.BIP322_MESSAGE
+
         const bipMessage = new TextInputBuilder()
           .setCustomId('bipMessage')
           .setLabel('BIP-322 message')
           .setStyle(TextInputStyle.Short)
-          .setValue(BIP_MESSAGE)
+          .setValue(randomMessage)
           .setRequired(false)
 
         const insIdActionRow = new ActionRowBuilder().addComponents(insIdInput)
