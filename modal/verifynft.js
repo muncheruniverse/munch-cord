@@ -21,7 +21,7 @@ module.exports = {
         },
       })
 
-      if (collection && insId.length > 40) {
+      if (collection) {
         try {
           const bipMessage = await BipMessages.findOne({
             where: {
@@ -31,7 +31,7 @@ module.exports = {
           })
 
           if (!bipMessage) {
-            const embed = errorEmbed('Can not find message')
+            const embed = warningEmbed('Signature not found', "Couldn't fetch the signature to validate against.")
             return interaction.reply({ embeds: [embed], ephemeral: true })
           }
 
