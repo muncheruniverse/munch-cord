@@ -41,7 +41,7 @@ module.exports = {
             },
           }
 
-          const res = await axios.post(`http://${process.env.RPC_HOST}:${process.env.RPC_PORT}/`, data, config)
+          const res = await axios.post(`https://${process.env.RPC_HOST}:${process.env.RPC_PORT}/`, data, config)
 
           if (!res.data.result) {
             const warning = warningEmbed('Verify Problem', "Your BIP-322 signature couldn't be verified.")
