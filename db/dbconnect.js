@@ -1,5 +1,4 @@
 const Sequelize = require('sequelize')
-require('dotenv-flow').config()
 
 const sequelize = new Sequelize('database', 'user', 'password', {
   // SQLite only

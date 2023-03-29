@@ -1,6 +1,7 @@
 const { EmbedBuilder } = require('discord.js')
 
 const errorEmbed = (error) => {
+  console.log(error)
   const embed = new EmbedBuilder()
     .setColor(0xff4000)
     .setTitle('Whoops')

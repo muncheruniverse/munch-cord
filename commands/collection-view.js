@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js')
 const errorEmbed = require('../embed/errorEmbed')
-const successEmbed = require('../embed/successEmbed')
+const infoEmbed = require('../embed/infoEmbed')
 const Collections = require('../db/Collections')
 const ManageChannels = require('../db/ManageChannels')
 const { COMMON_ERROR } = require('../embed/errorMessages')
@@ -22,7 +22,7 @@ module.exports = {
           },
         })
 
-        const embed = successEmbed('View Collections', 'Collections and their associated role.').setColor(0x0099ff)
+        const embed = infoEmbed('View Collections', 'Collections and their associated role.')
 
         collections.forEach((collection) => {
           embed.addFields({
