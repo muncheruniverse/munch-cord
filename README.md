@@ -22,6 +22,10 @@ Slash command
 Send Messages
 ```
 
+## Important Notes
+
+You must ensure that `RoleBot` is higher in the priority list than the roles it has to give out, otherwise it will trip a permissions error.
+
 ## BIP-322 Verification Notes
 
 The general premise from the server admin side, is to designate a specific Verify channel, and activate the bot with `/channel-add`.

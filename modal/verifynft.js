@@ -46,11 +46,18 @@ module.exports = {
           if (!res.data.result) return await interaction.reply({ embeds: [warning], ephemeral: true })
 
           const role = interaction.member.guild.roles.cache.find((roleItem) => roleItem.name === collection.role)
+
           if (role) {
             await interaction.member.roles.add(role)
             const embed = successEmbed(
               'Successfully verified',
               `Your signature was validated and you were assigned the ${role.name} role.`
+            )
+            return interaction.reply({ embeds: [embed], ephemeral: true })
+          } else {
+            const embed = warningEmbed(
+              'Role not found',
+              `The ${collection.role} role that was assigned to this collection isn't available.`
             )
             return interaction.reply({ embeds: [embed], ephemeral: true })
           }
