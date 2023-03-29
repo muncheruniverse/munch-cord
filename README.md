@@ -10,7 +10,7 @@ The initial scope is to facilitate automated Role assignment based on proof of i
 
 It's super easy, you dont need any tech, the Block Muncher team already host the bot. Just hit the following link to add it to your server:
 
-[Invite Link](https://munchbot.blockmunchers.com)
+👉 [Invite Link](https://munchbot.blockmunchers.com) 👈
 
 That's it, you're good to go!
 
@@ -38,9 +38,12 @@ This will show a persistent `Verify` message in the channel, new users simply cl
 
 You can add as many collections as you want, just call `/collection-add` to set it up. Currently, you paste in the inscriptions you'd like to include in the collection, this way you can assign multiple roles per collection, such as `@Mythic` to the top 10.
 
+> **Note**
+> Collections are _channel specific_: this allows you to have different setups for different groups of user.
+
 ## Using a private channel
 
-If you want to use the bot in a private channel, you must specifically add the `RoleMunch` role to the private channel so that the bot can send messages.
+If you want to use the bot in a private channel, you must specifically add the `MunchBot` role to the private channel so that the bot can send messages.
 
 ## Adding features
 
