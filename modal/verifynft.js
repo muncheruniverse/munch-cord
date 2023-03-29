@@ -16,6 +16,7 @@ module.exports = {
 
       const collection = await Collections.findOne({
         where: {
+          channelId: interaction.channelId,
           insIds: { [Op.like]: `%${insId}%` },
         },
       })
@@ -51,7 +52,7 @@ module.exports = {
             await interaction.member.roles.add(role)
             const embed = successEmbed(
               'Successfully verified',
-              `Your signature was validated and you were assigned the ${role.name} role.`
+              `Your signature was validated and you were assigned the **${role.name}** role.`
             )
             return interaction.reply({ embeds: [embed], ephemeral: true })
           } else {

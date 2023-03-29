@@ -24,7 +24,11 @@ Send Messages
 
 ## Important Notes
 
-You must ensure that `RoleBot` is higher in the priority list than the roles it has to give out, otherwise it will trip a permissions error.
+If you see this:
+
+You must ensure that `RoleBot` is higher in the priority list than the roles it assigns, simply drag it up the roles list.
+
+This can also happen when you attempt to assign a role thats owned by another integration, such as server boost.
 
 ## BIP-322 Verification Notes
 
