@@ -57,7 +57,7 @@ module.exports = {
           const res = await axios.post(`https://${process.env.RPC_HOST}:${process.env.RPC_PORT}/`, data, config)
 
           if (!res.data.result) {
-            const warning = warningEmbed('Verify Problem', "Your BIP-322 signature couldn't be verified.")
+            const warning = warningEmbed('Verify Problem', "The BIP-322 node couldn't verify your signature.")
             return await interaction.reply({ embeds: [warning], ephemeral: true })
           }
 
@@ -78,6 +78,11 @@ module.exports = {
             return interaction.reply({ embeds: [embed], ephemeral: true })
           }
         } catch (error) {
+          // Valid error from the RPC node
+          if (error.response && error.response.status === 500) {
+            const warning = warningEmbed('Verify Problem', "Your BIP-322 signature couldn't be verified.")
+            return await interaction.reply({ embeds: [warning], ephemeral: true })
+          }
           const embed = errorEmbed(error)
           return interaction.reply({ embeds: [embed], ephemeral: true })
         }
