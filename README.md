@@ -56,9 +56,9 @@ npm run format:write
 
 ## Self Hosting
 
-1. Setting up a bot application [link](https://discordjs.guide/preparations/setting-up-a-bot-application.html)
-2. Adding your bot to servers [link](https://discordjs.guide/preparations/adding-your-bot-to-servers.html)
-3. Copy `.env.example` to `.env` and complete the values:
+1. [Setting up a bot application](https://discordjs.guide/preparations/setting-up-a-bot-application.html)
+2. [Adding your bot to servers](https://discordjs.guide/preparations/adding-your-bot-to-servers.html)
+3. Copy `.env.example` to `.env.local` and update the values:
 
 - `TOKEN`: The token from the discord bot dash
 - `APPLICATION_ID`: The application id from the discord application page
