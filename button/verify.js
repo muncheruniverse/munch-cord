@@ -1,7 +1,8 @@
 const { ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } = require('discord.js')
 const errorEmbed = require('../embed/errorEmbed')
 const ManageChannels = require('../db/ManageChannels')
-var randomWords = require('random-words')
+const randomWords = require('random-words')
+const BipMessages = require('../db/BipMessages')
 
 const MODAL_ID = 'verifyNFTModal'
 const SIGNATURE_ID = 'signatureInput'
@@ -30,22 +31,50 @@ module.exports = {
           .setStyle(TextInputStyle.Short)
           .setMaxLength(120)
 
-        let BIP_MESSAGE = ''
-        if (process.env.BIP_MESSAGE) BIP_MESSAGE = process.env.BIP_MESSAGE
+        let message = ''
+
+        if (process.env.BIP_MESSAGE) message = process.env.BIP_MESSAGE
         else {
-          BIP_MESSAGE = 'munch-' + randomWords({ exactly: 3, join: '-' })
+          message = 'munch-' + randomWords({ exactly: 3, join: '-' })
         }
 
-        const bipMessage = new TextInputBuilder()
+        const bipMessage = await BipMessages.findOne({
+          where: {
+            channelId: interaction.channelId,
+            userId: interaction.user.id,
+          },
+        })
+
+        if (bipMessage) {
+          await BipMessages.update(
+            {
+              message,
+            },
+            {
+              where: {
+                channelId: interaction.channelId,
+                userId: interaction.user.id,
+              },
+            }
+          )
+        } else {
+          await BipMessages.create({
+            channelId: interaction.channelId,
+            userId: interaction.user.id,
+            message,
+          })
+        }
+
+        const bipMessageInput = new TextInputBuilder()
           .setCustomId('bipMessage')
           .setLabel('BIP-322 message')
           .setStyle(TextInputStyle.Short)
-          .setValue(BIP_MESSAGE)
+          .setValue(message)
           .setRequired(false)
 
         const insIdActionRow = new ActionRowBuilder().addComponents(insIdInput)
         const signatureActionRow = new ActionRowBuilder().addComponents(signatureInput)
-        const bipMessageActionRow = new ActionRowBuilder().addComponents(bipMessage)
+        const bipMessageActionRow = new ActionRowBuilder().addComponents(bipMessageInput)
 
         modal.addComponents(insIdActionRow, signatureActionRow, bipMessageActionRow)
 

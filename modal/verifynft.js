@@ -4,6 +4,7 @@ const errorEmbed = require('../embed/errorEmbed')
 const successEmbed = require('../embed/successEmbed')
 const warningEmbed = require('../embed/warningEmbed')
 const Collections = require('../db/Collections')
+const BipMessages = require('../db/BipMessages')
 const { MODAL_ID, SIGNATURE_ID, INS_ID_ID } = require('../button/verify')
 
 module.exports = {
@@ -22,13 +23,25 @@ module.exports = {
 
       if (collection && insId.length > 40) {
         try {
+          const bipMessage = await BipMessages.findOne({
+            where: {
+              channelId: interaction.channelId,
+              userId: interaction.user.id,
+            },
+          })
+
+          if (!bipMessage) {
+            const embed = errorEmbed('Can not find message')
+            return interaction.reply({ embeds: [embed], ephemeral: true })
+          }
+
           const { data: insInfo } = await axios.get(`https://api.hiro.so/ordinals/v1/inscriptions/${insId}`)
 
           const data = {
             jsonrpc: '1.0',
             id: 'curltest',
             method: 'verifymessage',
-            params: [insInfo.address, signature, 'munch munch'],
+            params: [insInfo.address, signature, bipMessage.message],
           }
 
           const config = {

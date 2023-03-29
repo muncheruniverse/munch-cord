@@ -5,6 +5,7 @@ const { Client, Collection, Events, GatewayIntentBits } = require('discord.js')
 
 const ManageChannels = require('./db/ManageChannels')
 const Collections = require('./db/Collections')
+const BipMessages = require('./db/BipMessages')
 
 const addCollectionModal = require('./modal/addcollection')
 const verifynft = require('./modal/verifynft')
@@ -89,6 +90,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
 client.once(Events.ClientReady, (c) => {
   ManageChannels.sync()
   Collections.sync()
+  BipMessages.sync()
   console.log(`Ready! Logged in as ${c.user.tag}`)
 })
 
