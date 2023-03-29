@@ -1,12 +1,11 @@
 const { ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } = require('discord.js')
 const errorEmbed = require('../embed/errorEmbed')
 const ManageChannels = require('../db/ManageChannels')
+var randomWords = require('random-words')
 
 const MODAL_ID = 'verifyNFTModal'
 const SIGNATURE_ID = 'signatureInput'
 const INS_ID_ID = 'insIdInput'
-
-const BIP_MESSAGE = 'munch munch'
 
 module.exports = {
   async execute(interaction) {
@@ -30,6 +29,12 @@ module.exports = {
           .setLabel('BIP-322 signature')
           .setStyle(TextInputStyle.Short)
           .setMaxLength(120)
+
+        let BIP_MESSAGE = ''
+        if (process.env.BIP_MESSAGE) BIP_MESSAGE = process.env.BIP_MESSAGE
+        else {
+          BIP_MESSAGE = 'munch-' + randomWords({ exactly: 3, join: '-' })
+        }
 
         const bipMessage = new TextInputBuilder()
           .setCustomId('bipMessage')
