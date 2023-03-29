@@ -26,6 +26,8 @@ Send Messages
 
 If you see this:
 
+<img width="373" alt="image" src="https://user-images.githubusercontent.com/127023971/228488566-f8f0c53f-67a9-4934-bf82-c1842921ddcd.png">
+
 You must ensure that `RoleBot` is higher in the priority list than the roles it assigns, simply drag it up the roles list.
 
 This can also happen when you attempt to assign a role thats owned by another integration, such as server boost.
