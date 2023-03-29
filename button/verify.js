@@ -1,12 +1,13 @@
 const { ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } = require('discord.js')
 const errorEmbed = require('../embed/errorEmbed')
+const warningEmbed = require('../embed/warningEmbed')
 const ManageChannels = require('../db/ManageChannels')
+const randomWords = require('random-words')
+const BipMessages = require('../db/BipMessages')
 
 const MODAL_ID = 'verifyNFTModal'
 const SIGNATURE_ID = 'signatureInput'
 const INS_ID_ID = 'insIdInput'
-
-const BIP_MESSAGE = 'munch munch'
 
 module.exports = {
   async execute(interaction) {
@@ -31,16 +32,50 @@ module.exports = {
           .setStyle(TextInputStyle.Short)
           .setMaxLength(120)
 
-        const bipMessage = new TextInputBuilder()
+        let message = ''
+
+        if (process.env.BIP_MESSAGE) message = process.env.BIP_MESSAGE
+        else {
+          message = 'munch-' + randomWords({ exactly: 3, join: '-' })
+        }
+
+        const bipMessage = await BipMessages.findOne({
+          where: {
+            channelId: interaction.channelId,
+            userId: interaction.user.id,
+          },
+        })
+
+        if (bipMessage) {
+          await BipMessages.update(
+            {
+              message,
+            },
+            {
+              where: {
+                channelId: interaction.channelId,
+                userId: interaction.user.id,
+              },
+            }
+          )
+        } else {
+          await BipMessages.create({
+            channelId: interaction.channelId,
+            userId: interaction.user.id,
+            message,
+          })
+        }
+
+        const bipMessageInput = new TextInputBuilder()
           .setCustomId('bipMessage')
           .setLabel('BIP-322 message')
           .setStyle(TextInputStyle.Short)
-          .setValue(BIP_MESSAGE)
+          .setValue(message)
           .setRequired(false)
 
         const insIdActionRow = new ActionRowBuilder().addComponents(insIdInput)
         const signatureActionRow = new ActionRowBuilder().addComponents(signatureInput)
-        const bipMessageActionRow = new ActionRowBuilder().addComponents(bipMessage)
+        const bipMessageActionRow = new ActionRowBuilder().addComponents(bipMessageInput)
 
         modal.addComponents(insIdActionRow, signatureActionRow, bipMessageActionRow)
 
@@ -50,7 +85,7 @@ module.exports = {
           return
         }
       } else {
-        const embed = errorEmbed('Discord bot is not available in this channel.')
+        const embed = warningEmbed('Bot not available', "The bot hasn't been configured for this channel.")
         return interaction.reply({ embeds: [embed], ephemeral: true })
       }
     } catch (error) {
