@@ -1,5 +1,6 @@
 const { ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } = require('discord.js')
 const errorEmbed = require('../embed/errorEmbed')
+const warningEmbed = require('../embed/warningEmbed')
 const ManageChannels = require('../db/ManageChannels')
 const randomWords = require('random-words')
 const BipMessages = require('../db/BipMessages')
@@ -84,7 +85,7 @@ module.exports = {
           return
         }
       } else {
-        const embed = errorEmbed('Discord bot is not available in this channel.')
+        const embed = warningEmbed('Bot not available', "The bot hasn't been configured for this channel.")
         return interaction.reply({ embeds: [embed], ephemeral: true })
       }
     } catch (error) {
