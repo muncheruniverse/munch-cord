@@ -68,6 +68,8 @@ npm run format:write
 - `RPC_PASSWORD`: Password for auth
 - `DB_HOST`: Hostname for sqlite
 - `DB_STORAGE`: Path to sqlite (it will autocreate)
+- `INSCRIPTION_API`: The inscription API to use, expects URI filter for the inscription id lookup
+- `BIP_MESSAGE`: Set to a string if you want a static BIP-322 message challenge
 
 4.  Install dependencies with `npm i`
 5.  Deploy commands with `npm run deploy`
