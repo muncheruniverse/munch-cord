@@ -5,7 +5,7 @@ const sequelize = new Sequelize({
   storage: process.env.DB_STORAGE,
   host: process.env.DB_HOST,
   dialect: 'sqlite',
-  logging: console.log,
+  logging: process.env.NODE_ENV === 'production' ? false : console.log,
   dialectOptions: {
     mode: 'require',
   },
