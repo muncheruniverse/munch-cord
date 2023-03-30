@@ -2,7 +2,7 @@ const errorEmbed = require('../embed/errorEmbed')
 const successEmbed = require('../embed/successEmbed')
 const { Collections } = require('../db/Collections')
 
-const { ROLE_SELECT_ID } = require('../modal/addcollection')
+const { ROLE_SELECT_ID } = require('../modal/add-collection')
 
 module.exports = {
   data: ROLE_SELECT_ID,

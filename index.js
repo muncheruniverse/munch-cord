@@ -11,12 +11,13 @@ const { Collections, Inscriptions } = require('./db/Collections')
 const BipMessages = require('./db/BipMessages')
 
 // Import required modal interactions
-const addCollectionModal = require('./modal/addcollection')
+const addCollectionMagicEdenModal = require('./modal/add-collection-magiceden')
+const addCollectionModal = require('./modal/add-collection')
 const verifynft = require('./modal/verifynft')
 
 // Import required selector interactions
 const roleSelector = require('./selector/roleselector')
-const removecollectionselector = require('./selector/removecollectionselector')
+const removeCollectionSelector = require('./selector/removecollectionselector')
 
 // Import required button action interactions
 const verify = require('./button/verify')
@@ -52,6 +53,8 @@ client.on(Events.InteractionCreate, async (interaction) => {
     await addCollectionModal.execute(interaction)
   } else if (interaction.customId === verifynft.data) {
     await verifynft.execute(interaction)
+  } else if (interaction.customId === addCollectionMagicEdenModal.data) {
+    await addCollectionMagicEdenModal.execute(interaction)
   }
 })
 
@@ -61,8 +64,8 @@ client.on(Events.InteractionCreate, async (interaction) => {
 
   if (interaction.customId === roleSelector.data) {
     roleSelector.execute(interaction)
-  } else if (interaction.customId === removecollectionselector.data) {
-    removecollectionselector.execute(interaction)
+  } else if (interaction.customId === removeCollectionSelector.data) {
+    removeCollectionSelector.execute(interaction)
   }
 })
 
