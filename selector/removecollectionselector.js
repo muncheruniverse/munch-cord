@@ -1,7 +1,7 @@
 const errorEmbed = require('../embed/errorEmbed')
 const successEmbed = require('../embed/successEmbed')
 const warningEmbed = require('../embed/warningEmbed')
-const { Collections, Inscriptions } = require('../db/Collections')
+const { Collections } = require('../db/Collections')
 
 const { REMOVE_COLLECTION_SELECTOR } = require('../commands/collection-remove')
 
@@ -19,12 +19,6 @@ module.exports = {
           ephemeral: true,
         })
       }
-
-      await Inscriptions.destroy({
-        where: {
-          collectionId: selected,
-        },
-      })
 
       await Collections.destroy({
         where: {

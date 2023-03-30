@@ -3,6 +3,7 @@ const errorEmbed = require('../embed/errorEmbed')
 const successEmbed = require('../embed/successEmbed')
 const warningEmbed = require('../embed/warningEmbed')
 const { Collections, Inscriptions } = require('../db/Collections')
+const UserInscriptions = require('../db/UserInscriptions')
 const BipMessages = require('../db/BipMessages')
 const { MODAL_ID, SIGNATURE_ID, INS_ID_ID } = require('../button/verify')
 
@@ -15,7 +16,7 @@ module.exports = {
 
       const inscription = await Inscriptions.findOne({
         where: {
-          inscriptionId,
+          inscriptionRef: inscriptionId,
         },
         include: {
           model: Collections,
@@ -75,6 +76,15 @@ module.exports = {
               'Successfully verified',
               `Your signature was validated and you were assigned the **${role.name}** role.`
             )
+
+            console.log(interaction.user.id, inscription.id)
+
+            // Everything has been allocated, lets upsert into the UserInscriptions table
+            await UserInscriptions.upsert({
+              userId: interaction.user.id,
+              inscriptionId: inscription.id,
+            })
+
             return interaction.reply({ embeds: [embed], ephemeral: true })
           } else {
             const embed = warningEmbed(

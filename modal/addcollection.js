@@ -11,10 +11,16 @@ module.exports = {
   async execute(interaction) {
     try {
       const collectionName = interaction.fields.getTextInputValue(COLLECT_NAME_ID)
-      const inscriptionIds = interaction.fields
-        .getTextInputValue(INS_IDS_ID)
-        .split(',')
-        .map((inscriptionId) => inscriptionId.replace(/\s/g, ''))
+      const inscriptionIds = interaction.fields.getTextInputValue(INS_IDS_ID)
+
+      // Matching inscription ids
+      const pattern = /\b([A-Za-z0-9]+i\d+)\b/g
+      const inscriptionsCleaned = []
+      let match
+
+      while ((match = pattern.exec(inscriptionIds))) {
+        inscriptionsCleaned.push(match[1])
+      }
 
       const collection = await Collections.create({
         name: collectionName,
@@ -22,8 +28,8 @@ module.exports = {
         role: '',
       })
 
-      const inscriptions = inscriptionIds.map((inscriptionId) => ({
-        inscriptionId,
+      const inscriptions = inscriptionsCleaned.map((inscriptionId) => ({
+        inscriptionRef: inscriptionId,
         collectionId: collection.id,
       }))
 

@@ -5,6 +5,7 @@ const sequelize = require('./db/dbconnect')
 const { Client, Collection, Events, GatewayIntentBits } = require('discord.js')
 
 const ManageChannels = require('./db/ManageChannels')
+const UserInscriptions = require('./db/UserInscriptions')
 const { Collections, Inscriptions } = require('./db/Collections')
 const BipMessages = require('./db/BipMessages')
 
@@ -99,6 +100,7 @@ client.once(Events.ClientReady, (c) => {
   Inscriptions.sync()
   BipMessages.sync()
   ManageChannels.sync()
+  UserInscriptions.sync()
   console.log(`Ready! Logged in as ${c.user.tag}`)
 })
 
