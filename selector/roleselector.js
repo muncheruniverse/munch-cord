@@ -1,6 +1,6 @@
 const errorEmbed = require('../embed/errorEmbed')
 const successEmbed = require('../embed/successEmbed')
-const Collections = require('../db/Collections')
+const { Collections } = require('../db/Collections')
 
 const { ROLE_SELECT_ID } = require('../modal/addcollection')
 
@@ -29,7 +29,7 @@ module.exports = {
 
       const embed = successEmbed(
         'Add Collection',
-        `You successfully added the **${collection.collectionName}** collection which will allocate the **${selected}** role.`
+        `You successfully added the **${collection.name}** collection which will allocate the **${selected}** role.`
       )
 
       return interaction.update({

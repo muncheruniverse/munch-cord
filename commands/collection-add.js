@@ -4,7 +4,7 @@ const ManageChannels = require('../db/ManageChannels')
 const { COMMON_ERROR } = require('../embed/errorMessages')
 
 const MODAL_ID = 'addcollectionModal'
-const COLLACTION_NAME_ID = 'collectName'
+const COLLECT_NAME_ID = 'collectName'
 const INS_IDS_ID = 'insIds'
 
 module.exports = {
@@ -20,7 +20,7 @@ module.exports = {
         const modal = new ModalBuilder().setCustomId(MODAL_ID).setTitle('Add Collection')
 
         const nameInput = new TextInputBuilder()
-          .setCustomId(COLLACTION_NAME_ID)
+          .setCustomId(COLLECT_NAME_ID)
           .setLabel('Collection Name')
           .setStyle(TextInputStyle.Short)
           .setMaxLength(30)
@@ -51,6 +51,6 @@ module.exports = {
     }
   },
   MODAL_ID,
-  COLLACTION_NAME_ID,
+  COLLECT_NAME_ID,
   INS_IDS_ID,
 }
