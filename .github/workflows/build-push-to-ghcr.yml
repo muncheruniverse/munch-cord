@@ -1,7 +1,6 @@
 name: Build and publish the container image
 
 on: push
-
 # "on":
 #   push:
 #     tags:
