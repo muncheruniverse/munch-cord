@@ -4,28 +4,36 @@ require('dotenv-flow').config()
 const sequelize = require('./db/dbconnect')
 const { Client, Collection, Events, GatewayIntentBits } = require('discord.js')
 
+// Import required model files
 const ManageChannels = require('./db/ManageChannels')
 const UserInscriptions = require('./db/UserInscriptions')
 const { Collections, Inscriptions } = require('./db/Collections')
 const BipMessages = require('./db/BipMessages')
 
+// Import required modal interactions
 const addCollectionModal = require('./modal/addcollection')
 const verifynft = require('./modal/verifynft')
 
+// Import required selector interactions
 const roleSelector = require('./selector/roleselector')
 const removecollectionselector = require('./selector/removecollectionselector')
 
+// Import required button action interactions
 const verify = require('./button/verify')
 
+// Create a new client
 const client = new Client({
   intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers],
 })
 
+// Create a new map to store all of the bot's commands
 client.commands = new Collection()
 
+// Find all files in the commands directory that end in .js
 const commandsPath = path.join(__dirname, 'commands')
 const commandFiles = fs.readdirSync(commandsPath).filter((file) => file.endsWith('.js'))
 
+// Loop through each command file and add it to the bot's commands map
 for (const file of commandFiles) {
   const filePath = path.join(commandsPath, file)
   const command = require(filePath)
@@ -36,6 +44,7 @@ for (const file of commandFiles) {
   }
 }
 
+// Listen for modal interactions and execute appropriate modals
 client.on(Events.InteractionCreate, async (interaction) => {
   if (!interaction.isModalSubmit()) return
 
@@ -46,6 +55,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
   }
 })
 
+// Listen for selector interactions and execute appropriate selectors
 client.on(Events.InteractionCreate, async (interaction) => {
   if (!interaction.isStringSelectMenu()) return
 
@@ -56,6 +66,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
   }
 })
 
+// Listen for slash command interactions and execute appropriate commands
 client.on(Events.InteractionCreate, async (interaction) => {
   if (!interaction.isChatInputCommand()) return
 
@@ -84,24 +95,32 @@ client.on(Events.InteractionCreate, async (interaction) => {
   }
 })
 
+// Listen for button interactions and execute appropriate button actions
 client.on(Events.InteractionCreate, async (interaction) => {
   if (!interaction.isButton()) return
   if (interaction.customId === 'verifyNFT') await verify.execute(interaction)
 })
 
+// Once the client is ready, perform initial setup and output a message indicating that the client is ready
 client.once(Events.ClientReady, (c) => {
+  // Connect to the database
   try {
     sequelize.authenticate()
     console.log('Database connection has been established successfully.')
   } catch (error) {
     console.error('Unable to connect to the database:', error)
   }
+
+  // Sync all database tables
   Collections.sync()
   Inscriptions.sync()
   BipMessages.sync()
   ManageChannels.sync()
   UserInscriptions.sync()
+
+  // Output a message indicating that the client is ready
   console.log(`Ready! Logged in as ${c.user.tag}`)
 })
 
+// Log in to Discord with the bot token specified in the .env file
 client.login(process.env.TOKEN)
