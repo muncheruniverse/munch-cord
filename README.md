@@ -51,7 +51,7 @@ We'd really welcome new features being added to the bot, just submit a PR, make 
 
 ```
 npm run lint
-npm run format:write
+npm run prettier
 ```
 
 ## Self Hosting
