@@ -35,7 +35,7 @@ module.exports = {
             return interaction.reply({ embeds: [embed], ephemeral: true })
           }
 
-          const { data: insInfo } = await axios.get(`https://api.hiro.so/ordinals/v1/inscriptions/${insId}`)
+          const { data: insInfo } = await axios.get(`${process.env.INSCRIPTION_API}/${insId}`)
 
           const data = {
             jsonrpc: '1.0',
