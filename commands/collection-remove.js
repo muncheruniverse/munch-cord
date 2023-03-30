@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, ActionRowBuilder, StringSelectMenuBuilder } = require('discord.js')
 const errorEmbed = require('../embed/errorEmbed')
 const successEmbed = require('../embed/successEmbed')
-const Collections = require('../db/Collections')
+const { Collections } = require('../db/Collections')
 const ManageChannels = require('../db/ManageChannels')
 const { COMMON_ERROR } = require('../embed/errorMessages')
 
@@ -18,7 +18,7 @@ module.exports = {
       })
       if (interaction.user.id === interaction.member.guild.ownerId && channelId) {
         const collections = await Collections.findAll({
-          attributes: ['collectionName', 'role', 'id'],
+          attributes: ['name', 'role', 'id'],
           where: {
             channelId: interaction.channelId,
           },
@@ -28,7 +28,7 @@ module.exports = {
 
         collections.forEach((collection) => {
           selectList.push({
-            label: collection.collectionName,
+            label: collection.name,
             value: `${collection.id}`,
           })
         })
@@ -52,7 +52,7 @@ module.exports = {
         return interaction.reply({ embeds: [embed], ephemeral: true })
       }
     } catch (error) {
-      const embed = errorEmbed('Error happened,')
+      const embed = errorEmbed(error)
       return interaction.reply({ embeds: [embed], ephemeral: true })
     }
   },

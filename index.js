@@ -1,10 +1,11 @@
 const fs = require('node:fs')
 const path = require('node:path')
 require('dotenv-flow').config()
+const sequelize = require('./db/dbconnect')
 const { Client, Collection, Events, GatewayIntentBits } = require('discord.js')
 
 const ManageChannels = require('./db/ManageChannels')
-const Collections = require('./db/Collections')
+const { Collections, Inscriptions } = require('./db/Collections')
 const BipMessages = require('./db/BipMessages')
 
 const addCollectionModal = require('./modal/addcollection')
@@ -88,9 +89,16 @@ client.on(Events.InteractionCreate, async (interaction) => {
 })
 
 client.once(Events.ClientReady, (c) => {
-  ManageChannels.sync()
+  try {
+    sequelize.authenticate()
+    console.log('Database connection has been established successfully.')
+  } catch (error) {
+    console.error('Unable to connect to the database:', error)
+  }
   Collections.sync()
+  Inscriptions.sync()
   BipMessages.sync()
+  ManageChannels.sync()
   console.log(`Ready! Logged in as ${c.user.tag}`)
 })
 

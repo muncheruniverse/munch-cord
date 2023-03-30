@@ -1,11 +1,36 @@
-const Sequelize = require('sequelize')
+const { DataTypes } = require('sequelize')
 const sequelize = require('./dbconnect')
 
 const Collections = sequelize.define('Collections', {
-  collectionName: Sequelize.STRING,
-  insIds: Sequelize.STRING,
-  role: Sequelize.STRING,
-  channelId: Sequelize.STRING,
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  channelId: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  role: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
 })
 
-module.exports = Collections
+const Inscriptions = sequelize.define('Inscriptions', {
+  collectionId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  inscriptionId: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+})
+
+Collections.hasMany(Inscriptions, { foreignKey: 'collectionId' })
+Inscriptions.belongsTo(Collections, { foreignKey: 'collectionId' })
+
+module.exports = {
+  Collections,
+  Inscriptions,
+}
