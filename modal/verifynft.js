@@ -1,9 +1,8 @@
-const { Op } = require('sequelize')
 const axios = require('axios')
 const errorEmbed = require('../embed/errorEmbed')
 const successEmbed = require('../embed/successEmbed')
 const warningEmbed = require('../embed/warningEmbed')
-const Collections = require('../db/Collections')
+const { Collections, Inscriptions } = require('../db/Collections')
 const BipMessages = require('../db/BipMessages')
 const { MODAL_ID, SIGNATURE_ID, INS_ID_ID } = require('../button/verify')
 
@@ -12,16 +11,21 @@ module.exports = {
   async execute(interaction) {
     try {
       const signature = interaction.fields.getTextInputValue(SIGNATURE_ID)
-      const insId = interaction.fields.getTextInputValue(INS_ID_ID)
+      const inscriptionId = interaction.fields.getTextInputValue(INS_ID_ID)
 
-      const collection = await Collections.findOne({
+      const inscription = await Inscriptions.findOne({
         where: {
-          channelId: interaction.channelId,
-          insIds: { [Op.like]: `%${insId}%` },
+          inscriptionId,
+        },
+        include: {
+          model: Collections,
+          where: {
+            channelId: interaction.channelId,
+          },
         },
       })
 
-      if (collection) {
+      if (inscription) {
         try {
           const bipMessage = await BipMessages.findOne({
             where: {
@@ -35,7 +39,7 @@ module.exports = {
             return interaction.reply({ embeds: [embed], ephemeral: true })
           }
 
-          const { data: insInfo } = await axios.get(`${process.env.INSCRIPTION_API}/${insId}`)
+          const { data: insInfo } = await axios.get(`${process.env.INSCRIPTION_API}/${inscriptionId}`)
 
           const data = {
             jsonrpc: '1.0',
@@ -61,7 +65,9 @@ module.exports = {
             return await interaction.reply({ embeds: [warning], ephemeral: true })
           }
 
-          const role = interaction.member.guild.roles.cache.find((roleItem) => roleItem.name === collection.role)
+          const role = interaction.member.guild.roles.cache.find(
+            (roleItem) => roleItem.name === inscription.Collection.role
+          )
 
           if (role) {
             await interaction.member.roles.add(role)
@@ -73,7 +79,7 @@ module.exports = {
           } else {
             const embed = warningEmbed(
               'Role not found',
-              `The ${collection.role} role that was assigned to this collection isn't available.`
+              `The ${inscription.Collection.role} role that was assigned to this collection isn't available.`
             )
             return interaction.reply({ embeds: [embed], ephemeral: true })
           }

@@ -1,7 +1,6 @@
 const errorEmbed = require('../embed/errorEmbed')
 const successEmbed = require('../embed/successEmbed')
 const warningEmbed = require('../embed/warningEmbed')
-const sequelize = require('../db/dbconnect')
 const { Collections, Inscriptions } = require('../db/Collections')
 
 const { REMOVE_COLLECTION_SELECTOR } = require('../commands/collection-remove')
