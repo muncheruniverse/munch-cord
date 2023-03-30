@@ -1,8 +1,8 @@
 const { StringSelectMenuBuilder, ActionRowBuilder } = require('discord.js')
 const errorEmbed = require('../embed/errorEmbed')
 const successEmbed = require('../embed/successEmbed')
-const Collections = require('../db/Collections')
-const { MODAL_ID, COLLACTION_NAME_ID, INS_IDS_ID } = require('../commands/collection-add')
+const { Collections, Inscriptions } = require('../db/Collections')
+const { MODAL_ID, COLLECT_NAME_ID, INS_IDS_ID } = require('../commands/collection-add')
 
 const ROLE_SELECT_ID = 'roleSelectID'
 
@@ -10,15 +10,30 @@ module.exports = {
   data: MODAL_ID,
   async execute(interaction) {
     try {
-      const collectionName = interaction.fields.getTextInputValue(COLLACTION_NAME_ID)
-      const insIds = interaction.fields.getTextInputValue(INS_IDS_ID)
+      const collectionName = interaction.fields.getTextInputValue(COLLECT_NAME_ID)
+      const inscriptionIds = interaction.fields.getTextInputValue(INS_IDS_ID)
 
-      await Collections.create({
-        collectionName,
-        insIds,
+      // Matching inscription ids
+      const pattern = /\b([A-Za-z0-9]+i\d+)\b/g
+      const inscriptionsCleaned = []
+      let match
+
+      while ((match = pattern.exec(inscriptionIds))) {
+        inscriptionsCleaned.push(match[1])
+      }
+
+      const collection = await Collections.create({
+        name: collectionName,
         channelId: interaction.channelId,
         role: '',
       })
+
+      const inscriptions = inscriptionsCleaned.map((inscriptionId) => ({
+        inscriptionRef: inscriptionId,
+        collectionId: collection.id,
+      }))
+
+      await Inscriptions.bulkCreate(inscriptions)
 
       const roleNames = []
       const roles = interaction.member.guild.roles.cache
