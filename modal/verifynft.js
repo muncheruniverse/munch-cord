@@ -77,8 +77,6 @@ module.exports = {
               `Your signature was validated and you were assigned the **${role.name}** role.`
             )
 
-            console.log(interaction.user.id, inscription.id)
-
             // Everything has been allocated, lets upsert into the UserInscriptions table
             await UserInscriptions.upsert({
               userId: interaction.user.id,
