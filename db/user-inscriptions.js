@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize')
 const sequelize = require('./db-connect')
-const { Inscriptions } = require('./Collections')
+const { Inscriptions } = require('./collections')
 
 const UserInscriptions = sequelize.define('UserInscriptions', {
   userId: {

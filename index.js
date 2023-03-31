@@ -5,10 +5,10 @@ const sequelize = require('./db/db-connect')
 const { Client, Collection, Events, GatewayIntentBits } = require('discord.js')
 
 // Import required model files
-const ManageChannels = require('./db/ManageChannels')
-const UserInscriptions = require('./db/UserInscriptions')
-const { Collections, Inscriptions } = require('./db/Collections')
-const BipMessages = require('./db/BipMessages')
+const ManageChannels = require('./db/manage-channels')
+const UserInscriptions = require('./db/user-inscriptions')
+const { Collections, Inscriptions } = require('./db/collections')
+const BipMessages = require('./db/bip-messages')
 
 // Import required modal interactions
 const addCollectionMagicEdenModal = require('./modal/add-collection-magiceden')

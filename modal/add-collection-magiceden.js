@@ -2,7 +2,7 @@ const { StringSelectMenuBuilder, ActionRowBuilder } = require('discord.js')
 const axios = require('axios')
 const errorEmbed = require('../embed/error-embed')
 const successEmbed = require('../embed/success-embed')
-const { Collections, Inscriptions } = require('../db/Collections')
+const { Collections, Inscriptions } = require('../db/collections')
 const { MODAL_ID, COLLECT_NAME_ID, COLLECTION_SYMBOL_ID } = require('../commands/collection-add-magiceden')
 
 const ROLE_SELECT_ID = 'roleSelectID'

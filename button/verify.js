@@ -1,9 +1,9 @@
 const { ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } = require('discord.js')
 const errorEmbed = require('../embed/error-embed')
 const warningEmbed = require('../embed/warning-embed')
-const ManageChannels = require('../db/ManageChannels')
+const ManageChannels = require('../db/manage-channels')
 const randomWords = require('random-words')
-const BipMessages = require('../db/BipMessages')
+const BipMessages = require('../db/bip-messages')
 
 const MODAL_ID = 'verifyNFTModal'
 const SIGNATURE_ID = 'signatureInput'

@@ -3,7 +3,7 @@ const errorEmbed = require('../embed/error-embed')
 const successEmbed = require('../embed/success-embed')
 const warningEmbed = require('../embed/warning-embed')
 const { COMMON_ERROR } = require('../embed/error-messages')
-const ManageChannels = require('../db/ManageChannels')
+const ManageChannels = require('../db/manage-channels')
 
 module.exports = {
   data: new SlashCommandBuilder()

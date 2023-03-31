@@ -2,9 +2,9 @@ const axios = require('axios')
 const errorEmbed = require('../embed/error-embed')
 const successEmbed = require('../embed/success-embed')
 const warningEmbed = require('../embed/warning-embed')
-const { Collections, Inscriptions } = require('../db/Collections')
-const UserInscriptions = require('../db/UserInscriptions')
-const BipMessages = require('../db/BipMessages')
+const { Collections, Inscriptions } = require('../db/collections')
+const UserInscriptions = require('../db/user-inscriptions')
+const BipMessages = require('../db/bip-messages')
 const { MODAL_ID, SIGNATURE_ID, INS_ID_ID } = require('../button/verify')
 
 module.exports = {

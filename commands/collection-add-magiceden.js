@@ -1,6 +1,6 @@
 const { ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, SlashCommandBuilder } = require('discord.js')
 const errorEmbed = require('../embed/error-embed')
-const ManageChannels = require('../db/ManageChannels')
+const ManageChannels = require('../db/manage-channels')
 const { COMMON_ERROR } = require('../embed/error-messages')
 
 const MODAL_ID = 'addCollectionMagicEdenModal'
