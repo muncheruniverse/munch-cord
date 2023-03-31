@@ -45,63 +45,52 @@ for (const file of commandFiles) {
   }
 }
 
-// Listen for modal interactions and execute appropriate modals
 client.on(Events.InteractionCreate, async (interaction) => {
-  if (!interaction.isModalSubmit()) return
-
-  if (interaction.customId === addCollectionModal.data) {
-    await addCollectionModal.execute(interaction)
-  } else if (interaction.customId === verifynft.data) {
-    await verifynft.execute(interaction)
-  } else if (interaction.customId === addCollectionMagicEdenModal.data) {
-    await addCollectionMagicEdenModal.execute(interaction)
-  }
-})
-
-// Listen for selector interactions and execute appropriate selectors
-client.on(Events.InteractionCreate, async (interaction) => {
-  if (!interaction.isStringSelectMenu()) return
-
-  if (interaction.customId === roleSelector.data) {
-    roleSelector.execute(interaction)
-  } else if (interaction.customId === removeCollectionSelector.data) {
-    removeCollectionSelector.execute(interaction)
-  }
-})
-
-// Listen for slash command interactions and execute appropriate commands
-client.on(Events.InteractionCreate, async (interaction) => {
-  if (!interaction.isChatInputCommand()) return
-
-  const command = interaction.client.commands.get(interaction.commandName)
-
-  if (!command) {
-    console.error(`No command matching ${interaction.commandName} was found.`)
-    return
-  }
-
   try {
-    await command.execute(interaction)
+    if (interaction.isModalSubmit()) {
+      // Modal interactions
+      if (interaction.customId === addCollectionModal.data) {
+        await addCollectionModal.execute(interaction)
+      } else if (interaction.customId === verifynft.data) {
+        await verifynft.execute(interaction)
+      } else if (interaction.customId === addCollectionMagicEdenModal.data) {
+        await addCollectionMagicEdenModal.execute(interaction)
+      }
+    } else if (interaction.isStringSelectMenu()) {
+      // Selector interactions
+      if (interaction.customId === roleSelector.data) {
+        roleSelector.execute(interaction)
+      } else if (interaction.customId === removeCollectionSelector.data) {
+        removeCollectionSelector.execute(interaction)
+      }
+    } else if (interaction.isChatInputCommand()) {
+      // Slash command interactions
+      const command = interaction.client.commands.get(interaction.commandName)
+
+      if (!command) {
+        console.error(`No command matching ${interaction.commandName} was found.`)
+        return
+      }
+
+      await command.execute(interaction)
+    } else if (interaction.isButton()) {
+      // Button interactions
+      if (interaction.customId === 'verifyNFT') await verify.execute(interaction)
+    }
   } catch (error) {
     console.error(error)
     if (interaction.replied || interaction.deferred) {
       await interaction.followUp({
-        content: 'There was an error while executing this command!',
+        content: 'There was an error while executing this interaction!',
         ephemeral: true,
       })
     } else {
       await interaction.reply({
-        content: 'There was an error while executing this command!',
+        content: 'There was an error while executing this interaction!',
         ephemeral: true,
       })
     }
   }
-})
-
-// Listen for button interactions and execute appropriate button actions
-client.on(Events.InteractionCreate, async (interaction) => {
-  if (!interaction.isButton()) return
-  if (interaction.customId === 'verifyNFT') await verify.execute(interaction)
 })
 
 // Once the client is ready, perform initial setup and output a message indicating that the client is ready
