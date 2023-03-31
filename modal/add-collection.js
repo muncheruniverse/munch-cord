@@ -43,7 +43,10 @@ module.exports = {
       })
 
       const row = new ActionRowBuilder().addComponents(
-        new StringSelectMenuBuilder().setCustomId(ROLE_SELECT_ID).setPlaceholder('Select a role').addOptions(roleNames)
+        new StringSelectMenuBuilder()
+          .setCustomId(ROLE_SELECT_ID)
+          .setPlaceholder('Select a role')
+          .addOptions(roleNames.slice(-25))
       )
 
       const embed = successEmbed('Add Collection', 'Pick the role that you would like to award for this collection.')
