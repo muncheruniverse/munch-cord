@@ -1,10 +1,10 @@
 const { SlashCommandBuilder } = require('discord.js')
 const axios = require('axios')
-const errorEmbed = require('../embed/errorEmbed')
-const successEmbed = require('../embed/successEmbed')
-const ManageChannels = require('../db/ManageChannels')
-const { Collections, Inscriptions } = require('../db/Collections')
-const { COMMON_ERROR } = require('../embed/errorMessages')
+const errorEmbed = require('../embed/error-embed')
+const successEmbed = require('../embed/success-embed')
+const ManageChannels = require('../db/manage-channels')
+const { Collections, Inscriptions } = require('../db/collections-inscriptions')
+const { COMMON_ERROR } = require('../embed/error-messages')
 
 const PAGINATED_AMOUNT = 20
 
