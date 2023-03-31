@@ -4,7 +4,6 @@
     "es2021": true
   },
   "extends": "standard",
-  "overrides": [],
   "parserOptions": {
     "ecmaVersion": "latest",
     "sourceType": "module"
@@ -14,5 +13,16 @@
     "comma-dangle": "off",
     "space-before-function-paren": ["error", { "anonymous": "always", "named": "never", "asyncArrow": "always" }],
     "capitalized-comments": ["error", "always", { "ignoreConsecutiveComments": true, "ignoreInlineComments": true }]
-  }
+  },
+  "overrides": [
+    {
+      "files": ["**/*.test.js"],
+      "env": {
+        "mocha": true
+      },
+      "rules": {
+        "no-unused-expressions": "off"
+      }
+    }
+  ]
 }

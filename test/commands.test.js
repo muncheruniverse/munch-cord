@@ -1,3 +1,4 @@
+/* global describe beforeEach afterEach it */
 const { expect } = require('chai')
 const fs = require('fs')
 const path = require('path')

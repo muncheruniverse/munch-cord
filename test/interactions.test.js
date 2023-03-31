@@ -1,3 +1,4 @@
+/* global describe beforeEach afterEach it */
 const { expect } = require('chai')
 const { Client, GatewayIntentBits, MessageComponentInteraction } = require('discord.js')
 const sinon = require('sinon')
