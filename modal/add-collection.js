@@ -1,7 +1,7 @@
 const { StringSelectMenuBuilder, ActionRowBuilder } = require('discord.js')
-const errorEmbed = require('../embed/errorEmbed')
-const successEmbed = require('../embed/successEmbed')
-const { Collections, Inscriptions } = require('../db/Collections')
+const errorEmbed = require('../embed/error-embed')
+const successEmbed = require('../embed/success-embed')
+const { Collections, Inscriptions } = require('../db/collections-inscriptions')
 const { MODAL_ID, COLLECT_NAME_ID, INS_IDS_ID } = require('../commands/collection-add')
 
 const ROLE_SELECT_ID = 'roleSelectID'
@@ -43,7 +43,10 @@ module.exports = {
       })
 
       const row = new ActionRowBuilder().addComponents(
-        new StringSelectMenuBuilder().setCustomId(ROLE_SELECT_ID).setPlaceholder('Select a role').addOptions(roleNames)
+        new StringSelectMenuBuilder()
+          .setCustomId(ROLE_SELECT_ID)
+          .setPlaceholder('Select a role')
+          .addOptions(roleNames.slice(-25))
       )
 
       const embed = successEmbed('Add Collection', 'Pick the role that you would like to award for this collection.')

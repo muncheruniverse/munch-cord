@@ -1,5 +1,5 @@
 const { DataTypes } = require('sequelize')
-const sequelize = require('./dbconnect')
+const sequelize = require('./db-connect')
 
 const BipMessages = sequelize.define('BipMessages', {
   channelId: {

@@ -1,7 +1,7 @@
-const errorEmbed = require('../embed/errorEmbed')
-const successEmbed = require('../embed/successEmbed')
-const warningEmbed = require('../embed/warningEmbed')
-const { Collections } = require('../db/Collections')
+const errorEmbed = require('../embed/error-embed')
+const successEmbed = require('../embed/success-embed')
+const warningEmbed = require('../embed/warning-embed')
+const { Collections } = require('../db/collections-inscriptions')
 
 const { REMOVE_COLLECTION_SELECTOR } = require('../commands/collection-remove')
 
@@ -34,7 +34,7 @@ module.exports = {
       })
     } catch (error) {
       const embed = errorEmbed(error)
-      return interaction.reply({ embeds: [embed], ephemeral: true })
+      return interaction.update({ embeds: [embed], ephemeral: true })
     }
   },
 }

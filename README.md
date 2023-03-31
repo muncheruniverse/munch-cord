@@ -75,3 +75,10 @@ npm run prettier
 5.  Deploy commands with `npm run deploy`
 6.  Run bot with `npm start`
 7.  Invite bot to your server ensure you have the relevant permissions in the URL: `&permissions=2415921152&scope=bot`
+
+## Docker
+
+```
+docker build .
+docker run -it -v "$PWD/storage:/home/node/app/data" <image> /bin/bash
+```

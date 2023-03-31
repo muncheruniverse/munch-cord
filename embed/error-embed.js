@@ -54,7 +54,7 @@ function handleError(error) {
   }
 
   console.error('Error:', log)
-  if (process.env.AXIOM_TOKEN && process.env.AXIOM_DATASET) {
+  if (process.env.AXIOM_TOKEN && process.env.AXIOM_DATASET && typeof error.message !== 'undefined') {
     sendLogToAxiom(log)
   }
 }

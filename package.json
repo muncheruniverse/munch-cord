@@ -4,7 +4,8 @@
   "description": "The MunchCord Bot aims to be a multipurpose bot that can add Ordinal/Inscription functionality to any discord server.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "nyc mocha",
+    "coverage": "nyc report --reporter=html",
     "dev": "node deploy-commands && node .",
     "deploy": "node deploy-commands",
     "start": "node .",
@@ -24,6 +25,8 @@
     "sqlite3": "^5.1.6"
   },
   "devDependencies": {
+    "chai": "^4.3.7",
+    "chai-as-promised": "^7.1.1",
     "eslint": "^8.36.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^8.8.0",
@@ -31,6 +34,9 @@
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-n": "^15.6.1",
     "eslint-plugin-promise": "^6.1.1",
-    "prettier": "^2.8.7"
+    "mocha": "^10.2.0",
+    "nyc": "^15.1.0",
+    "prettier": "^2.8.7",
+    "sinon": "^15.0.3"
   }
 }
