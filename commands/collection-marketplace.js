@@ -2,6 +2,7 @@ const { SlashCommandBuilder } = require('discord.js')
 const axios = require('axios')
 const errorEmbed = require('../embed/error-embed')
 const successEmbed = require('../embed/success-embed')
+const infoEmbed = require('../embed/info-embed')
 const ManageChannels = require('../db/manage-channels')
 const { Collections, Inscriptions } = require('../db/collections-inscriptions')
 const { COMMON_ERROR } = require('../embed/error-messages')
@@ -18,17 +19,19 @@ const MARKET_PLACES = [
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('collection-marketplace')
-    .setDescription('Add collection details and assign role')
+    .setDescription('Automatically add a collection direct from a supported marketplace and assign role')
     .addStringOption((option) =>
       option
         .setName('venue')
-        .setDescription('Marketplace name')
+        .setDescription('Choose the marketplace')
         .addChoices(...MARKET_PLACES)
         .setRequired(true)
     )
-    .addRoleOption((option) => option.setName('role').setDescription('Holder role').setRequired(true))
-    .addStringOption((option) => option.setName('url').setDescription('Marketplace url').setRequired(true))
-    .addStringOption((option) => option.setName('name').setDescription('Collection Name').setRequired(false)),
+    .addRoleOption((option) => option.setName('role').setDescription('Choose the role to assign').setRequired(true))
+    .addStringOption((option) => option.setName('link').setDescription('The link to the collection').setRequired(true))
+    .addStringOption((option) =>
+      option.setName('name').setDescription('Override the collection name').setRequired(false)
+    ),
   async execute(interaction) {
     try {
       const channelId = await ManageChannels.findOne({
@@ -39,7 +42,7 @@ module.exports = {
       if (interaction.user.id === interaction.member.guild.ownerId && channelId) {
         const venue = interaction.options.getString('venue')
         const role = interaction.options.getRole('role')
-        const url = interaction.options.getString('url')
+        const url = interaction.options.getString('link')
         const pattern = /\w+$/
         const match = url.match(pattern)
         const collectionSymbol = match ? match[0] : ''
@@ -50,7 +53,7 @@ module.exports = {
         )
         const totalCount = insInfo.total
         if (totalCount === 0) {
-          const embed = errorEmbed('Can not find inscriptions')
+          const embed = errorEmbed("Can't find any inscriptions from this collection.")
           return interaction.reply({ embeds: [embed], ephemeral: true })
         }
 
@@ -60,7 +63,7 @@ module.exports = {
           role: role.name,
         })
 
-        const embed = successEmbed('Loading', 'Preparing for load collection ids')
+        const embed = infoEmbed('Fetching Inscriptions', `Loading the ${venue} API.`)
         await interaction.reply({
           embeds: [embed],
           ephemeral: true,
@@ -76,7 +79,7 @@ module.exports = {
           insInfo.tokens.forEach((inscription) => {
             inscriptions.push({ collectionId: collection.id, inscriptionRef: inscription.id })
           })
-          const embed = successEmbed('Loading', `indexing ${offset}/${totalCount}`)
+          const embed = infoEmbed('Fetching Inscriptions', `Currently indexing ${offset}/${totalCount} inscriptions.`)
           await interaction.editReply({
             embeds: [embed],
             ephemeral: true,
@@ -87,7 +90,10 @@ module.exports = {
 
         await Inscriptions.bulkCreate(inscriptions)
 
-        const endEmbed = successEmbed('Completed', 'Successfully added')
+        const endEmbed = successEmbed(
+          'Collection Complete',
+          `All ${totalCount} inscriptions from the ${name} collection have been added.`
+        )
         return await interaction.editReply({
           embeds: [endEmbed],
           ephemeral: true,
