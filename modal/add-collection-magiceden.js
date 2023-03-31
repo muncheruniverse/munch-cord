@@ -1,7 +1,7 @@
 const { StringSelectMenuBuilder, ActionRowBuilder } = require('discord.js')
 const axios = require('axios')
-const errorEmbed = require('../embed/errorEmbed')
-const successEmbed = require('../embed/successEmbed')
+const errorEmbed = require('../embed/error-embed')
+const successEmbed = require('../embed/success-embed')
 const { Collections, Inscriptions } = require('../db/Collections')
 const { MODAL_ID, COLLECT_NAME_ID, COLLECTION_SYMBOL_ID } = require('../commands/collection-add-magiceden')
 

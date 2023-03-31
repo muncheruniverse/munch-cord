@@ -10,6 +10,7 @@
     "sourceType": "module"
   },
   "rules": {
+    "camelcase": ["error", { "properties": "always" }],
     "comma-dangle": "off",
     "space-before-function-paren": ["error", { "anonymous": "always", "named": "never", "asyncArrow": "always" }],
     "capitalized-comments": ["error", "always", { "ignoreConsecutiveComments": true, "ignoreInlineComments": true }]

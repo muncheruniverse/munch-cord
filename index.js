@@ -1,7 +1,7 @@
 const fs = require('node:fs')
 const path = require('node:path')
 require('dotenv-flow').config()
-const sequelize = require('./db/dbconnect')
+const sequelize = require('./db/db-connect')
 const { Client, Collection, Events, GatewayIntentBits } = require('discord.js')
 
 // Import required model files
@@ -13,11 +13,11 @@ const BipMessages = require('./db/BipMessages')
 // Import required modal interactions
 const addCollectionMagicEdenModal = require('./modal/add-collection-magiceden')
 const addCollectionModal = require('./modal/add-collection')
-const verifynft = require('./modal/verifynft')
+const verifynft = require('./modal/verify-nft')
 
 // Import required selector interactions
-const roleSelector = require('./selector/roleselector')
-const removeCollectionSelector = require('./selector/removecollectionselector')
+const roleSelector = require('./selector/role-selector')
+const removeCollectionSelector = require('./selector/remove-collection-selector')
 
 // Import required button action interactions
 const verify = require('./button/verify')

@@ -1,7 +1,7 @@
 const { ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, SlashCommandBuilder } = require('discord.js')
-const errorEmbed = require('../embed/errorEmbed')
+const errorEmbed = require('../embed/error-embed')
 const ManageChannels = require('../db/ManageChannels')
-const { COMMON_ERROR } = require('../embed/errorMessages')
+const { COMMON_ERROR } = require('../embed/error-messages')
 
 const MODAL_ID = 'addcollectionModal'
 const COLLECT_NAME_ID = 'collectName'

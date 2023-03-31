@@ -1,6 +1,6 @@
 const { ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } = require('discord.js')
-const errorEmbed = require('../embed/errorEmbed')
-const warningEmbed = require('../embed/warningEmbed')
+const errorEmbed = require('../embed/error-embed')
+const warningEmbed = require('../embed/warning-embed')
 const ManageChannels = require('../db/ManageChannels')
 const randomWords = require('random-words')
 const BipMessages = require('../db/BipMessages')

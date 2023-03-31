@@ -1,5 +1,5 @@
 const { DataTypes } = require('sequelize')
-const sequelize = require('./dbconnect')
+const sequelize = require('./db-connect')
 const { Inscriptions } = require('./Collections')
 
 const UserInscriptions = sequelize.define('UserInscriptions', {

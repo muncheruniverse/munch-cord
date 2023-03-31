@@ -1,10 +1,10 @@
 const { SlashCommandBuilder, ButtonBuilder, ActionRowBuilder, ButtonStyle } = require('discord.js')
-const errorEmbed = require('../embed/errorEmbed')
-const successEmbed = require('../embed/successEmbed')
-const infoEmbed = require('../embed/infoEmbed')
-const warningEmbed = require('../embed/warningEmbed')
+const errorEmbed = require('../embed/error-embed')
+const successEmbed = require('../embed/success-embed')
+const infoEmbed = require('../embed/info-embed')
+const warningEmbed = require('../embed/warning-embed')
 const ManageChannels = require('../db/ManageChannels')
-const { COMMON_ERROR } = require('../embed/errorMessages')
+const { COMMON_ERROR } = require('../embed/error-messages')
 
 module.exports = {
   data: new SlashCommandBuilder().setName('channel-add').setDescription('Add the verify bot to this channel.'),

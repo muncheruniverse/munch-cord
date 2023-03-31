@@ -1,9 +1,9 @@
 const { SlashCommandBuilder } = require('discord.js')
-const errorEmbed = require('../embed/errorEmbed')
-const successEmbed = require('../embed/successEmbed')
-const warningEmbed = require('../embed/warningEmbed')
+const errorEmbed = require('../embed/error-embed')
+const successEmbed = require('../embed/success-embed')
+const warningEmbed = require('../embed/warning-embed')
+const { COMMON_ERROR } = require('../embed/error-messages')
 const ManageChannels = require('../db/ManageChannels')
-const { COMMON_ERROR } = require('../embed/errorMessages')
 
 module.exports = {
   data: new SlashCommandBuilder()

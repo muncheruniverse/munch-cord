@@ -1,10 +1,10 @@
 const { SlashCommandBuilder } = require('discord.js')
-const errorEmbed = require('../embed/errorEmbed')
-const infoEmbed = require('../embed/infoEmbed')
+const errorEmbed = require('../embed/error-embed')
+const infoEmbed = require('../embed/info-embed')
 const { Collections, Inscriptions } = require('../db/Collections')
 const ManageChannels = require('../db/ManageChannels')
-const { COMMON_ERROR } = require('../embed/errorMessages')
-const sequelize = require('../db/dbconnect')
+const { COMMON_ERROR } = require('../embed/error-messages')
+const sequelize = require('../db/db-connect')
 
 module.exports = {
   data: new SlashCommandBuilder().setName('collection-view').setDescription('View all collections'),

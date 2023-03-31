@@ -1,6 +1,6 @@
-const errorEmbed = require('../embed/errorEmbed')
-const successEmbed = require('../embed/successEmbed')
-const warningEmbed = require('../embed/warningEmbed')
+const errorEmbed = require('../embed/error-embed')
+const successEmbed = require('../embed/success-embed')
+const warningEmbed = require('../embed/warning-embed')
 const { Collections } = require('../db/Collections')
 
 const { REMOVE_COLLECTION_SELECTOR } = require('../commands/collection-remove')
