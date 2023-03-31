@@ -36,7 +36,7 @@ The general premise from the server admin side, is to designate a specific Verif
 
 This will show a persistent `Verify` message in the channel, new users simply click the button and begin the verification process.
 
-You can add as many collections as you want, just call `/collection-add` to set it up. Currently, you paste in the inscriptions you'd like to include in the collection, this way you can assign multiple roles per collection, such as `@Mythic` to the top 10.
+You can add as many collections as you want, just call `/collection-add` to set up manual groups of inscriptions, or use `/collection-marketplace` to automagically grab the data from venues like Magic Eden.
 
 > **Note**
 > Collections are _channel specific_: this allows you to have different setups for different groups of user.
