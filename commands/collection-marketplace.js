@@ -53,7 +53,7 @@ module.exports = {
         )
         const totalCount = insInfo.total
         if (totalCount === 0) {
-          const embed = errorEmbed("Can't find any inscriptions from this collection.")
+          const embed = errorEmbed("Can't find any inscriptions for this collection.")
           return interaction.reply({ embeds: [embed], ephemeral: true })
         }
 
