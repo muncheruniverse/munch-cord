@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, ActionRowBuilder, StringSelectMenuBuilder } = require('discord.js')
 const errorEmbed = require('../embed/error-embed')
 const successEmbed = require('../embed/success-embed')
-const { Collections } = require('../db/collections')
+const { Collections } = require('../db/collections-inscriptions')
 const ManageChannels = require('../db/manage-channels')
 const { COMMON_ERROR } = require('../embed/error-messages')
 

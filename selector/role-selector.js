@@ -1,6 +1,6 @@
 const errorEmbed = require('../embed/error-embed')
 const successEmbed = require('../embed/success-embed')
-const { Collections } = require('../db/collections')
+const { Collections } = require('../db/collections-inscriptions')
 
 const { ROLE_SELECT_ID } = require('../modal/add-collection')
 

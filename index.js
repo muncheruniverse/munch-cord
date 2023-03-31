@@ -7,7 +7,7 @@ const { Client, Collection, Events, GatewayIntentBits } = require('discord.js')
 // Import required model files
 const ManageChannels = require('./db/manage-channels')
 const UserInscriptions = require('./db/user-inscriptions')
-const { Collections, Inscriptions } = require('./db/collections')
+const { Collections, Inscriptions } = require('./db/collections-inscriptions')
 const BipMessages = require('./db/bip-messages')
 
 // Import required modal interactions

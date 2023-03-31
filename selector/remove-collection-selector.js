@@ -1,7 +1,7 @@
 const errorEmbed = require('../embed/error-embed')
 const successEmbed = require('../embed/success-embed')
 const warningEmbed = require('../embed/warning-embed')
-const { Collections } = require('../db/collections')
+const { Collections } = require('../db/collections-inscriptions')
 
 const { REMOVE_COLLECTION_SELECTOR } = require('../commands/collection-remove')
 

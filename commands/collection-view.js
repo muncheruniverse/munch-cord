@@ -1,7 +1,7 @@
 const { SlashCommandBuilder } = require('discord.js')
 const errorEmbed = require('../embed/error-embed')
 const infoEmbed = require('../embed/info-embed')
-const { Collections, Inscriptions } = require('../db/collections')
+const { Collections, Inscriptions } = require('../db/collections-inscriptions')
 const ManageChannels = require('../db/manage-channels')
 const { COMMON_ERROR } = require('../embed/error-messages')
 const sequelize = require('../db/db-connect')
