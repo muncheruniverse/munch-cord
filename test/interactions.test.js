@@ -6,7 +6,6 @@ const roleSelector = require('../selector/role-selector')
 const removeCollectionSelector = require('../selector/remove-collection-selector')
 const addCollectionModal = require('../modal/add-collection')
 const verifynft = require('../modal/verify-nft')
-const addCollectionMagicEdenModal = require('../modal/add-collection-magiceden')
 const verify = require('../button/verify')
 
 describe('Interactions', () => {
@@ -30,8 +29,6 @@ describe('Interactions', () => {
           await addCollectionModal.execute(interaction)
         } else if (interaction.customId === verifynft.data) {
           await verifynft.execute(interaction)
-        } else if (interaction.customId === addCollectionMagicEdenModal.data) {
-          await addCollectionMagicEdenModal.execute(interaction)
         }
       } else if (interaction.isButton()) {
         if (interaction.customId === 'verifyNFT') {
@@ -76,19 +73,6 @@ describe('Interactions', () => {
     interaction.customId = verifynft.data
 
     const executeStub = sinon.stub(verifynft, 'execute')
-    await client.listeners('interactionCreate')[0](interaction)
-
-    expect(executeStub.calledOnce).to.be.true
-  })
-
-  it('should call addCollectionMagicEdenModal.execute when interaction.customId is addCollectionMagicEdenModal.data', async () => {
-    const interaction = sinon.createStubInstance(MessageComponentInteraction)
-    interaction.isModalSubmit.returns(true)
-    interaction.isButton.returns(false)
-    interaction.isStringSelectMenu.returns(false)
-    interaction.customId = addCollectionMagicEdenModal.data
-
-    const executeStub = sinon.stub(addCollectionMagicEdenModal, 'execute')
     await client.listeners('interactionCreate')[0](interaction)
 
     expect(executeStub.calledOnce).to.be.true

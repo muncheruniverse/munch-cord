@@ -11,7 +11,6 @@ const { Collections, Inscriptions } = require('./db/collections-inscriptions')
 const BipMessages = require('./db/bip-messages')
 
 // Import required modal interactions
-const addCollectionMagicEdenModal = require('./modal/add-collection-magiceden')
 const addCollectionModal = require('./modal/add-collection')
 const verifynft = require('./modal/verify-nft')
 
@@ -53,8 +52,6 @@ client.on(Events.InteractionCreate, async (interaction) => {
         await addCollectionModal.execute(interaction)
       } else if (interaction.customId === verifynft.data) {
         await verifynft.execute(interaction)
-      } else if (interaction.customId === addCollectionMagicEdenModal.data) {
-        await addCollectionMagicEdenModal.execute(interaction)
       }
     } else if (interaction.isStringSelectMenu()) {
       // Selector interactions
