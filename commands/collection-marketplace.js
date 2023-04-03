@@ -7,6 +7,7 @@ const { Collections, Inscriptions } = require('../db/collections-inscriptions')
 const { COMMON_ERROR } = require('../embed/error-messages')
 const MagicEden = require('./marketplace/magic-eden')
 const Ordswap = require('./marketplace/ordswap')
+const OrdinalsWallet = require('./marketplace/ordinals-wallet')
 
 const PAGINATED_AMOUNT = 20
 
@@ -20,6 +21,11 @@ const MARKET_PLACES = [
     name: Ordswap.name,
     value: Ordswap.name,
     marketPlace: Ordswap,
+  },
+  {
+    name: OrdinalsWallet.name,
+    value: OrdinalsWallet.name,
+    marketPlace: OrdinalsWallet,
   },
 ]
 
@@ -54,8 +60,6 @@ module.exports = {
         const match = url.match(pattern)
         const collectionSymbol = match ? match[1] : ''
         const name = interaction.options.getString('name') ?? collectionSymbol
-
-        console.log(collectionSymbol)
 
         const selectedMarketplace = MARKET_PLACES.find((item) => item.name === venue)
 
