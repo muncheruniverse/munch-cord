@@ -88,8 +88,6 @@ module.exports = {
           if (insInfo.tokens.length < PAGINATED_AMOUNT) break
         }
 
-        console.log(inscriptions)
-
         await Inscriptions.bulkCreate(inscriptions)
 
         const endEmbed = successEmbed(
