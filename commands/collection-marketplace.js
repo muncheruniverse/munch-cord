@@ -6,13 +6,15 @@ const infoEmbed = require('../embed/info-embed')
 const ManageChannels = require('../db/manage-channels')
 const { Collections, Inscriptions } = require('../db/collections-inscriptions')
 const { COMMON_ERROR } = require('../embed/error-messages')
+const MagicEden = require('./marketplace/magic-eden')
 
 const PAGINATED_AMOUNT = 20
 
 const MARKET_PLACES = [
   {
-    name: 'Magic Eden',
-    value: 'https://api-mainnet.magiceden.io/v2/ord/btc/tokens',
+    name: MagicEden.name,
+    value: MagicEden.name,
+    getUrl: MagicEden.getUrl,
   },
 ]
 
@@ -48,9 +50,9 @@ module.exports = {
         const collectionSymbol = match ? match[0] : ''
         const name = interaction.options.getString('name') ?? collectionSymbol
 
-        const { data: insInfo } = await axios.get(
-          `${venue}?limit=1&offset=0&sortBy=priceAsc&minPrice=0&maxPrice=0&collectionSymbol=${collectionSymbol}`
-        )
+        const marketPlace = MARKET_PLACES.find((item) => item.name === venue)
+
+        const { data: insInfo } = await axios.get(marketPlace.getUrl(1, 0, collectionSymbol))
         const totalCount = insInfo.total
         if (totalCount === 0) {
           const embed = errorEmbed("Can't find any inscriptions for this collection.")
@@ -73,9 +75,7 @@ module.exports = {
         let offset = 0
 
         while (true) {
-          const { data: insInfo } = await axios.get(
-            `${venue}?limit=${PAGINATED_AMOUNT}&offset=${offset}&sortBy=priceAsc&minPrice=0&maxPrice=0&collectionSymbol=${collectionSymbol}`
-          )
+          const { data: insInfo } = await axios.get(marketPlace.getUrl(PAGINATED_AMOUNT, offset, collectionSymbol))
           insInfo.tokens.forEach((inscription) => {
             inscriptions.push({ collectionId: collection.id, inscriptionRef: inscription.id })
           })
@@ -87,6 +87,8 @@ module.exports = {
           offset += PAGINATED_AMOUNT
           if (insInfo.tokens.length < PAGINATED_AMOUNT) break
         }
+
+        console.log(inscriptions)
 
         await Inscriptions.bulkCreate(inscriptions)
 
