@@ -1,5 +1,4 @@
 const { SlashCommandBuilder } = require('discord.js')
-const axios = require('axios')
 const errorEmbed = require('../embed/error-embed')
 const successEmbed = require('../embed/success-embed')
 const infoEmbed = require('../embed/info-embed')
@@ -7,6 +6,7 @@ const ManageChannels = require('../db/manage-channels')
 const { Collections, Inscriptions } = require('../db/collections-inscriptions')
 const { COMMON_ERROR } = require('../embed/error-messages')
 const MagicEden = require('./marketplace/magic-eden')
+const Ordswap = require('./marketplace/ordswap')
 
 const PAGINATED_AMOUNT = 20
 
@@ -14,7 +14,12 @@ const MARKET_PLACES = [
   {
     name: MagicEden.name,
     value: MagicEden.name,
-    getUrl: MagicEden.getUrl,
+    marketPlace: MagicEden,
+  },
+  {
+    name: Ordswap.name,
+    value: Ordswap.name,
+    marketPlace: Ordswap,
   },
 ]
 
@@ -45,15 +50,16 @@ module.exports = {
         const venue = interaction.options.getString('venue')
         const role = interaction.options.getRole('role')
         const url = interaction.options.getString('link')
-        const pattern = /\w+$/
+        const pattern = /\/([^\/]*)$/
         const match = url.match(pattern)
-        const collectionSymbol = match ? match[0] : ''
+        const collectionSymbol = match ? match[1] : ''
         const name = interaction.options.getString('name') ?? collectionSymbol
 
-        const marketPlace = MARKET_PLACES.find((item) => item.name === venue)
+        console.log(collectionSymbol)
 
-        const { data: insInfo } = await axios.get(marketPlace.getUrl(1, 0, collectionSymbol))
-        const totalCount = insInfo.total
+        const selectedMarketplace = MARKET_PLACES.find((item) => item.name === venue)
+
+        const totalCount = await selectedMarketplace.marketPlace.getTotalNumbers(collectionSymbol)
         if (totalCount === 0) {
           const embed = errorEmbed("Can't find any inscriptions for this collection.")
           return interaction.reply({ embeds: [embed], ephemeral: true })
@@ -75,17 +81,20 @@ module.exports = {
         let offset = 0
 
         while (true) {
-          const { data: insInfo } = await axios.get(marketPlace.getUrl(PAGINATED_AMOUNT, offset, collectionSymbol))
-          insInfo.tokens.forEach((inscription) => {
-            inscriptions.push({ collectionId: collection.id, inscriptionRef: inscription.id })
-          })
+          const { paginatedInscriptions, count } = await selectedMarketplace.marketPlace.getInsInfos(
+            collection.id,
+            PAGINATED_AMOUNT,
+            offset,
+            collectionSymbol
+          )
+          inscriptions.push(...paginatedInscriptions)
           const embed = infoEmbed('Fetching Inscriptions', `Currently indexing ${offset}/${totalCount} inscriptions.`)
           await interaction.editReply({
             embeds: [embed],
             ephemeral: true,
           })
-          offset += PAGINATED_AMOUNT
-          if (insInfo.tokens.length < PAGINATED_AMOUNT) break
+          offset += count
+          if (offset >= totalCount - 1) break
         }
 
         await Inscriptions.bulkCreate(inscriptions)
