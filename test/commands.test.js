@@ -4,6 +4,7 @@ const fs = require('fs')
 const path = require('path')
 const { Client, GatewayIntentBits, CommandInteraction } = require('discord.js')
 const sinon = require('sinon')
+require('dotenv').config({ path: '.env.test' })
 
 describe('Commands', () => {
   let client
