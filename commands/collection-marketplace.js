@@ -62,7 +62,7 @@ module.exports = {
         const venue = interaction.options.getString('venue')
         const role = interaction.options.getRole('role')
         const url = interaction.options.getString('link')
-        const pattern = /(\/|=)([^\/=]*)$/
+        const pattern = /(\/|=)([^/=]*)$/
         const match = url.match(pattern)
         const collectionSymbol = match ? match[2] : ''
         const name = interaction.options.getString('name') ?? collectionSymbol
