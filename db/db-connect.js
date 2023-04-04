@@ -1,14 +1,20 @@
 const Sequelize = require('sequelize')
 
-const sequelize = new Sequelize({
-  // SQLite only
-  storage: process.env.DB_STORAGE,
-  host: process.env.DB_HOST,
-  dialect: 'sqlite',
-  logging: process.env.NODE_ENV === 'production' ? false : console.log,
-  dialectOptions: {
-    mode: 'require',
-  },
-})
+let sequelize
+
+if (process.env.DB_DIALECT === 'mysql') {
+  sequelize = new Sequelize(process.env.DB_URL, {
+    logging: process.env.NODE_ENV === 'production' ? false : console.log,
+  })
+} else {
+  sequelize = new Sequelize({
+    dialect: 'sqlite',
+    storage: process.env.DB_STORAGE,
+    logging: process.env.NODE_ENV === 'production' ? false : console.log,
+    dialectOptions: {
+      mode: 'require',
+    },
+  })
+}
 
 module.exports = sequelize
