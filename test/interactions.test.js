@@ -7,6 +7,7 @@ const removeCollectionSelector = require('../selector/remove-collection-selector
 const addCollectionModal = require('../modal/add-collection')
 const verifynft = require('../modal/verify-nft')
 const verify = require('../button/verify')
+require('dotenv').config({ path: '.env.test' })
 
 describe('Interactions', () => {
   let client
