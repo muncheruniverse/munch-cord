@@ -75,7 +75,7 @@ module.exports = {
 
         const selectedMarketplace = MARKET_PLACES.find((item) => item.name === venue)
 
-        const initEmbed = infoEmbed('Preparing Now', `To load the ${venue} API.`)
+        const initEmbed = infoEmbed('Preparing', `Loading the ${venue} API.`)
         await interaction.reply({
           embeds: [initEmbed],
           ephemeral: true,
@@ -93,7 +93,10 @@ module.exports = {
           role: role.name,
         })
 
-        const loadingEmbed = infoEmbed('Fetching Inscriptions', `Loading the ${venue} API.`)
+        const loadingEmbed = infoEmbed(
+          'Fetching Inscriptions',
+          `Preparing the fetch of ${totalCount} ${name} inscriptions.`
+        )
         await interaction.editReply({
           embeds: [loadingEmbed],
           ephemeral: true,
