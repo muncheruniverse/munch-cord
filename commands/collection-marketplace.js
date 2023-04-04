@@ -9,6 +9,7 @@ const MagicEden = require('./marketplace/magic-eden')
 const Ordswap = require('./marketplace/ordswap')
 const OrdinalsWallet = require('./marketplace/ordinals-wallet')
 const OpenOrdex = require('./marketplace/open-ordex')
+const Gamma = require('./marketplace/gamma')
 
 const PAGINATED_AMOUNT = 20
 
@@ -32,6 +33,11 @@ const MARKET_PLACES = [
     name: OpenOrdex.name,
     value: OpenOrdex.name,
     marketPlace: OpenOrdex,
+  },
+  {
+    name: Gamma.name,
+    value: Gamma.name,
+    marketPlace: Gamma,
   },
 ]
 
@@ -67,9 +73,13 @@ module.exports = {
         const collectionSymbol = match ? match[2] : ''
         const name = interaction.options.getString('name') ?? collectionSymbol
 
-        console.log(collectionSymbol)
-
         const selectedMarketplace = MARKET_PLACES.find((item) => item.name === venue)
+
+        const initEmbed = infoEmbed('Preparing Now', `To load the ${venue} API.`)
+        await interaction.reply({
+          embeds: [initEmbed],
+          ephemeral: true,
+        })
 
         const totalCount = await selectedMarketplace.marketPlace.getTotalNumbers(collectionSymbol)
         if (totalCount === 0) {
@@ -83,9 +93,9 @@ module.exports = {
           role: role.name,
         })
 
-        const embed = infoEmbed('Fetching Inscriptions', `Loading the ${venue} API.`)
-        await interaction.reply({
-          embeds: [embed],
+        const loadingEmbed = infoEmbed('Fetching Inscriptions', `Loading the ${venue} API.`)
+        await interaction.editReply({
+          embeds: [loadingEmbed],
           ephemeral: true,
         })
 
