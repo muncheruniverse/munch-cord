@@ -66,8 +66,7 @@ npm run prettier
 - `RPC_PORT`: Port for the RPC
 - `RPC_USERNAME`: Username for auth
 - `RPC_PASSWORD`: Password for auth
-- `DB_HOST`: Hostname for sqlite
-- `DB_STORAGE`: Path to sqlite (it will autocreate)
+- `DB_URL`: Fully qualified URL for DB connection
 - `INSCRIPTION_API`: The inscription API to use, expects URI filter for the inscription id lookup
 - `BIP_MESSAGE`: Set to a string if you want a static BIP-322 message challenge
 
