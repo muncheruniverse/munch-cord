@@ -75,17 +75,21 @@ client.on(Events.InteractionCreate, async (interaction) => {
       if (interaction.customId === 'verifyNFT') await verify.execute(interaction)
     }
   } catch (error) {
-    console.error(error)
-    if (interaction.replied || interaction.deferred) {
-      await interaction.followUp({
-        content: 'There was an error while executing this interaction!',
-        ephemeral: true,
-      })
+    if (error.code === 10062 || error.code === 40060) {
+      console.warn('Interaction has already been acknowledged. Are multiple bots running using the same app/token?')
     } else {
-      await interaction.reply({
-        content: 'There was an error while executing this interaction!',
-        ephemeral: true,
-      })
+      console.error(error)
+      if (interaction.replied || interaction.deferred) {
+        await interaction.followUp({
+          content: 'There was an error while executing this interaction!',
+          ephemeral: true,
+        })
+      } else {
+        await interaction.reply({
+          content: 'There was an error while executing this interaction!',
+          ephemeral: true,
+        })
+      }
     }
   }
 })
