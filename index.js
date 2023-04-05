@@ -2,6 +2,7 @@ const fs = require('node:fs')
 const path = require('node:path')
 require('dotenv-flow').config()
 const express = require('express')
+const gitRevSync = require('git-rev-sync')
 const sequelize = require('./db/db-connect')
 const { Client, Collection, Events, GatewayIntentBits } = require('discord.js')
 
@@ -48,20 +49,35 @@ for (const file of commandFiles) {
 const healthApiService = () => {
   const app = express()
 
-  // Define the API endpoint
-  app.get('/health', (req, res) => {
-    const botName = 'Munch Bot'
-    const environment = process.env.NODE_ENV
-    const version = require('./package.json').version
-    const description = require('./package.json').description
-    // Create a JSON response
-    const data = { botName, environment, version, description }
-    res.json(data)
+  app.get('/health', async (req, res) => {
+    try {
+      const gitHash = gitRevSync.long()
+      const gitTag = gitRevSync.tag()
+      const packageInfo = require('./package.json')
+
+      const healthInfo = {
+        status: 'OK',
+        info: {
+          name: packageInfo.name,
+          version: packageInfo.version,
+        },
+        git: {
+          hash: gitHash,
+          tag: gitTag,
+        },
+      }
+
+      res.status(200).json(healthInfo)
+    } catch (error) {
+      res.status(500).json({ status: 'ERROR', error: error.message })
+    }
   })
 
+  const port = process.env.PORT || 3000
+
   // Set the server to listen for requests
-  app.listen(process.env.PORT || 3000, () => {
-    console.log(`Server started on port ${process.env.PORT || 3000}`)
+  app.listen(port, () => {
+    console.log(`Server is running on port ${port}`)
   })
 }
 
@@ -132,6 +148,7 @@ client.once(Events.ClientReady, (c) => {
   ManageChannels.sync()
   UserInscriptions.sync()
 
+  // Health check endpoint
   healthApiService()
   // Output a message indicating that the client is ready
   console.log(`Ready! Logged in as ${c.user.tag}`)
