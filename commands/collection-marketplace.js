@@ -92,7 +92,7 @@ module.exports = {
           return interaction.editReply({ embeds: [embed], ephemeral: true })
         }
 
-        if (totalCount > 1000) {
+        if (totalCount > 10000) {
           const embed = warningEmbed(
             'Collection too large',
             `Maximum supported collection size is 10,000. ${name} has ${totalCount} inscriptions.`
