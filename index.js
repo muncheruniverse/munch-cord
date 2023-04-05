@@ -2,7 +2,6 @@ const fs = require('node:fs')
 const path = require('node:path')
 require('dotenv-flow').config()
 const express = require('express')
-const gitRevSync = require('git-rev-sync')
 const sequelize = require('./db/db-connect')
 const { Client, Collection, Events, GatewayIntentBits } = require('discord.js')
 
@@ -51,8 +50,6 @@ const healthApiService = () => {
 
   app.get('/health', async (req, res) => {
     try {
-      const gitHash = gitRevSync.long()
-      const gitTag = gitRevSync.tag()
       const packageInfo = require('./package.json')
 
       const healthInfo = {
@@ -61,9 +58,10 @@ const healthApiService = () => {
           name: packageInfo.name,
           version: packageInfo.version,
         },
-        git: {
-          hash: gitHash,
-          tag: gitTag,
+        discord: {
+          username: client?.user?.username,
+          id: client?.user?.id,
+          tag: client?.user?.tag,
         },
       }
 
