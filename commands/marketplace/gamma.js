@@ -37,7 +37,8 @@ const getInsInfos = async (collectionId, PAGINATED_AMOUNT, offset, collectionSym
     paginatedInscriptions.push({ collectionId, inscriptionRef: inscription.inscription_id })
   })
 
-  cursorInscriptionId = data.result.data.json.next_cursor.inscription_id
+  cursorInscriptionId = data.result.data.json.next_cursor ? data.result.data.json.next_cursor.inscription_id : null
+
   return { paginatedInscriptions, count: data.result.data.json.items.length }
 }
 
