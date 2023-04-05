@@ -54,7 +54,7 @@ npm run lint
 npm run prettier
 ```
 
-Special bonus prizes for those who add tests, you can run them with: 
+Special bonus prizes for those who add tests, you can run them with:
 
 ```
 npm test
@@ -81,7 +81,7 @@ npm test
 6.  Run bot with `npm start`
 7.  Invite bot to your server ensure you have the relevant permissions in the URL: `&permissions=2415921152&scope=bot`
 
-Set `NODE_ENV` to `production` if you don't want verbose logging. 
+Set `NODE_ENV` to `production` if you don't want verbose logging.
 
 ## Docker
 
@@ -91,3 +91,5 @@ A new package is created on every merge to `main`.
 docker build .
 docker run -it -v "$PWD/storage:/home/node/app/data" <image> /bin/bash
 ```
+
+## Railway
