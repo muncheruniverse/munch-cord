@@ -73,8 +73,6 @@ module.exports = {
         const collectionSymbol = match ? match[2] : url
         const name = interaction.options.getString('name') ?? collectionSymbol
 
-        console.log('collectionSymbol', collectionSymbol)
-
         const selectedMarketplace = MARKET_PLACES.find((item) => item.name === venue)
 
         const initEmbed = infoEmbed('Preparing', `Loading the ${venue} API.`)
