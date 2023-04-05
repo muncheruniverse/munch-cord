@@ -85,7 +85,7 @@ module.exports = {
         try {
           totalCount = await selectedMarketplace.marketPlace.getTotalNumbers(collectionSymbol)
         } catch (error) {
-          const embed = errorEmbed("Can't find any inscriptions for this collection.")
+          const embed = warningEmbed("Can't find any inscriptions for this collection.")
           return interaction.editReply({ embeds: [embed], ephemeral: true })
         }
 
