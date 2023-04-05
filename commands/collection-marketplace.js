@@ -1,6 +1,7 @@
 const { SlashCommandBuilder } = require('discord.js')
 const errorEmbed = require('../embed/error-embed')
 const successEmbed = require('../embed/success-embed')
+const warningEmbed = require('../embed/warning-embed')
 const infoEmbed = require('../embed/info-embed')
 const ManageChannels = require('../db/manage-channels')
 const { Collections, Inscriptions } = require('../db/collections-inscriptions')
@@ -85,6 +86,13 @@ module.exports = {
           totalCount = await selectedMarketplace.marketPlace.getTotalNumbers(collectionSymbol)
         } catch (error) {
           const embed = errorEmbed("Can't find any inscriptions for this collection.")
+          return interaction.editReply({ embeds: [embed], ephemeral: true })
+        }
+
+        if (totalCount > 10000) {
+          const embed = warningEmbed(
+            `Maximum supported collection size is 10,000. ${name} has ${totalCount} inscriptions.`
+          )
           return interaction.editReply({ embeds: [embed], ephemeral: true })
         }
 
