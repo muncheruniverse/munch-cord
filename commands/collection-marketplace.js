@@ -85,13 +85,16 @@ module.exports = {
         try {
           totalCount = await selectedMarketplace.marketPlace.getTotalNumbers(collectionSymbol)
         } catch (error) {
-          const embed = warningEmbed("Can't find any inscriptions for this collection.")
+          const embed = warningEmbed(
+            "Can't find collection",
+            "The supplied link doesn't point to a valid ${venue} collection."
+          )
           return interaction.editReply({ embeds: [embed], ephemeral: true })
         }
 
         if (totalCount > 1000) {
           const embed = warningEmbed(
-            'Warning',
+            'Collection too large',
             `Maximum supported collection size is 10,000. ${name} has ${totalCount} inscriptions.`
           )
           return interaction.editReply({ embeds: [embed], ephemeral: true })
