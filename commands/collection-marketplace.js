@@ -1,18 +1,44 @@
 const { SlashCommandBuilder } = require('discord.js')
-const axios = require('axios')
 const errorEmbed = require('../embed/error-embed')
 const successEmbed = require('../embed/success-embed')
+const warningEmbed = require('../embed/warning-embed')
 const infoEmbed = require('../embed/info-embed')
 const ManageChannels = require('../db/manage-channels')
 const { Collections, Inscriptions } = require('../db/collections-inscriptions')
 const { COMMON_ERROR } = require('../embed/error-messages')
+const MagicEden = require('./marketplace/magic-eden')
+const Ordswap = require('./marketplace/ordswap')
+const OrdinalsWallet = require('./marketplace/ordinals-wallet')
+const OpenOrdex = require('./marketplace/open-ordex')
+const Gamma = require('./marketplace/gamma')
 
 const PAGINATED_AMOUNT = 20
 
 const MARKET_PLACES = [
   {
-    name: 'Magic Eden',
-    value: 'https://api-mainnet.magiceden.io/v2/ord/btc/tokens',
+    name: MagicEden.name,
+    value: MagicEden.name,
+    marketPlace: MagicEden,
+  },
+  {
+    name: Ordswap.name,
+    value: Ordswap.name,
+    marketPlace: Ordswap,
+  },
+  {
+    name: OrdinalsWallet.name,
+    value: OrdinalsWallet.name,
+    marketPlace: OrdinalsWallet,
+  },
+  {
+    name: OpenOrdex.name,
+    value: OpenOrdex.name,
+    marketPlace: OpenOrdex,
+  },
+  {
+    name: Gamma.name,
+    value: Gamma.name,
+    marketPlace: Gamma,
   },
 ]
 
@@ -43,18 +69,35 @@ module.exports = {
         const venue = interaction.options.getString('venue')
         const role = interaction.options.getRole('role')
         const url = interaction.options.getString('link')
-        const pattern = /\w+$/
+        const pattern = /(\/|=)([^/=]*)$/
         const match = url.match(pattern)
-        const collectionSymbol = match ? match[0] : ''
+        const collectionSymbol = match ? match[2] : url
         const name = interaction.options.getString('name') ?? collectionSymbol
 
-        const { data: insInfo } = await axios.get(
-          `${venue}?limit=1&offset=0&sortBy=priceAsc&minPrice=0&maxPrice=0&collectionSymbol=${collectionSymbol}`
-        )
-        const totalCount = insInfo.total
-        if (totalCount === 0) {
-          const embed = errorEmbed("Can't find any inscriptions for this collection.")
-          return interaction.reply({ embeds: [embed], ephemeral: true })
+        const selectedMarketplace = MARKET_PLACES.find((item) => item.name === venue)
+
+        const initEmbed = infoEmbed('Preparing', `Loading the ${venue} API.`)
+        await interaction.reply({
+          embeds: [initEmbed],
+          ephemeral: true,
+        })
+        let totalCount
+        try {
+          totalCount = await selectedMarketplace.marketPlace.getTotalNumbers(collectionSymbol)
+        } catch (error) {
+          const embed = warningEmbed(
+            "Can't find collection",
+            `The supplied link doesn't point to a valid ${venue} collection.`
+          )
+          return interaction.editReply({ embeds: [embed], ephemeral: true })
+        }
+
+        if (totalCount > 1000) {
+          const embed = warningEmbed(
+            'Collection too large',
+            `Maximum supported collection size is 10,000. ${name} has ${totalCount} inscriptions.`
+          )
+          return interaction.editReply({ embeds: [embed], ephemeral: true })
         }
 
         const collection = await Collections.create({
@@ -63,9 +106,12 @@ module.exports = {
           role: role.name,
         })
 
-        const embed = infoEmbed('Fetching Inscriptions', `Loading the ${venue} API.`)
-        await interaction.reply({
-          embeds: [embed],
+        const loadingEmbed = infoEmbed(
+          'Fetching Inscriptions',
+          `Preparing the fetch of ${totalCount} ${name} inscriptions.`
+        )
+        await interaction.editReply({
+          embeds: [loadingEmbed],
           ephemeral: true,
         })
 
@@ -73,19 +119,20 @@ module.exports = {
         let offset = 0
 
         while (true) {
-          const { data: insInfo } = await axios.get(
-            `${venue}?limit=${PAGINATED_AMOUNT}&offset=${offset}&sortBy=priceAsc&minPrice=0&maxPrice=0&collectionSymbol=${collectionSymbol}`
+          const { paginatedInscriptions, count } = await selectedMarketplace.marketPlace.getInsInfos(
+            collection.id,
+            PAGINATED_AMOUNT,
+            offset,
+            collectionSymbol
           )
-          insInfo.tokens.forEach((inscription) => {
-            inscriptions.push({ collectionId: collection.id, inscriptionRef: inscription.id })
-          })
+          inscriptions.push(...paginatedInscriptions)
           const embed = infoEmbed('Fetching Inscriptions', `Currently indexing ${offset}/${totalCount} inscriptions.`)
           await interaction.editReply({
             embeds: [embed],
             ephemeral: true,
           })
-          offset += PAGINATED_AMOUNT
-          if (insInfo.tokens.length < PAGINATED_AMOUNT) break
+          offset += count
+          if (offset >= totalCount - 1) break
         }
 
         await Inscriptions.bulkCreate(inscriptions)
