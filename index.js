@@ -1,6 +1,7 @@
 const fs = require('node:fs')
 const path = require('node:path')
 require('dotenv-flow').config()
+const express = require('express')
 const sequelize = require('./db/db-connect')
 const { Client, Collection, Events, GatewayIntentBits } = require('discord.js')
 
@@ -42,6 +43,26 @@ for (const file of commandFiles) {
   } else {
     console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`)
   }
+}
+
+const healthApiService = () => {
+  const app = express()
+
+  // Define the API endpoint
+  app.get('/health', (req, res) => {
+    const botName = 'Munch Bot'
+    const environment = process.env.NODE_ENV
+    const version = require('./package.json').version
+    const description = require('./package.json').description
+    // Create a JSON response
+    const data = { botName, environment, version, description }
+    res.json(data)
+  })
+
+  // Set the server to listen for requests
+  app.listen(process.env.PORT || 3000, () => {
+    console.log(`Server started on port ${process.env.PORT || 3000}`)
+  })
 }
 
 client.on(Events.InteractionCreate, async (interaction) => {
@@ -111,6 +132,7 @@ client.once(Events.ClientReady, (c) => {
   ManageChannels.sync()
   UserInscriptions.sync()
 
+  healthApiService()
   // Output a message indicating that the client is ready
   console.log(`Ready! Logged in as ${c.user.tag}`)
 })
