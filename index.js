@@ -69,6 +69,7 @@ const healthApiService = () => {
 
       res.status(200).json(healthInfo)
     } catch (error) {
+      console.log(error)
       res.status(500).json({ status: 'ERROR', error: error.message })
     }
   })
