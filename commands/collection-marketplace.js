@@ -70,8 +70,10 @@ module.exports = {
         const url = interaction.options.getString('link')
         const pattern = /(\/|=)([^/=]*)$/
         const match = url.match(pattern)
-        const collectionSymbol = match ? match[2] : ''
+        const collectionSymbol = match ? match[2] : url
         const name = interaction.options.getString('name') ?? collectionSymbol
+
+        console.log('collectionSymbol', collectionSymbol)
 
         const selectedMarketplace = MARKET_PLACES.find((item) => item.name === venue)
 
@@ -80,11 +82,12 @@ module.exports = {
           embeds: [initEmbed],
           ephemeral: true,
         })
-
-        const totalCount = await selectedMarketplace.marketPlace.getTotalNumbers(collectionSymbol)
-        if (totalCount === 0) {
+        let totalCount
+        try {
+          totalCount = await selectedMarketplace.marketPlace.getTotalNumbers(collectionSymbol)
+        } catch (error) {
           const embed = errorEmbed("Can't find any inscriptions for this collection.")
-          return interaction.reply({ embeds: [embed], ephemeral: true })
+          return interaction.editReply({ embeds: [embed], ephemeral: true })
         }
 
         const collection = await Collections.create({
