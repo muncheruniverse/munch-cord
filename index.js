@@ -75,7 +75,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
       if (interaction.customId === 'verifyNFT') await verify.execute(interaction)
     }
   } catch (error) {
-    if (error.code === 40060) {
+    if (error.code === 10062) {
       console.warn('Interaction has already been acknowledged. Are multiple bots running using the same app/token?')
     } else {
       console.error(error)
