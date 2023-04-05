@@ -87,7 +87,7 @@ module.exports = {
         } catch (error) {
           const embed = warningEmbed(
             "Can't find collection",
-            "The supplied link doesn't point to a valid ${venue} collection."
+            `The supplied link doesn't point to a valid ${venue} collection.`
           )
           return interaction.editReply({ embeds: [embed], ephemeral: true })
         }
