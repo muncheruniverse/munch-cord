@@ -1,6 +1,8 @@
 const fs = require('node:fs')
 const path = require('node:path')
 require('dotenv-flow').config()
+const express = require('express')
+const gitRevSync = require('git-rev-sync')
 const sequelize = require('./db/db-connect')
 const { Client, Collection, Events, GatewayIntentBits } = require('discord.js')
 
@@ -42,6 +44,41 @@ for (const file of commandFiles) {
   } else {
     console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`)
   }
+}
+
+const healthApiService = () => {
+  const app = express()
+
+  app.get('/health', async (req, res) => {
+    try {
+      const gitHash = gitRevSync.long()
+      const gitTag = gitRevSync.tag()
+      const packageInfo = require('./package.json')
+
+      const healthInfo = {
+        status: 'OK',
+        info: {
+          name: packageInfo.name,
+          version: packageInfo.version,
+        },
+        git: {
+          hash: gitHash,
+          tag: gitTag,
+        },
+      }
+
+      res.status(200).json(healthInfo)
+    } catch (error) {
+      res.status(500).json({ status: 'ERROR', error: error.message })
+    }
+  })
+
+  const port = process.env.PORT || 3000
+
+  // Set the server to listen for requests
+  app.listen(port, () => {
+    console.log(`Server is running on port ${port}`)
+  })
 }
 
 client.on(Events.InteractionCreate, async (interaction) => {
@@ -111,6 +148,8 @@ client.once(Events.ClientReady, (c) => {
   ManageChannels.sync()
   UserInscriptions.sync()
 
+  // Health check endpoint
+  healthApiService()
   // Output a message indicating that the client is ready
   console.log(`Ready! Logged in as ${c.user.tag}`)
 })
