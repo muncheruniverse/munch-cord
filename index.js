@@ -81,6 +81,7 @@ const healthApiService = () => {
   })
 }
 
+// Catch uncaught errors
 client.on(Events.Error, (error) => {
   handleError(error)
 })
@@ -141,7 +142,6 @@ client.once(Events.ClientReady, (client) => {
   })
   BipMessages.sync()
   ManageChannels.sync()
-  InteractionCache.sync()
 
   // Set activity
   client.user.setActivity('Monster Mash 👹', { type: ActivityType.Listening })
