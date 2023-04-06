@@ -11,6 +11,7 @@ const Ordswap = require('./marketplace/ordswap')
 const OrdinalsWallet = require('./marketplace/ordinals-wallet')
 const OpenOrdex = require('./marketplace/open-ordex')
 const Gamma = require('./marketplace/gamma')
+const commaNumber = require('comma-number')
 
 const PAGINATED_AMOUNT = 20
 
@@ -95,7 +96,9 @@ module.exports = {
         if (totalCount > 10000) {
           const embed = warningEmbed(
             'Collection too large',
-            `Maximum supported collection size is 10,000. ${name} has ${totalCount} inscriptions.`
+            `Maximum supported collection size is ${commaNumber(10000)}. ${name} has ${commaNumber(
+              totalCount
+            )} inscriptions.`
           )
           return interaction.editReply({ embeds: [embed], ephemeral: true })
         }
@@ -108,7 +111,7 @@ module.exports = {
 
         const loadingEmbed = infoEmbed(
           'Fetching Inscriptions',
-          `Preparing the fetch of ${totalCount} ${name} inscriptions.`
+          `Preparing the fetch of ${commaNumber(totalCount)} ${name} inscriptions.`
         )
         await interaction.editReply({
           embeds: [loadingEmbed],
@@ -126,7 +129,10 @@ module.exports = {
             collectionSymbol
           )
           inscriptions.push(...paginatedInscriptions)
-          const embed = infoEmbed('Fetching Inscriptions', `Currently indexing ${offset}/${totalCount} inscriptions.`)
+          const embed = infoEmbed(
+            'Fetching Inscriptions',
+            `Currently indexing ${commaNumber(offset)}/${commaNumber(totalCount)} inscriptions.`
+          )
           await interaction.editReply({
             embeds: [embed],
             ephemeral: true,
@@ -139,7 +145,9 @@ module.exports = {
 
         const endEmbed = successEmbed(
           'Collection Complete',
-          `All ${totalCount} inscriptions from the ${name} collection have been added.`
+          `All **${commaNumber(
+            totalCount
+          )}** inscriptions from the **${name}** collection have been added from **${venue}**.`
         )
         return await interaction.editReply({
           embeds: [endEmbed],
