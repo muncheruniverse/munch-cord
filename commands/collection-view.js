@@ -1,8 +1,10 @@
 const { SlashCommandBuilder } = require('discord.js')
 const errorEmbed = require('../embed/error-embed')
 const infoEmbed = require('../embed/info-embed')
+const roleEmbed = require('../embed/role-embed')
 const { Collections, Inscriptions } = require('../db/collections-inscriptions')
 const sequelize = require('../db/db-connect')
+const commaNumber = require('comma-number')
 
 module.exports = {
   data: new SlashCommandBuilder().setName('collection-view').setDescription('View all collections'),
@@ -25,12 +27,14 @@ module.exports = {
         group: ['Collections.id'],
       })
 
-      const embed = infoEmbed('View Collections', 'Collections and their associated role.')
+      const embed = infoEmbed('View Collections', 'Collections, their associated role and inscription count.')
 
       collections.forEach((collection) => {
         embed.addFields({
           name: collection.dataValues.name,
-          value: `${collection.dataValues.role} (${collection.dataValues.inscriptionCount})`,
+          value: `${roleEmbed(interaction, collection.dataValues.role)} (${commaNumber(
+            collection.dataValues.inscriptionCount
+          )})`,
           inline: true,
         })
       })

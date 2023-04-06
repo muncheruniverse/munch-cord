@@ -140,11 +140,13 @@ client.once(Events.ClientReady, (c) => {
   }
 
   // Sync all database tables
-  Collections.sync()
-  Inscriptions.sync()
+  Collections.sync().then(() => {
+    Inscriptions.sync().then(() => {
+      UserInscriptions.sync()
+    })
+  })
   BipMessages.sync()
   ManageChannels.sync()
-  UserInscriptions.sync()
 
   // Health check endpoint
   healthApiService()

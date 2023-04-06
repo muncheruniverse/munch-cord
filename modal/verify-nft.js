@@ -2,6 +2,7 @@ const axios = require('axios')
 const errorEmbed = require('../embed/error-embed')
 const successEmbed = require('../embed/success-embed')
 const warningEmbed = require('../embed/warning-embed')
+const roleEmbed = require('../embed/role-embed')
 const { Collections, Inscriptions } = require('../db/collections-inscriptions')
 const UserInscriptions = require('../db/user-inscriptions')
 const BipMessages = require('../db/bip-messages')
@@ -74,7 +75,7 @@ module.exports = {
             await interaction.member.roles.add(role)
             const embed = successEmbed(
               'Successfully verified',
-              `Your signature was validated and you were assigned the **${role.name}** role.`
+              `Your signature was validated and you were assigned the ${roleEmbed(interaction, role.name)} role.`
             )
 
             // Everything has been allocated, lets upsert into the UserInscriptions table

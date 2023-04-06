@@ -8,7 +8,9 @@ const COLLECT_NAME_ID = 'collectName'
 const INS_IDS_ID = 'insIds'
 
 module.exports = {
-  data: new SlashCommandBuilder().setName('collection-add').setDescription('Add collection details and assign role'),
+  data: new SlashCommandBuilder()
+    .setName('collection-add')
+    .setDescription('Manually add collection details and assign role'),
   async execute(interaction) {
     try {
       const channelId = await ManageChannels.findOne({
