@@ -3,6 +3,7 @@ const errorEmbed = require('../embed/error-embed')
 const successEmbed = require('../embed/success-embed')
 const warningEmbed = require('../embed/warning-embed')
 const infoEmbed = require('../embed/info-embed')
+const roleEmbed = require('../embed/role-embed')
 const ManageChannels = require('../db/manage-channels')
 const { Collections, Inscriptions } = require('../db/collections-inscriptions')
 const { COMMON_ERROR } = require('../embed/error-messages')
@@ -12,6 +13,7 @@ const OrdinalsWallet = require('./marketplace/ordinals-wallet')
 const OpenOrdex = require('./marketplace/open-ordex')
 const Gamma = require('./marketplace/gamma')
 const commaNumber = require('comma-number')
+const { capitalCase } = require('change-case')
 
 const PAGINATED_AMOUNT = 20
 
@@ -73,7 +75,7 @@ module.exports = {
         const pattern = /(\/|=)([^/=]*)$/
         const match = url.match(pattern)
         const collectionSymbol = match ? match[2] : url
-        const name = interaction.options.getString('name') ?? collectionSymbol
+        const name = interaction.options.getString('name') ?? capitalCase(collectionSymbol)
 
         const selectedMarketplace = MARKET_PLACES.find((item) => item.name === venue)
 
@@ -142,10 +144,11 @@ module.exports = {
         await Inscriptions.bulkCreate(inscriptions)
 
         const endEmbed = successEmbed(
-          'Collection Complete',
-          `All **${commaNumber(
-            totalCount
-          )}** inscriptions from the **${name}** collection have been added from **${venue}**.`
+          `${name} Collection Complete`,
+          `All **${commaNumber(totalCount)}** inscriptions have been added and will assign the ${roleEmbed(
+            interaction,
+            role.name
+          )} role.`
         )
         return await interaction.editReply({
           embeds: [endEmbed],
