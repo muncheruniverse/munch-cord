@@ -87,6 +87,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
       where: { id: interaction.id },
     })
 
+    // If another bot has already handled the interaction, return
     if (cachedInteraction) {
       console.warn(`Duplicate interaction detected: ${interaction.id}`)
       return
