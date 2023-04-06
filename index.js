@@ -10,6 +10,7 @@ const ManageChannels = require('./db/manage-channels')
 const UserInscriptions = require('./db/user-inscriptions')
 const { Collections, Inscriptions } = require('./db/collections-inscriptions')
 const BipMessages = require('./db/bip-messages')
+const InteractionCache = require('./db/interaction-cache')
 
 // Import required modal interactions
 const addCollectionModal = require('./modal/add-collection')
@@ -81,6 +82,26 @@ const healthApiService = () => {
 
 client.on(Events.InteractionCreate, async (interaction) => {
   try {
+    const cachedInteraction = await InteractionCache.findOne({
+      where: { id: interaction.id },
+    })
+
+    if (cachedInteraction) {
+      console.warn(`Duplicate interaction detected: ${interaction.id}`)
+      return
+    }
+
+    // Add the interaction ID to the cache
+    await InteractionCache.create({
+      id: interaction.id,
+      timestamp: new Date(),
+    })
+
+    // Optionally, set a timeout to remove the interaction ID from the cache after a specified time
+    setTimeout(async () => {
+      await InteractionCache.destroy({ where: { id: interaction.id } })
+    }, 60000) // Remove the interaction ID from the cache after 1 minute (60000 milliseconds)
+
     if (interaction.isModalSubmit()) {
       // Modal interactions
       if (interaction.customId === addCollectionModal.data) {
@@ -147,6 +168,7 @@ client.once(Events.ClientReady, (client) => {
   })
   BipMessages.sync()
   ManageChannels.sync()
+  InteractionCache.sync()
 
   // Set activity
   client.user.setActivity('to Monster Mash', { type: ActivityType.Listening })
