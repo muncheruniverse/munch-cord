@@ -3,7 +3,7 @@ const path = require('node:path')
 require('dotenv-flow').config()
 const express = require('express')
 const sequelize = require('./db/db-connect')
-const { Client, Collection, Events, GatewayIntentBits } = require('discord.js')
+const { Client, Collection, Events, GatewayIntentBits, ActivityType } = require('discord.js')
 
 // Import required model files
 const ManageChannels = require('./db/manage-channels')
@@ -130,7 +130,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
 })
 
 // Once the client is ready, perform initial setup and output a message indicating that the client is ready
-client.once(Events.ClientReady, (c) => {
+client.once(Events.ClientReady, (client) => {
   // Connect to the database
   try {
     sequelize.authenticate()
@@ -148,10 +148,13 @@ client.once(Events.ClientReady, (c) => {
   BipMessages.sync()
   ManageChannels.sync()
 
+  // Set activity
+  client.user.setActivity('to Monster Mash', { type: ActivityType.Listening })
+
   // Health check endpoint
   healthApiService()
   // Output a message indicating that the client is ready
-  console.log(`Ready! Logged in as ${c.user.tag}`)
+  console.log(`Ready! Logged in as ${client.user.tag}`)
 })
 
 // Log in to Discord with the bot token specified in the .env file
