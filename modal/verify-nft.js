@@ -2,7 +2,6 @@ const axios = require('axios')
 const errorEmbed = require('../embed/error-embed')
 const successEmbed = require('../embed/success-embed')
 const warningEmbed = require('../embed/warning-embed')
-const infoEmbed = require('../embed/info-embed')
 const roleEmbed = require('../embed/role-embed')
 const { getInscription } = require('../db/collections-inscriptions')
 const UserInscriptions = require('../db/user-inscriptions')
@@ -51,9 +50,7 @@ module.exports = {
           return interaction.reply({ embeds: [embed], ephemeral: true })
         }
 
-        const embed = infoEmbed('Checking signature', 'Please wait...')
-        await interaction.reply({
-          embeds: [embed],
+        await interaction.deferReply({
           ephemeral: true,
         })
 
