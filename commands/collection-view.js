@@ -27,7 +27,7 @@ module.exports = {
         group: ['Collections.id'],
       })
 
-      const embed = infoEmbed('View Collections', 'Collections and their associated role.')
+      const embed = infoEmbed('View Collections', 'Collections, their associated role and inscription count.')
 
       collections.forEach((collection) => {
         embed.addFields({
