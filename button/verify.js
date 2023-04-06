@@ -7,7 +7,7 @@ const BipMessages = require('../db/bip-messages')
 
 const MODAL_ID = 'verifyNFTModal'
 const SIGNATURE_ID = 'signatureInput'
-const INS_ID_ID = 'insIdInput'
+const ADDRESS = 'addressInput'
 
 module.exports = {
   async execute(interaction) {
@@ -20,9 +20,9 @@ module.exports = {
       if (channelId) {
         const modal = new ModalBuilder().setCustomId(MODAL_ID).setTitle('Verify Your Ownership')
 
-        const insIdInput = new TextInputBuilder()
-          .setCustomId(INS_ID_ID)
-          .setLabel('Inscription ID')
+        const addressInput = new TextInputBuilder()
+          .setCustomId(ADDRESS)
+          .setLabel('Wallet Address')
           .setStyle(TextInputStyle.Short)
           .setMaxLength(70)
 
@@ -73,11 +73,11 @@ module.exports = {
           .setValue(message)
           .setRequired(false)
 
-        const insIdActionRow = new ActionRowBuilder().addComponents(insIdInput)
+        const addressActionRow = new ActionRowBuilder().addComponents(addressInput)
         const signatureActionRow = new ActionRowBuilder().addComponents(signatureInput)
         const bipMessageActionRow = new ActionRowBuilder().addComponents(bipMessageInput)
 
-        modal.addComponents(insIdActionRow, signatureActionRow, bipMessageActionRow)
+        modal.addComponents(addressActionRow, signatureActionRow, bipMessageActionRow)
 
         await interaction.showModal(modal)
 
@@ -95,5 +95,5 @@ module.exports = {
   },
   MODAL_ID,
   SIGNATURE_ID,
-  INS_ID_ID,
+  ADDRESS,
 }
