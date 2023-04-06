@@ -42,7 +42,7 @@ module.exports = {
 
         const embed = successEmbed('Remove Collection', 'Choose the collection you want to remove.')
 
-        interaction.reply({
+        return interaction.reply({
           embeds: [embed],
           components: [row],
           ephemeral: true,
