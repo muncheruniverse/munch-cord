@@ -86,41 +86,40 @@ client.on(Events.Error, (error) => {
 })
 
 client.on(Events.InteractionCreate, async (interaction) => {
-  try {
-    if (interaction.isModalSubmit()) {
-      // Modal interactions
-      if (interaction.customId === addCollectionModal.data) {
-        await addCollectionModal.execute(interaction)
-      } else if (interaction.customId === verifynft.data) {
-        await verifynft.execute(interaction)
-      }
-    } else if (interaction.isStringSelectMenu()) {
-      // Selector interactions
-      if (interaction.customId === roleSelector.data) {
-        roleSelector.execute(interaction)
-      } else if (interaction.customId === removeCollectionSelector.data) {
-        removeCollectionSelector.execute(interaction)
-      }
-    } else if (interaction.isChatInputCommand()) {
-      // Slash command interactions
-      const command = interaction.client.commands.get(interaction.commandName)
+  ;(async () => {
+    try {
+      if (interaction.isModalSubmit()) {
+        // Modal interactions
+        if (interaction.customId === addCollectionModal.data) {
+          await addCollectionModal.execute(interaction)
+        } else if (interaction.customId === verifynft.data) {
+          await verifynft.execute(interaction)
+        }
+      } else if (interaction.isStringSelectMenu()) {
+        // Selector interactions
+        if (interaction.customId === roleSelector.data) {
+          roleSelector.execute(interaction)
+        } else if (interaction.customId === removeCollectionSelector.data) {
+          removeCollectionSelector.execute(interaction)
+        }
+      } else if (interaction.isChatInputCommand()) {
+        // Slash command interactions
+        const command = interaction.client.commands.get(interaction.commandName)
 
-      if (!command) {
-        console.error(`No command matching ${interaction.commandName} was found.`)
-        return
-      }
+        if (!command) {
+          console.error(`No command matching ${interaction.commandName} was found.`)
+          return
+        }
 
-      await command.execute(interaction)
-    } else if (interaction.isButton()) {
-      // Button interactions
-      if (interaction.customId === 'verifyNFT') await verify.execute(interaction)
+        await command.execute(interaction)
+      } else if (interaction.isButton()) {
+        // Button interactions
+        if (interaction.customId === 'verifyNFT') await verify.execute(interaction)
+      }
+    } catch (error) {
+      handleError(error)
     }
-  } catch (error) {
-    if (error.code === 10062 || error.code === 40060) {
-      console.warn('Interaction has already been acknowledged. Are multiple bots running using the same app/token?')
-    }
-    handleError(error)
-  }
+  })().catch(handleError)
 })
 
 // Once the client is ready, perform initial setup and output a message indicating that the client is ready
