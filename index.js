@@ -82,6 +82,7 @@ const healthApiService = () => {
 
 client.on(Events.InteractionCreate, async (interaction) => {
   try {
+    // Catch the same interaction when multiple bots run
     const cachedInteraction = await InteractionCache.findOne({
       where: { id: interaction.id },
     })
