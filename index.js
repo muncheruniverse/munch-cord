@@ -11,7 +11,6 @@ const ManageChannels = require('./db/manage-channels')
 const UserInscriptions = require('./db/user-inscriptions')
 const { Collections, Inscriptions } = require('./db/collections-inscriptions')
 const BipMessages = require('./db/bip-messages')
-const InteractionCache = require('./db/interaction-cache')
 
 // Import required modal interactions
 const addCollectionModal = require('./modal/add-collection')
