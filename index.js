@@ -85,6 +85,10 @@ client.on(Events.Error, (error) => {
   handleError(error)
 })
 
+process.on('unhandledRejection', (reason) => {
+  handleError(reason)
+})
+
 client.on(Events.InteractionCreate, async (interaction) => {
   ;(async () => {
     try {
