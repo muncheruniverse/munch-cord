@@ -2,11 +2,28 @@ const axios = require('axios')
 const errorEmbed = require('../embed/error-embed')
 const successEmbed = require('../embed/success-embed')
 const warningEmbed = require('../embed/warning-embed')
+const infoEmbed = require('../embed/info-embed')
 const roleEmbed = require('../embed/role-embed')
 const { Collections, Inscriptions } = require('../db/collections-inscriptions')
 const UserInscriptions = require('../db/user-inscriptions')
 const BipMessages = require('../db/bip-messages')
 const { MODAL_ID, SIGNATURE_ID, INS_ID_ID } = require('../button/verify')
+
+const getInscription = async (inscriptionId, channelId) => {
+  const inscription = await Inscriptions.findOne({
+    where: {
+      inscriptionRef: inscriptionId,
+    },
+    include: {
+      model: Collections,
+      where: {
+        channelId,
+      },
+    },
+  })
+
+  return inscription
+}
 
 module.exports = {
   data: MODAL_ID,
@@ -15,17 +32,7 @@ module.exports = {
       const signature = interaction.fields.getTextInputValue(SIGNATURE_ID)
       const inscriptionId = interaction.fields.getTextInputValue(INS_ID_ID)
 
-      const inscription = await Inscriptions.findOne({
-        where: {
-          inscriptionRef: inscriptionId,
-        },
-        include: {
-          model: Collections,
-          where: {
-            channelId: interaction.channelId,
-          },
-        },
-      })
+      const inscription = await getInscription(inscriptionId, interaction.channelId)
 
       if (inscription) {
         try {
@@ -60,37 +67,56 @@ module.exports = {
             },
           }
 
+          const embed = infoEmbed('Checking signature', 'Please wait...')
+          await interaction.reply({
+            embeds: [embed],
+            ephemeral: true,
+          })
+
           const res = await axios.post(`https://${process.env.RPC_HOST}:${process.env.RPC_PORT}/`, data, config)
 
           if (!res.data.result) {
             const warning = warningEmbed('Verify Problem', "The BIP-322 node couldn't verify your signature.")
-            return await interaction.reply({ embeds: [warning], ephemeral: true })
+            return await interaction.editReply({ embeds: [warning], ephemeral: true })
           }
 
-          const role = interaction.member.guild.roles.cache.find(
-            (roleItem) => roleItem.name === inscription.Collection.role
-          )
+          const inscriptions = await axios.get(`${process.env.ORDAPI_URL}/${insInfo.address}`)
+          const addedRoles = []
+          const notFoundRoles = []
+          for (const insInfo of inscriptions.data) {
+            const inscription = await getInscription(insInfo.id, interaction.channelId)
+            if (inscription) {
+              const role = interaction.member.guild.roles.cache.find(
+                (roleItem) => roleItem.name === inscription.Collection.role
+              )
 
-          if (role) {
-            await interaction.member.roles.add(role)
+              if (role) {
+                await interaction.member.roles.add(role)
+                addedRoles.push(roleEmbed(interaction, role.name))
+                // Everything has been allocated, lets upsert into the UserInscriptions table
+                await UserInscriptions.upsert({
+                  userId: interaction.user.id,
+                  inscriptionId: inscription.id,
+                })
+              } else {
+                notFoundRoles.push(role.name)
+              }
+            }
+          }
+          if (addedRoles.length > 0) {
             const embed = successEmbed(
               'Successfully verified',
-              `Your signature was validated and you were assigned the ${roleEmbed(interaction, role.name)} role.`
+              `Your signature was validated and you were assigned ${addedRoles.join(' ')}.`
             )
 
-            // Everything has been allocated, lets upsert into the UserInscriptions table
-            await UserInscriptions.upsert({
-              userId: interaction.user.id,
-              inscriptionId: inscription.id,
-            })
-
-            return interaction.reply({ embeds: [embed], ephemeral: true })
-          } else {
+            return interaction.editReply({ embeds: [embed], ephemeral: true })
+          }
+          if (notFoundRoles.length > 0) {
             const embed = warningEmbed(
               'Role not found',
-              `The ${inscription.Collection.role} role that was assigned to this collection isn't available.`
+              `${notFoundRoles.join(' ')} that were assigned to this collection aren't available.`
             )
-            return interaction.reply({ embeds: [embed], ephemeral: true })
+            return interaction.editReply({ embeds: [embed], ephemeral: true })
           }
         } catch (error) {
           // Valid error from the RPC node
