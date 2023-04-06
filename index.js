@@ -3,6 +3,7 @@ const path = require('node:path')
 require('dotenv-flow').config()
 const express = require('express')
 const sequelize = require('./db/db-connect')
+const handleError = require('./log/handle-error')
 const { Client, Collection, Events, GatewayIntentBits, ActivityType } = require('discord.js')
 
 // Import required model files
@@ -80,30 +81,12 @@ const healthApiService = () => {
   })
 }
 
+client.on(Events.Error, (error) => {
+  handleError(error)
+})
+
 client.on(Events.InteractionCreate, async (interaction) => {
   try {
-    // Catch the same interaction when multiple bots run
-    const cachedInteraction = await InteractionCache.findOne({
-      where: { id: interaction.id },
-    })
-
-    // If another bot has already handled the interaction, return
-    if (cachedInteraction) {
-      console.warn(`Duplicate interaction detected: ${interaction.id}`)
-      return
-    }
-
-    // Add the interaction ID to the cache
-    await InteractionCache.create({
-      id: interaction.id,
-      timestamp: new Date(),
-    })
-
-    // Optionally, set a timeout to remove the interaction ID from the cache after a specified time
-    setTimeout(async () => {
-      await InteractionCache.destroy({ where: { id: interaction.id } })
-    }, 60000) // Remove the interaction ID from the cache after 1 minute (60000 milliseconds)
-
     if (interaction.isModalSubmit()) {
       // Modal interactions
       if (interaction.customId === addCollectionModal.data) {
@@ -135,20 +118,8 @@ client.on(Events.InteractionCreate, async (interaction) => {
   } catch (error) {
     if (error.code === 10062 || error.code === 40060) {
       console.warn('Interaction has already been acknowledged. Are multiple bots running using the same app/token?')
-    } else {
-      console.error(error)
-      if (interaction.replied || interaction.deferred) {
-        await interaction.followUp({
-          content: 'There was an error while executing this interaction!',
-          ephemeral: true,
-        })
-      } else {
-        await interaction.reply({
-          content: 'There was an error while executing this interaction!',
-          ephemeral: true,
-        })
-      }
     }
+    handleError(error)
   }
 })
 
@@ -173,7 +144,7 @@ client.once(Events.ClientReady, (client) => {
   InteractionCache.sync()
 
   // Set activity
-  client.user.setActivity('to Monster Mash', { type: ActivityType.Listening })
+  client.user.setActivity('Monster Mash 👹', { type: ActivityType.Listening })
 
   // Health check endpoint
   healthApiService()
