@@ -5,6 +5,7 @@ const express = require('express')
 const sequelize = require('./db/db-connect')
 const handleError = require('./log/handle-error')
 const { Client, Collection, Events, GatewayIntentBits, ActivityType } = require('discord.js')
+const { APIError } = require('@discordjs/rest')
 
 // Import required model files
 const ManageChannels = require('./db/manage-channels')
@@ -80,50 +81,63 @@ const healthApiService = () => {
   })
 }
 
-// Catch uncaught errors
-client.on(Events.Error, (error) => {
-  handleError(error)
-})
-
-process.on('unhandledRejection', (reason) => {
-  handleError(reason)
-})
-
 client.on(Events.InteractionCreate, async (interaction) => {
-  ;(async () => {
-    try {
-      if (interaction.isModalSubmit()) {
-        // Modal interactions
-        if (interaction.customId === addCollectionModal.data) {
-          await addCollectionModal.execute(interaction)
-        } else if (interaction.customId === verifynft.data) {
-          await verifynft.execute(interaction)
-        }
-      } else if (interaction.isStringSelectMenu()) {
-        // Selector interactions
-        if (interaction.customId === roleSelector.data) {
-          roleSelector.execute(interaction)
-        } else if (interaction.customId === removeCollectionSelector.data) {
-          removeCollectionSelector.execute(interaction)
-        }
-      } else if (interaction.isChatInputCommand()) {
-        // Slash command interactions
-        const command = interaction.client.commands.get(interaction.commandName)
-
-        if (!command) {
-          console.error(`No command matching ${interaction.commandName} was found.`)
-          return
-        }
-
-        await command.execute(interaction)
-      } else if (interaction.isButton()) {
-        // Button interactions
-        if (interaction.customId === 'verifyNFT') await verify.execute(interaction)
+  try {
+    if (interaction.isModalSubmit()) {
+      // Modal interactions
+      if (interaction.customId === addCollectionModal.data) {
+        await addCollectionModal.execute(interaction)
+      } else if (interaction.customId === verifynft.data) {
+        await verifynft.execute(interaction)
       }
-    } catch (error) {
-      handleError(error)
+    } else if (interaction.isStringSelectMenu()) {
+      // Selector interactions
+      if (interaction.customId === roleSelector.data) {
+        roleSelector.execute(interaction)
+      } else if (interaction.customId === removeCollectionSelector.data) {
+        removeCollectionSelector.execute(interaction)
+      }
+    } else if (interaction.isChatInputCommand()) {
+      // Slash command interactions
+      const command = interaction.client.commands.get(interaction.commandName)
+
+      if (!command) {
+        console.error(`No command matching ${interaction.commandName} was found.`)
+        return
+      }
+
+      await command.execute(interaction)
+    } else if (interaction.isButton()) {
+      // Button interactions
+      if (interaction.customId === 'verifyNFT') await verify.execute(interaction)
     }
-  })().catch(handleError)
+  } catch (error) {
+    if (
+      error instanceof APIError &&
+      error.code === 10062 &&
+      error.stack.includes('ChatInputCommandInteraction.reply')
+    ) {
+      console.warn(
+        'Error related to ChatInputCommandInteraction. The interaction might have already been acknowledged or is no longer valid.'
+      )
+    } else if (error.code === 10062 || error.code === 40060) {
+      console.warn('Interaction has already been acknowledged. Are multiple bots running using the same app/token?')
+    } else {
+      console.error('Error:', error)
+      if (interaction.replied || interaction.deferred) {
+        await interaction.followUp({
+          content: 'There was an error while executing this interaction!',
+          ephemeral: true,
+        })
+      } else {
+        await interaction.reply({
+          content: 'There was an error while executing this interaction!',
+          ephemeral: true,
+        })
+      }
+    }
+    return handleError(error)
+  }
 })
 
 // Once the client is ready, perform initial setup and output a message indicating that the client is ready
