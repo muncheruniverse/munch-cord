@@ -80,7 +80,7 @@ module.exports = {
             return await interaction.editReply({ embeds: [warning], ephemeral: true })
           }
 
-          const inscriptions = await axios.get(`${process.env.ORDAPI_URL}/${insInfo.address}`)
+          const inscriptions = await axios.get(`${process.env.ADDRESS_API}/${insInfo.address}`)
           const addedRoles = []
           const notFoundRoles = []
           for (const insInfo of inscriptions.data) {
