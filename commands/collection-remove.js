@@ -28,7 +28,7 @@ module.exports = {
 
         collections.forEach((collection) => {
           selectList.push({
-            label: collection.name,
+            label: `${collection.name} (@${collection.role}))`,
             value: `${collection.id}`,
           })
         })
