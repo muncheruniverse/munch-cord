@@ -77,9 +77,7 @@ module.exports = {
 
         const selectedMarketplace = MARKET_PLACES.find((item) => item.name === venue)
 
-        const initEmbed = infoEmbed('Preparing', `Loading the ${venue} API.`)
-        await interaction.reply({
-          embeds: [initEmbed],
+        await interaction.deferReply({
           ephemeral: true,
         })
         let totalCount

@@ -52,7 +52,7 @@ module.exports = {
         }
 
         const embed = infoEmbed('Checking signature', 'Please wait...')
-        await interaction.reply({
+        await interaction.deferReply({
           embeds: [embed],
           ephemeral: true,
         })
