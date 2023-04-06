@@ -10,6 +10,8 @@ module.exports = {
   data: new SlashCommandBuilder().setName('collection-view').setDescription('View all collections'),
   async execute(interaction) {
     try {
+      await interaction.deferReply({ ephemeral: true })
+
       const collections = await Collections.findAll({
         where: {
           channelId: interaction.channelId,
@@ -39,12 +41,10 @@ module.exports = {
         })
       })
 
-      interaction.deferReply({ embeds: [embed], ephemeral: true }).catch((err) => {
-        throw err
-      })
+      await interaction.editReply({ embeds: [embed], ephemeral: true })
     } catch (error) {
       const embed = errorEmbed(error)
-      return interaction.reply({ embeds: [embed], ephemeral: true })
+      await interaction.reply({ embeds: [embed], ephemeral: true })
     }
   },
 }
