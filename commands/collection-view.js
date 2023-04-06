@@ -39,7 +39,7 @@ module.exports = {
         })
       })
 
-      interaction.reply({ embeds: [embed], ephemeral: true })
+      return interaction.reply({ embeds: [embed], ephemeral: true })
     } catch (error) {
       const embed = errorEmbed(error)
       return interaction.reply({ embeds: [embed], ephemeral: true })
