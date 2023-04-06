@@ -5,7 +5,6 @@ const express = require('express')
 const sequelize = require('./db/db-connect')
 const handleError = require('./log/handle-error')
 const { Client, Collection, Events, GatewayIntentBits, ActivityType } = require('discord.js')
-const { APIError } = require('@discordjs/rest')
 
 // Import required model files
 const ManageChannels = require('./db/manage-channels')
@@ -106,21 +105,21 @@ client.on(Events.InteractionCreate, async (interaction) => {
         return
       }
 
-      await command.execute(interaction)
+      try {
+        await command.execute(interaction)
+      } catch (error) {
+        if (error.code === 10062) {
+          console.warn('Interaction has already been acknowledged. Are multiple bots running using the same app/token?')
+        } else {
+          throw error
+        }
+      }
     } else if (interaction.isButton()) {
       // Button interactions
       if (interaction.customId === 'verifyNFT') await verify.execute(interaction)
     }
   } catch (error) {
-    if (
-      error instanceof APIError &&
-      error.code === 10062 &&
-      error.stack.includes('ChatInputCommandInteraction.reply')
-    ) {
-      console.warn(
-        'Error related to ChatInputCommandInteraction. The interaction might have already been acknowledged or is no longer valid.'
-      )
-    } else if (error.code === 10062 || error.code === 40060) {
+    if (error.code === 10062 || error.code === 40060) {
       console.warn('Interaction has already been acknowledged. Are multiple bots running using the same app/token?')
     } else {
       console.error('Error:', error)
