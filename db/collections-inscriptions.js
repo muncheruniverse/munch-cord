@@ -42,10 +42,27 @@ const Inscriptions = sequelize.define('Inscriptions', {
   },
 })
 
+const getInscription = async (inscriptionId, channelId) => {
+  const inscription = await Inscriptions.findOne({
+    where: {
+      inscriptionRef: inscriptionId,
+    },
+    include: {
+      model: Collections,
+      where: {
+        channelId,
+      },
+    },
+  })
+
+  return inscription
+}
+
 Collections.hasMany(Inscriptions, { foreignKey: 'collectionId' })
 Inscriptions.belongsTo(Collections, { foreignKey: 'collectionId' })
 
 module.exports = {
   Collections,
   Inscriptions,
+  getInscription,
 }

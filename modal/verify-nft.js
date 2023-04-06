@@ -4,25 +4,31 @@ const successEmbed = require('../embed/success-embed')
 const warningEmbed = require('../embed/warning-embed')
 const infoEmbed = require('../embed/info-embed')
 const roleEmbed = require('../embed/role-embed')
-const { Collections, Inscriptions } = require('../db/collections-inscriptions')
+const { getInscription } = require('../db/collections-inscriptions')
 const UserInscriptions = require('../db/user-inscriptions')
 const BipMessages = require('../db/bip-messages')
 const { MODAL_ID, SIGNATURE_ID, ADDRESS } = require('../button/verify')
 
-const getInscription = async (inscriptionId, channelId) => {
-  const inscription = await Inscriptions.findOne({
-    where: {
-      inscriptionRef: inscriptionId,
-    },
-    include: {
-      model: Collections,
-      where: {
-        channelId,
-      },
-    },
-  })
+const checkSignature = async (address, signature, bipMessage) => {
+  const data = {
+    jsonrpc: '1.0',
+    id: 'curltest',
+    method: 'verifymessage',
+    params: [address, signature, bipMessage],
+  }
 
-  return inscription
+  const config = {
+    headers: {
+      'content-type': 'text/plain',
+    },
+    auth: {
+      username: process.env.RPC_USERNAME,
+      password: process.env.RPC_PASSWORD,
+    },
+  }
+
+  const res = await axios.post(`https://${process.env.RPC_HOST}:${process.env.RPC_PORT}/`, data, config)
+  return res.data.result
 }
 
 module.exports = {
@@ -45,32 +51,15 @@ module.exports = {
           return interaction.reply({ embeds: [embed], ephemeral: true })
         }
 
-        const data = {
-          jsonrpc: '1.0',
-          id: 'curltest',
-          method: 'verifymessage',
-          params: [address, signature, bipMessage.message],
-        }
-
-        const config = {
-          headers: {
-            'content-type': 'text/plain',
-          },
-          auth: {
-            username: process.env.RPC_USERNAME,
-            password: process.env.RPC_PASSWORD,
-          },
-        }
-
         const embed = infoEmbed('Checking signature', 'Please wait...')
         await interaction.reply({
           embeds: [embed],
           ephemeral: true,
         })
 
-        const res = await axios.post(`https://${process.env.RPC_HOST}:${process.env.RPC_PORT}/`, data, config)
+        const res = await checkSignature(address, signature, bipMessage.message)
 
-        if (!res.data.result) {
+        if (!res) {
           const warning = warningEmbed('Verify Problem', "The BIP-322 node couldn't verify your signature.")
           return await interaction.editReply({ embeds: [warning], ephemeral: true })
         }
