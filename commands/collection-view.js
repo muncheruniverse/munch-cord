@@ -39,7 +39,7 @@ module.exports = {
         })
       })
 
-      interaction.reply({ embeds: [embed], ephemeral: true }).catch((err) => {
+      interaction.deferReply({ embeds: [embed], ephemeral: true }).catch((err) => {
         throw err
       })
     } catch (error) {
