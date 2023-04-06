@@ -102,9 +102,10 @@ module.exports = {
 
         // Valid roles
         if (addedRoles.length > 0) {
+          const roleRef = addedRoles.length > 1 ? 'roles' : 'role'
           const embed = successEmbed(
             'Successfully verified',
-            `Your signature was validated and you were assigned ${addedRoles.join(' ')}.`
+            `Your signature was validated and you were assigned the ${addedRoles.join(' ')} ${roleRef}.`
           )
 
           return interaction.editReply({ embeds: [embed], ephemeral: true })
@@ -112,15 +113,18 @@ module.exports = {
 
         // Invalid Roles
         if (notFoundRoles.length > 0) {
-          const embed = warningEmbed(
-            'Roles not found',
-            `${notFoundRoles.join(' ')} that were assigned to this collection aren't available.`
-          )
+          const embed =
+            notFoundRoles.length > 1
+              ? warningEmbed('Roles not found', `The **${notFoundRoles.join(' ')}** roles aren't available.`)
+              : warningEmbed('Role not found', `The **${notFoundRoles.join(' ')}** role isn't available.`)
           return interaction.editReply({ embeds: [embed], ephemeral: true })
         }
 
         // Catch where no collections were matched
-        const warning = warningEmbed('Verify Problem', "There's no matching collection for that inscription.")
+        const warning = warningEmbed(
+          'Verify Problem',
+          "There's no matching collections for the inscriptions in your wallet."
+        )
         return interaction.reply({ embeds: [warning], ephemeral: true })
       } catch (error) {
         // Valid error from the RPC node
