@@ -131,21 +131,29 @@ module.exports = {
           group: ['Collections.id'],
         })
 
-        const resultEmbed = successEmbed(
-          'Successfully verified',
-          'Your signature was validated and you were assigned the.'
-        )
-        collections.forEach((collection) => {
-          resultEmbed.addFields({
-            name: collection.dataValues.name,
-            value: `${roleEmbed(interaction, collection.dataValues.role)} (${commaNumber(
-              collection.dataValues.inscriptionCount
-            )})`,
-            inline: true,
+        if (collections.length > 0) {
+          const resultEmbed = successEmbed(
+            'Successfully verified',
+            'Your signature was validated and you were assigned the.'
+          )
+          collections.forEach((collection) => {
+            resultEmbed.addFields({
+              name: collection.dataValues.name,
+              value: `${roleEmbed(interaction, collection.dataValues.role)} (${commaNumber(
+                collection.dataValues.inscriptionCount
+              )})`,
+              inline: true,
+            })
           })
-        })
 
-        return interaction.editReply({ embeds: [resultEmbed], ephemeral: true })
+          return interaction.editReply({ embeds: [resultEmbed], ephemeral: true })
+        }
+        // Catch where no collections were matched
+        const warning = warningEmbed(
+          'Verify Problem',
+          "There's no matching collections for the inscriptions in your wallet."
+        )
+        return interaction.editReply({ embeds: [warning], ephemeral: true })
       } catch (error) {
         // Valid error from the RPC node
         if (error.response && error.response.status === 500) {
