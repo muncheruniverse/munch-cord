@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('discord.js')
+const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js')
 const errorEmbed = require('../embed/error-embed')
 const successEmbed = require('../embed/success-embed')
 const warningEmbed = require('../embed/warning-embed')
@@ -58,7 +58,9 @@ module.exports = {
     .addStringOption((option) => option.setName('link').setDescription('The link to the collection').setRequired(true))
     .addStringOption((option) =>
       option.setName('name').setDescription('Override the collection name').setRequired(false)
-    ),
+    )
+    .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild),
+
   async execute(interaction) {
     try {
       const channelId = await ManageChannels.findOne({
@@ -66,7 +68,7 @@ module.exports = {
           channelId: interaction.channelId,
         },
       })
-      if (interaction.user.id === interaction.member.guild.ownerId && channelId) {
+      if (channelId) {
         const venue = interaction.options.getString('venue')
         const role = interaction.options.getRole('role')
         const url = interaction.options.getString('link')
