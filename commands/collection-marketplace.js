@@ -128,6 +128,13 @@ module.exports = {
             offset,
             collectionSymbol
           )
+          if (paginatedInscriptions.length === 0) {
+            const embed = errorEmbed('The api is not available now')
+            return interaction.editReply({
+              embeds: [embed],
+              ephemeral: true,
+            })
+          }
           inscriptions.push(...paginatedInscriptions)
           const embed = infoEmbed(
             'Fetching Inscriptions',
