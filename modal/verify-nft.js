@@ -106,9 +106,9 @@ module.exports = {
             channelId: interaction.channelId,
           },
           attributes: [
-            'id',
-            'name',
-            'role',
+            [sequelize.literal('Collections.id'), 'id'],
+            [sequelize.literal('Collections.name'), 'name'],
+            [sequelize.literal('Collections.role'), 'role'],
             [sequelize.fn('COUNT', sequelize.col('Inscriptions.id')), 'inscriptionCount'],
           ],
           include: {
@@ -125,7 +125,8 @@ module.exports = {
               [Op.gt]: 0,
             },
           },
-          group: ['Collections.id', 'Inscriptions.id'],
+          group: ['Collections.id'],
+          raw: true,
         })
 
         if (collections.length > 0) {
