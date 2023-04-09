@@ -66,7 +66,7 @@ module.exports = {
         const inscriptions = await axios.get(`${process.env.ADDRESS_API}/${address}`)
 
         if (!Array.isArray(inscriptions.data)) {
-          const warning = warningEmbed('Verify Problem', 'Can not fetch your inscriptions')
+          const warning = warningEmbed('Verification Problem', 'There are no inscriptions in your wallet.')
           return await interaction.editReply({ embeds: [warning], ephemeral: true })
         }
         const addedRoles = []
@@ -129,9 +129,10 @@ module.exports = {
         })
 
         if (collections.length > 0) {
+          const rolePlural = addedRoles.length > 1 ? 'roles were' : 'role was'
           const resultEmbed = successEmbed(
             'Successfully verified',
-            'Your signature was validated and you were assigned the.'
+            `Your signature was validated and the relevant ${rolePlural} assigned.`
           )
           collections.forEach((collection) => {
             resultEmbed.addFields({
