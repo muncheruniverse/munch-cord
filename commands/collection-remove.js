@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, ActionRowBuilder, StringSelectMenuBuilder } = require('discord.js')
+const { SlashCommandBuilder, ActionRowBuilder, StringSelectMenuBuilder, PermissionFlagsBits } = require('discord.js')
 const errorEmbed = require('../embed/error-embed')
 const successEmbed = require('../embed/success-embed')
 const { Collections } = require('../db/collections-inscriptions')
@@ -8,7 +8,11 @@ const { COMMON_ERROR } = require('../embed/error-messages')
 const REMOVE_COLLECTION_SELECTOR = 'removeCollectionSelector'
 
 module.exports = {
-  data: new SlashCommandBuilder().setName('collection-remove').setDescription('Remove a collection from the server'),
+  data: new SlashCommandBuilder()
+    .setName('collection-remove')
+    .setDescription('Remove a collection from the server')
+    .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild),
+
   async execute(interaction) {
     try {
       const channelId = await ManageChannels.findOne({
@@ -16,7 +20,7 @@ module.exports = {
           channelId: interaction.channelId,
         },
       })
-      if (interaction.user.id === interaction.member.guild.ownerId && channelId) {
+      if (channelId) {
         const collections = await Collections.findAll({
           attributes: ['name', 'role', 'id'],
           where: {

@@ -1,4 +1,11 @@
-const { ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, SlashCommandBuilder } = require('discord.js')
+const {
+  ActionRowBuilder,
+  ModalBuilder,
+  TextInputBuilder,
+  TextInputStyle,
+  SlashCommandBuilder,
+  PermissionFlagsBits,
+} = require('discord.js')
 const errorEmbed = require('../embed/error-embed')
 const ManageChannels = require('../db/manage-channels')
 const { COMMON_ERROR } = require('../embed/error-messages')
@@ -10,7 +17,8 @@ const INS_IDS_ID = 'insIds'
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('collection-add')
-    .setDescription('Manually add collection details and assign role'),
+    .setDescription('Manually add collection details and assign role')
+    .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild),
   async execute(interaction) {
     try {
       const channelId = await ManageChannels.findOne({
@@ -18,7 +26,7 @@ module.exports = {
           channelId: interaction.channelId,
         },
       })
-      if (interaction.user.id === interaction.member.guild.ownerId && channelId) {
+      if (channelId) {
         const modal = new ModalBuilder().setCustomId(MODAL_ID).setTitle('Add Collection')
 
         const nameInput = new TextInputBuilder()
