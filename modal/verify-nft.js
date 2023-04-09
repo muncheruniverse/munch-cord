@@ -125,7 +125,7 @@ module.exports = {
               [Op.gt]: 0,
             },
           },
-          group: ['Collections.id'],
+          group: ['Collections.id', 'Inscriptions.id'],
         })
 
         if (collections.length > 0) {
