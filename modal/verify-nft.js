@@ -106,15 +106,17 @@ module.exports = {
             channelId: interaction.channelId,
           },
           attributes: [
-            [sequelize.literal('Collections.id'), 'id'],
-            [sequelize.literal('Collections.name'), 'name'],
-            [sequelize.literal('Collections.role'), 'role'],
+            'id',
+            'name',
+            'role',
             [sequelize.fn('COUNT', sequelize.col('Inscriptions.id')), 'inscriptionCount'],
           ],
           include: {
             model: Inscriptions,
+            attributes: [],
             include: {
               model: UserInscriptions,
+              attributes: [],
               where: {
                 userId: interaction.user.id,
               },
@@ -126,7 +128,6 @@ module.exports = {
             },
           },
           group: ['Collections.id'],
-          raw: true,
         })
 
         if (collections.length > 0) {
