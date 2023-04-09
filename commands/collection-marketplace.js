@@ -130,8 +130,10 @@ module.exports = {
             offset,
             collectionSymbol
           )
+
+          // This usually happens if API is down or rate limit is hit
           if (paginatedInscriptions.length === 0) {
-            const embed = errorEmbed('The api is not available now')
+            const embed = errorEmbed('The marketplace api is not responding, it may be unavailable or rate limited.')
             return interaction.editReply({
               embeds: [embed],
               ephemeral: true,
