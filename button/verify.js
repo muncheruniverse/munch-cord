@@ -28,7 +28,7 @@ module.exports = {
 
         const signatureInput = new TextInputBuilder()
           .setCustomId(SIGNATURE_ID)
-          .setLabel('BIP-322 signature')
+          .setLabel('BIP-322 Signature')
           .setStyle(TextInputStyle.Short)
           .setMaxLength(120)
 
@@ -68,7 +68,7 @@ module.exports = {
 
         const bipMessageInput = new TextInputBuilder()
           .setCustomId('bipMessage')
-          .setLabel('BIP-322 message')
+          .setLabel('BIP-322 Message')
           .setStyle(TextInputStyle.Short)
           .setValue(message)
           .setRequired(false)

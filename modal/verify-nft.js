@@ -3,7 +3,10 @@ const errorEmbed = require('../embed/error-embed')
 const successEmbed = require('../embed/success-embed')
 const warningEmbed = require('../embed/warning-embed')
 const roleEmbed = require('../embed/role-embed')
-const { getInscription } = require('../db/collections-inscriptions')
+const commaNumber = require('comma-number')
+const { Op } = require('sequelize')
+const { getInscription, Collections, Inscriptions } = require('../db/collections-inscriptions')
+const sequelize = require('../db/db-connect')
 const UserInscriptions = require('../db/user-inscriptions')
 const BipMessages = require('../db/bip-messages')
 const { MODAL_ID, SIGNATURE_ID, ADDRESS } = require('../button/verify')
@@ -60,8 +63,12 @@ module.exports = {
           const warning = warningEmbed('Verify Problem', "The BIP-322 node couldn't verify your signature.")
           return await interaction.editReply({ embeds: [warning], ephemeral: true })
         }
-
         const inscriptions = await axios.get(`${process.env.ADDRESS_API}/${address}`)
+
+        if (!Array.isArray(inscriptions.data)) {
+          const warning = warningEmbed('Verification Problem', 'There are no inscriptions in your wallet.')
+          return await interaction.editReply({ embeds: [warning], ephemeral: true })
+        }
         const addedRoles = []
         const notFoundRoles = []
 
@@ -76,42 +83,77 @@ module.exports = {
               await interaction.member.roles.add(role)
               addedRoles.push(roleEmbed(interaction, role.name))
               // Everything has been allocated, lets upsert into the UserInscriptions table
-              await UserInscriptions.upsert({
-                userId: interaction.user.id,
-                inscriptionId: inscription.id,
+              const userInscription = await UserInscriptions.findOne({
+                where: {
+                  inscriptionId: inscription.id,
+                  userId: interaction.user.id,
+                },
               })
+              if (!userInscription) {
+                await UserInscriptions.create({
+                  inscriptionId: inscription.id,
+                  userId: interaction.user.id,
+                })
+              }
             } else {
               notFoundRoles.push(role.name)
             }
           }
         }
 
-        // Valid roles
-        if (addedRoles.length > 0) {
-          const roleRef = addedRoles.length > 1 ? 'roles' : 'role'
-          const embed = successEmbed(
+        const collections = await Collections.findAll({
+          where: {
+            channelId: interaction.channelId,
+          },
+          attributes: [
+            'id',
+            'name',
+            'role',
+            [sequelize.fn('COUNT', sequelize.col('Inscriptions.id')), 'inscriptionCount'],
+          ],
+          include: {
+            model: Inscriptions,
+            attributes: [],
+            include: {
+              model: UserInscriptions,
+              attributes: [],
+              where: {
+                userId: interaction.user.id,
+              },
+            },
+          },
+          having: {
+            inscriptionCount: {
+              [Op.gt]: 0,
+            },
+          },
+          group: ['Collections.id'],
+        })
+
+        if (collections.length > 0) {
+          const rolePlural = addedRoles.length > 1 ? 'roles were' : 'role was'
+          const resultEmbed = successEmbed(
             'Successfully verified',
-            `Your signature was validated and you were assigned the ${addedRoles.join(' ')} ${roleRef}.`
+            `Your signature was validated and the relevant ${rolePlural} assigned.`
           )
+          collections.forEach((collection) => {
+            resultEmbed.addFields({
+              name: collection.dataValues.name,
+              value: `${roleEmbed(interaction, collection.dataValues.role)} (${commaNumber(
+                collection.dataValues.inscriptionCount
+              )})`,
+              inline: true,
+            })
+          })
 
-          return interaction.editReply({ embeds: [embed], ephemeral: true })
+          return interaction.editReply({ embeds: [resultEmbed], ephemeral: true })
         }
-
-        // Invalid Roles
-        if (notFoundRoles.length > 0) {
-          const embed =
-            notFoundRoles.length > 1
-              ? warningEmbed('Roles not found', `The **${notFoundRoles.join(' ')}** roles aren't available.`)
-              : warningEmbed('Role not found', `The **${notFoundRoles.join(' ')}** role isn't available.`)
-          return interaction.editReply({ embeds: [embed], ephemeral: true })
-        }
-
         // Catch where no collections were matched
         const warning = warningEmbed(
           'Verify Problem',
           "There's no matching collections for the inscriptions in your wallet."
         )
-        return interaction.reply({ embeds: [warning], ephemeral: true })
+        return interaction.editReply({ embeds: [warning], ephemeral: true })
       } catch (error) {
         // Valid error from the RPC node
         if (error.response && error.response.status === 500) {

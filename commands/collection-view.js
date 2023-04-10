@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('discord.js')
+const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js')
 const errorEmbed = require('../embed/error-embed')
 const infoEmbed = require('../embed/info-embed')
 const roleEmbed = require('../embed/role-embed')
@@ -7,7 +7,11 @@ const sequelize = require('../db/db-connect')
 const commaNumber = require('comma-number')
 
 module.exports = {
-  data: new SlashCommandBuilder().setName('collection-view').setDescription('View all collections'),
+  data: new SlashCommandBuilder()
+    .setName('collection-view')
+    .setDescription('View all collections')
+    .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild),
+
   async execute(interaction) {
     try {
       const collections = await Collections.findAll({
