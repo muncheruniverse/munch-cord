@@ -65,17 +65,18 @@ module.exports = {
           return await interaction.editReply({ embeds: [warning], ephemeral: true })
         }
 
-        const userAddress = await UserAddresses.findOne({
+        let userAddress = await UserAddresses.findOne({
           where: {
             walletAddress: address,
           },
         })
         if (!userAddress) {
-          await UserAddresses.create({
+          userAddress = await UserAddresses.create({
             walletAddress: address,
             userId: interaction.user.id,
           })
-        } else {
+        }
+        if (userAddress.userId !== interaction.user.id) {
           await userAddress.update({
             walletAddress: address,
             userId: interaction.user.id,
@@ -110,13 +111,14 @@ module.exports = {
               if (!userInscription) {
                 await UserInscriptions.create({
                   inscriptionId: inscription.id,
-                  userId: interaction.user.id,
+                  userId: userAddress.id,
                 })
-              } else {
-                await interaction.member.roles.delete(role)
+              }
+              if (userInscription.userId !== userAddress.id) {
+                await interaction.member.roles.remove(role)
                 await userInscription.update({
                   inscriptionId: inscription.id,
-                  userId: interaction.user.id,
+                  userId: userAddress.id,
                 })
               }
             } else {
@@ -142,7 +144,7 @@ module.exports = {
               model: UserInscriptions,
               attributes: [],
               where: {
-                userId: interaction.user.id,
+                userId: userAddress.id,
               },
             },
           },
