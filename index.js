@@ -10,6 +10,7 @@ const ManageChannels = require('./db/manage-channels')
 const UserInscriptions = require('./db/user-inscriptions')
 const { Collections, Inscriptions } = require('./db/collections-inscriptions')
 const BipMessages = require('./db/bip-messages')
+const UserAddresses = require('./db/user-addresses')
 
 // Import required modal interactions
 const addCollectionModal = require('./modal/add-collection')
@@ -147,6 +148,7 @@ client.once(Events.ClientReady, (client) => {
   })
   BipMessages.sync()
   ManageChannels.sync()
+  UserAddresses.sync()
 
   // Health check endpoint
   healthApiService()
