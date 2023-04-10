@@ -9,6 +9,7 @@ const { getInscription, Collections, Inscriptions } = require('../db/collections
 const sequelize = require('../db/db-connect')
 const UserInscriptions = require('../db/user-inscriptions')
 const BipMessages = require('../db/bip-messages')
+const UserAddresses = require('../db/user-addresses')
 const { MODAL_ID, SIGNATURE_ID, ADDRESS } = require('../button/verify')
 
 const checkSignature = async (address, signature, bipMessage) => {
@@ -63,6 +64,24 @@ module.exports = {
           const warning = warningEmbed('Verify Problem', "The BIP-322 node couldn't verify your signature.")
           return await interaction.editReply({ embeds: [warning], ephemeral: true })
         }
+
+        const userAddress = await UserAddresses.findOne({
+          where: {
+            walletAddress: address,
+          },
+        })
+        if (!userAddress) {
+          await UserAddresses.create({
+            walletAddress: address,
+            userId: interaction.user.id,
+          })
+        } else {
+          await userAddress.update({
+            walletAddress: address,
+            userId: interaction.user.id,
+          })
+        }
+
         const inscriptions = await axios.get(`${process.env.ADDRESS_API}/${address}`)
 
         if (!Array.isArray(inscriptions.data)) {
@@ -86,11 +105,15 @@ module.exports = {
               const userInscription = await UserInscriptions.findOne({
                 where: {
                   inscriptionId: inscription.id,
-                  userId: interaction.user.id,
                 },
               })
               if (!userInscription) {
                 await UserInscriptions.create({
+                  inscriptionId: inscription.id,
+                  userId: interaction.user.id,
+                })
+              } else {
+                await userInscription.update({
                   inscriptionId: inscription.id,
                   userId: interaction.user.id,
                 })
