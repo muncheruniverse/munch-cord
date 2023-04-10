@@ -5,7 +5,6 @@ const roleEmbed = require('../embed/role-embed')
 const { Collections, Inscriptions } = require('../db/collections-inscriptions')
 const sequelize = require('../db/db-connect')
 const commaNumber = require('comma-number')
-const { Op } = require('sequelize')
 const UserInscriptions = require('../db/user-inscriptions')
 
 module.exports = {
@@ -32,11 +31,6 @@ module.exports = {
           include: {
             model: UserInscriptions,
             attributes: [],
-          },
-        },
-        having: {
-          userInscriptionCount: {
-            [Op.gt]: 0,
           },
         },
         group: ['Collections.id'],
