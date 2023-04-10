@@ -113,6 +113,7 @@ module.exports = {
                   userId: interaction.user.id,
                 })
               } else {
+                await interaction.member.roles.delete(role)
                 await userInscription.update({
                   inscriptionId: inscription.id,
                   userId: interaction.user.id,
