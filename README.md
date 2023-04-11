@@ -74,6 +74,7 @@ npm test
 - `RPC_PASSWORD`: Password for auth
 - `DB_URL`: Fully qualified URL for DB connection
 - `INSCRIPTION_API`: The inscription API to use, expects URI filter for the inscription id lookup
+- `ADDRESS_API`: An API that can be used to list all the inscriptions within an address
 - `BIP_MESSAGE`: Set to a string if you want a static BIP-322 message challenge
 
 4.  Install dependencies with `npm i`
