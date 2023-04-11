@@ -161,11 +161,12 @@ module.exports = {
           return await interaction.editReply({ embeds: [warning], ephemeral: true })
         }
         const embed = errorEmbed(error)
-        return interaction.reply({ embeds: [embed], ephemeral: true })
+        return interaction.editReply({ embeds: [embed], ephemeral: true })
       }
     } catch (error) {
       const embed = errorEmbed(error)
-      return interaction.reply({ embeds: [embed], ephemeral: true })
+      if (interaction.replied) return interaction.editReply({ embeds: [embed], ephemeral: true })
+      else return interaction.reply({ embeds: [embed], ephemeral: true })
     }
   },
 }
