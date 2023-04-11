@@ -1,10 +1,10 @@
 const axios = require('axios')
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js')
 const errorEmbed = require('../embed/error-embed')
-const successEmbed = require('../embed/success-embed')
 const warningEmbed = require('../embed/warning-embed')
 const sequelize = require('../db/db-connect')
 const { QueryTypes } = require('sequelize')
+const CollectionVerifications = require('./collection-verifications')
 
 const getOwnerAddress = async (inscriptionRef) => {
   const { data } = await axios.get(`${process.env.INSCRIPTION_API}/${inscriptionRef}`)
@@ -46,12 +46,7 @@ module.exports = {
           await user.roles.remove(role)
         }
       }
-      const embed = successEmbed('Add verify bot', 'Successfully added the bot to this channel.')
-
-      return interaction.reply({
-        embeds: [embed],
-        ephemeral: true,
-      })
+      return CollectionVerifications.execute(interaction)
     } catch (error) {
       if (error.name === 'SequelizeUniqueConstraintError') {
         const embed = warningEmbed('Add verify bot', 'The bot is already in the channel.')
