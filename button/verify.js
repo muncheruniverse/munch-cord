@@ -1,15 +1,19 @@
-const { ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } = require('discord.js')
+const { SlashCommandBuilder, ActionRowBuilder, StringSelectMenuBuilder, PermissionFlagsBits } = require('discord.js')
 const errorEmbed = require('../embed/error-embed')
-const warningEmbed = require('../embed/warning-embed')
+const successEmbed = require('../embed/success-embed')
 const ManageChannels = require('../db/manage-channels')
-const randomWords = require('random-words')
-const BipMessages = require('../db/bip-messages')
+const { COMMON_ERROR } = require('../embed/error-messages')
 
-const MODAL_ID = 'verifyNFTModal'
-const SIGNATURE_ID = 'signatureInput'
-const ADDRESS = 'addressInput'
+const VERIFY_SELECTOR = 'verifySelector'
+const MANUAL_VERIFICATION = 'manualVerification'
+const ADD_NEW_WALLET_ADDRESS = 'addNewWalletAddress'
 
 module.exports = {
+  data: new SlashCommandBuilder()
+    .setName('collection-remove')
+    .setDescription('Remove a collection from the server')
+    .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild),
+
   async execute(interaction) {
     try {
       const channelId = await ManageChannels.findOne({
@@ -18,74 +22,27 @@ module.exports = {
         },
       })
       if (channelId) {
-        const modal = new ModalBuilder().setCustomId(MODAL_ID).setTitle('Verify Your Ownership')
+        const selectList = [
+          { label: 'Manual Verification', value: MANUAL_VERIFICATION },
+          { label: 'Add new wallet address', value: ADD_NEW_WALLET_ADDRESS },
+        ]
 
-        const addressInput = new TextInputBuilder()
-          .setCustomId(ADDRESS)
-          .setLabel('Wallet Address')
-          .setStyle(TextInputStyle.Short)
-          .setMaxLength(70)
+        const row = new ActionRowBuilder().addComponents(
+          new StringSelectMenuBuilder()
+            .setCustomId(VERIFY_SELECTOR)
+            .setPlaceholder('Select a action')
+            .addOptions(selectList)
+        )
 
-        const signatureInput = new TextInputBuilder()
-          .setCustomId(SIGNATURE_ID)
-          .setLabel('BIP-322 Signature')
-          .setStyle(TextInputStyle.Short)
-          .setMaxLength(120)
+        const embed = successEmbed('Verify Your Ownership', 'Please select an action')
 
-        let message = ''
-
-        if (process.env.BIP_MESSAGE) message = process.env.BIP_MESSAGE
-        else {
-          message = 'munch-' + randomWords({ exactly: 3, join: '-' })
-        }
-
-        const bipMessage = await BipMessages.findOne({
-          where: {
-            channelId: interaction.channelId,
-            userId: interaction.user.id,
-          },
+        return interaction.reply({
+          embeds: [embed],
+          components: [row],
+          ephemeral: true,
         })
-
-        if (bipMessage) {
-          await BipMessages.update(
-            {
-              message,
-            },
-            {
-              where: {
-                channelId: interaction.channelId,
-                userId: interaction.user.id,
-              },
-            }
-          )
-        } else {
-          await BipMessages.create({
-            channelId: interaction.channelId,
-            userId: interaction.user.id,
-            message,
-          })
-        }
-
-        const bipMessageInput = new TextInputBuilder()
-          .setCustomId('bipMessage')
-          .setLabel('BIP-322 Message')
-          .setStyle(TextInputStyle.Short)
-          .setValue(message)
-          .setRequired(false)
-
-        const addressActionRow = new ActionRowBuilder().addComponents(addressInput)
-        const signatureActionRow = new ActionRowBuilder().addComponents(signatureInput)
-        const bipMessageActionRow = new ActionRowBuilder().addComponents(bipMessageInput)
-
-        modal.addComponents(addressActionRow, signatureActionRow, bipMessageActionRow)
-
-        await interaction.showModal(modal)
-
-        if (interaction.replied) {
-          return
-        }
       } else {
-        const embed = warningEmbed('Bot not available', "The bot hasn't been configured for this channel.")
+        const embed = errorEmbed(COMMON_ERROR)
         return interaction.reply({ embeds: [embed], ephemeral: true })
       }
     } catch (error) {
@@ -93,7 +50,7 @@ module.exports = {
       return interaction.reply({ embeds: [embed], ephemeral: true })
     }
   },
-  MODAL_ID,
-  SIGNATURE_ID,
-  ADDRESS,
+  VERIFY_SELECTOR,
+  MANUAL_VERIFICATION,
+  ADD_NEW_WALLET_ADDRESS,
 }

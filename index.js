@@ -18,6 +18,7 @@ const verifynft = require('./modal/verify-nft')
 
 // Import required selector interactions
 const roleSelector = require('./selector/role-selector')
+const verifySelector = require('./selector/verify-selector')
 const removeCollectionSelector = require('./selector/remove-collection-selector')
 
 // Import required button action interactions
@@ -95,6 +96,8 @@ client.on(Events.InteractionCreate, async (interaction) => {
         roleSelector.execute(interaction)
       } else if (interaction.customId === removeCollectionSelector.data) {
         removeCollectionSelector.execute(interaction)
+      } else if (interaction.customId === verifySelector.data) {
+        verifySelector.execute(interaction)
       }
     } else if (interaction.isChatInputCommand()) {
       // Slash command interactions

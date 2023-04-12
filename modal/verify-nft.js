@@ -10,7 +10,7 @@ const sequelize = require('../db/db-connect')
 const UserInscriptions = require('../db/user-inscriptions')
 const BipMessages = require('../db/bip-messages')
 const UserAddresses = require('../db/user-addresses')
-const { MODAL_ID, SIGNATURE_ID, ADDRESS } = require('../button/verify')
+const { MODAL_ID, SIGNATURE_ID, ADDRESS } = require('../selector/verify-selector')
 
 const checkSignature = async (address, signature, bipMessage) => {
   const data = {
