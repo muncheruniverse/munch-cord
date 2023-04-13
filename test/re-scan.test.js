@@ -60,18 +60,20 @@ describe('re-scan', () => {
 
     // Mock sequelize.query
     const sequelizeQueryStub = sinon.stub(sequelize, 'query').resolves([
-      {
-        walletAddress: 'btcAddress1',
-        userId: '123456789012345678',
-        inscriptionRef: 'inscriptionRef',
-        role: 'role1',
-      },
-      {
-        walletAddress: 'btcAddress2',
-        userId: '123456789012345678',
-        inscriptionRef: 'inscriptionRef',
-        role: 'role2',
-      },
+      [
+        {
+          walletAddress: 'btcAddress1',
+          userId: '123456789012345678',
+          inscriptionRef: 'inscriptionRef',
+          role: 'role1',
+        },
+        {
+          walletAddress: 'btcAddress2',
+          userId: '123456789012345678',
+          inscriptionRef: 'inscriptionRef',
+          role: 'role2',
+        },
+      ],
     ])
 
     // Mock CollectionVerifications.execute
@@ -129,10 +131,7 @@ describe('re-scan', () => {
     expect(axiosGetStub.called).to.be.false
     expect(sequelizeQueryStub.calledOnce).to.be.true
     expect(interaction.reply.calledOnce).to.be.true
-    expect(interaction.reply.firstCall.args[0].embeds[0].data.title).to.equal('Add verify bot')
-    expect(interaction.reply.firstCall.args[0].embeds[0].data.description).to.equal(
-      'The bot is already in the channel.'
-    )
+    expect(interaction.reply.firstCall.args[0].embeds[0].data.title).to.equal('Whoops')
     expect(interaction.reply.firstCall.args[0].ephemeral).to.be.true
   })
 })

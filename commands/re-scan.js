@@ -1,7 +1,6 @@
 const axios = require('axios')
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js')
 const errorEmbed = require('../embed/error-embed')
-const warningEmbed = require('../embed/warning-embed')
 const sequelize = require('../db/db-connect')
 const { QueryTypes } = require('sequelize')
 const CollectionVerifications = require('./collection-verifications')
@@ -35,9 +34,12 @@ module.exports = {
         ) 
         as inscriptionInfos
       where UserInscriptions.inscriptionId=inscriptionInfos.inscriptionId
-        and UserAddresses.id=UserInscriptions.userId`
+        and UserAddresses.id=UserInscriptions.userAddressId`
 
-      const insInfos = await sequelize.query(query, QueryTypes.SELECT)
+      const [insInfos] = await sequelize.query(query, QueryTypes.SELECT)
+
+      // We want to loop all of the inscriptions, find their current address and if it has moved we can remove the role
+      // We then want to bucket all affected users, and re-run their validation for their remaining inscriptions
       for (const insInfo of insInfos) {
         const ownerAddress = await getOwnerAddress(insInfo.inscriptionRef)
         if (ownerAddress !== insInfo.walletAddress) {
@@ -48,11 +50,6 @@ module.exports = {
       }
       return CollectionVerifications.execute(interaction)
     } catch (error) {
-      if (error.name === 'SequelizeUniqueConstraintError') {
-        const embed = warningEmbed('Add verify bot', 'The bot is already in the channel.')
-        return interaction.reply({ embeds: [embed], ephemeral: true })
-      }
-
       const embed = errorEmbed(error)
       return interaction.reply({ embeds: [embed], ephemeral: true })
     }
