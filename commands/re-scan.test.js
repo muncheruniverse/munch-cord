@@ -3,8 +3,8 @@ const sinon = require('sinon')
 const axios = require('axios')
 const { GuildMemberRoleManager } = require('discord.js')
 const sequelize = require('../db/db-connect')
-const CollectionVerifications = require('../commands/collection-verifications')
-const reScan = require('../commands/re-scan')
+const CollectionVerifications = require('./collection-verifications')
+const reScan = require('./re-scan')
 const UserInscriptions = require('../db/user-inscriptions')
 
 describe('re-scan', () => {
