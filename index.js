@@ -1,7 +1,6 @@
 const fs = require('node:fs')
 const path = require('node:path')
 require('dotenv-flow').config()
-const express = require('express')
 const sequelize = require('./db/db-connect')
 const { Client, Collection, Events, GatewayIntentBits, ActivityType } = require('discord.js')
 
@@ -24,6 +23,9 @@ const removeCollectionSelector = require('./selector/remove-collection-selector'
 // Import required button action interactions
 const verify = require('./button/verify')
 
+// Import required api service
+const apiService = require('./api/api-service')
+
 // Create a new client
 const client = new Client({
   intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers],
@@ -45,40 +47,6 @@ for (const file of commandFiles) {
   } else {
     console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`)
   }
-}
-
-const healthApiService = () => {
-  const app = express()
-
-  app.get('/health', async (req, res) => {
-    try {
-      const packageInfo = require('./package.json')
-
-      const healthInfo = {
-        status: 'OK',
-        info: {
-          name: packageInfo.name,
-          version: packageInfo.version,
-        },
-        discord: {
-          username: client?.user?.username,
-          id: client?.user?.id,
-          tag: client?.user?.tag,
-        },
-      }
-
-      res.status(200).json(healthInfo)
-    } catch (error) {
-      res.status(500).json({ status: 'ERROR', error: error.message })
-    }
-  })
-
-  const port = process.env.PORT || 3000
-
-  // Set the server to listen for requests
-  app.listen(port, () => {
-    console.log(`Server is running on port ${port}`)
-  })
 }
 
 client.on(Events.InteractionCreate, async (interaction) => {
@@ -153,8 +121,8 @@ client.once(Events.ClientReady, (client) => {
   ManageChannels.sync()
   UserAddresses.sync()
 
-  // Health check endpoint
-  healthApiService()
+  // Api Service for health and verify
+  apiService(client)
 
   // Activity status for discord
   client.user.setActivity('Monster Mash 👹', { type: ActivityType.Listening })
