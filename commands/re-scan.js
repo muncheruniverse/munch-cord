@@ -1,7 +1,6 @@
 const axios = require('axios')
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js')
 const errorEmbed = require('../embed/error-embed')
-const warningEmbed = require('../embed/warning-embed')
 const sequelize = require('../db/db-connect')
 const { QueryTypes } = require('sequelize')
 const CollectionVerifications = require('./collection-verifications')
