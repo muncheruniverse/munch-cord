@@ -40,6 +40,8 @@ module.exports = {
 
       const [insInfos] = await sequelize.query(query, QueryTypes.SELECT)
 
+      const affectedUsers = new Set()
+
       // We want to loop all of the inscriptions, find their current address and if it has moved we can remove the role
       // We then want to bucket all affected users, and re-run their validation for their remaining inscriptions
       for (const insInfo of insInfos) {
@@ -55,8 +57,14 @@ module.exports = {
               id: insInfo.id,
             },
           })
+          // Add to unique set of affected users
+          affectedUsers.add(insInfo.userId)
         }
       }
+
+      // We now need to re-scan the live inscriptions for each affected user to ensure we have the correct roles
+      console.log(affectedUsers)
+
       return CollectionVerifications.execute(interaction)
     } catch (error) {
       const embed = errorEmbed(error)
