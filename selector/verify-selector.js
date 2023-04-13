@@ -11,8 +11,46 @@ const MODAL_ID = 'verifyNFTModal'
 const SIGNATURE_ID = 'signatureInput'
 const ADDRESS = 'addressInput'
 
-function generateAccessToken(userId) {
+const generateAccessToken = (userId) => {
   return jwt.sign(userId, process.env.TOKEN_SECRET, { expiresIn: process.env.TOKEN_EXPIRE_IN })
+}
+
+const getMessage = async (interaction) => {
+  let message = ''
+
+  if (process.env.BIP_MESSAGE) message = process.env.BIP_MESSAGE
+  else {
+    message = 'munch-' + randomWords({ exactly: 3, join: '-' })
+  }
+
+  const bipMessage = await BipMessages.findOne({
+    where: {
+      channelId: interaction.channelId,
+      userId: interaction.user.id,
+    },
+  })
+
+  if (bipMessage) {
+    await BipMessages.update(
+      {
+        message,
+      },
+      {
+        where: {
+          channelId: interaction.channelId,
+          userId: interaction.user.id,
+        },
+      }
+    )
+  } else {
+    await BipMessages.create({
+      channelId: interaction.channelId,
+      userId: interaction.user.id,
+      message,
+    })
+  }
+
+  return message
 }
 
 module.exports = {
@@ -20,6 +58,7 @@ module.exports = {
   async execute(interaction) {
     try {
       const selected = interaction.values[0]
+      const message = await getMessage(interaction)
 
       if (selected === MANUAL_VERIFICATION) {
         const modal = new ModalBuilder().setCustomId(MODAL_ID).setTitle('Verify Your Ownership')
@@ -35,40 +74,6 @@ module.exports = {
           .setLabel('BIP-322 Signature')
           .setStyle(TextInputStyle.Short)
           .setMaxLength(120)
-
-        let message = ''
-
-        if (process.env.BIP_MESSAGE) message = process.env.BIP_MESSAGE
-        else {
-          message = 'munch-' + randomWords({ exactly: 3, join: '-' })
-        }
-
-        const bipMessage = await BipMessages.findOne({
-          where: {
-            channelId: interaction.channelId,
-            userId: interaction.user.id,
-          },
-        })
-
-        if (bipMessage) {
-          await BipMessages.update(
-            {
-              message,
-            },
-            {
-              where: {
-                channelId: interaction.channelId,
-                userId: interaction.user.id,
-              },
-            }
-          )
-        } else {
-          await BipMessages.create({
-            channelId: interaction.channelId,
-            userId: interaction.user.id,
-            message,
-          })
-        }
 
         const bipMessageInput = new TextInputBuilder()
           .setCustomId('bipMessage')
@@ -90,8 +95,9 @@ module.exports = {
         const generatedToken = generateAccessToken({ userId: interaction.user.id })
         const embed = infoEmbed(
           'Please open this link to verify',
-          `Click [Here](${process.env.VERIFICATION_URL}?auth=${generatedToken})`
+          `Click [Here](${process.env.VERIFICATION_URL}?auth=${generatedToken}&message=${message})`
         )
+        console.log('link', `${process.env.VERIFICATION_URL}?auth=${generatedToken}&message=${message}`)
         return interaction.update({ embeds: [embed], components: [], ephemeral: true })
       }
     } catch (error) {
