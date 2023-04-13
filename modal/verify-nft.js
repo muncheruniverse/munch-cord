@@ -113,7 +113,7 @@ module.exports = {
                   inscriptionId: inscription.id,
                   userAddressId: userAddress.id,
                 })
-              } else if (userInscription.userAddressId !== userAddress.id) {
+              } else if (userInscription.userId !== userAddress.id) {
                 await interaction.member.roles.remove(role)
                 await userInscription.update({
                   inscriptionId: inscription.id,

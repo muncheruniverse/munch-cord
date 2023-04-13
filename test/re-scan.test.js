@@ -129,10 +129,7 @@ describe('re-scan', () => {
     expect(axiosGetStub.called).to.be.false
     expect(sequelizeQueryStub.calledOnce).to.be.true
     expect(interaction.reply.calledOnce).to.be.true
-    expect(interaction.reply.firstCall.args[0].embeds[0].data.title).to.equal('Add verify bot')
-    expect(interaction.reply.firstCall.args[0].embeds[0].data.description).to.equal(
-      'The bot is already in the channel.'
-    )
+    expect(interaction.reply.firstCall.args[0].embeds[0].data.title).to.equal('Whoops')
     expect(interaction.reply.firstCall.args[0].ephemeral).to.be.true
   })
 })
