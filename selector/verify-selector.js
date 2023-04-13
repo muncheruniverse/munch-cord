@@ -1,13 +1,19 @@
 const { ModalBuilder, TextInputStyle, TextInputBuilder, ActionRowBuilder } = require('discord.js')
+const jwt = require('jsonwebtoken')
 const randomWords = require('random-words')
 const BipMessages = require('../db/bip-messages')
+const successEmbed = require('../embed/success-embed')
 const errorEmbed = require('../embed/error-embed')
 
-const { VERIFY_SELECTOR, MANUAL_VERIFICATION } = require('../button/verify')
+const { VERIFY_SELECTOR, MANUAL_VERIFICATION, ADD_NEW_WALLET_ADDRESS } = require('../button/verify')
 
 const MODAL_ID = 'verifyNFTModal'
 const SIGNATURE_ID = 'signatureInput'
 const ADDRESS = 'addressInput'
+
+function generateAccessToken(userId) {
+  return jwt.sign(userId, process.env.TOKEN_SECRET, { expiresIn: process.env.TOKEN_EXPIRE_IN })
+}
 
 module.exports = {
   data: VERIFY_SELECTOR,
@@ -79,9 +85,18 @@ module.exports = {
 
         await interaction.showModal(modal)
       }
+
+      if (selected === ADD_NEW_WALLET_ADDRESS) {
+        const generatedToken = generateAccessToken({ userId: interaction.user.id })
+        const embed = successEmbed(
+          'Please open this link to verify',
+          `Click [Here](${process.env.VERIFICATION_URL}?auth=${generatedToken})`
+        )
+        return interaction.update({ embeds: [embed], components: [], ephemeral: true })
+      }
     } catch (error) {
       const embed = errorEmbed(error)
-      return interaction.update({ embeds: [embed], ephemeral: true })
+      return interaction.update({ embeds: [embed], components: [], ephemeral: true })
     }
   },
   MODAL_ID,
