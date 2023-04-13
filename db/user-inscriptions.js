@@ -4,7 +4,7 @@ const { Inscriptions } = require('./collections-inscriptions')
 const UserAddresses = require('./user-addresses')
 
 const UserInscriptions = sequelize.define('UserInscriptions', {
-  userId: {
+  userAddressId: {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {

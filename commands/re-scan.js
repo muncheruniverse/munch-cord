@@ -7,6 +7,7 @@ const { QueryTypes } = require('sequelize')
 const CollectionVerifications = require('./collection-verifications')
 
 const getOwnerAddress = async (inscriptionRef) => {
+  console.log(`${process.env.INSCRIPTION_API}/${inscriptionRef}`)
   const { data } = await axios.get(`${process.env.INSCRIPTION_API}/${inscriptionRef}`)
   return data.address
 }
@@ -35,9 +36,9 @@ module.exports = {
         ) 
         as inscriptionInfos
       where UserInscriptions.inscriptionId=inscriptionInfos.inscriptionId
-        and UserAddresses.id=UserInscriptions.userId`
+        and UserAddresses.id=UserInscriptions.userAddressId`
 
-      const insInfos = await sequelize.query(query, QueryTypes.SELECT)
+      const [insInfos] = await sequelize.query(query, QueryTypes.SELECT)
       for (const insInfo of insInfos) {
         const ownerAddress = await getOwnerAddress(insInfo.inscriptionRef)
         if (ownerAddress !== insInfo.walletAddress) {

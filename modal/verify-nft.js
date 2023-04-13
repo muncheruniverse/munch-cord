@@ -111,14 +111,13 @@ module.exports = {
               if (!userInscription) {
                 await UserInscriptions.create({
                   inscriptionId: inscription.id,
-                  userId: userAddress.id,
+                  userAddressId: userAddress.id,
                 })
-              }
-              if (userInscription.userId !== userAddress.id) {
+              } else if (userInscription.userAddressId !== userAddress.id) {
                 await interaction.member.roles.remove(role)
                 await userInscription.update({
                   inscriptionId: inscription.id,
-                  userId: userAddress.id,
+                  userAddressId: userAddress.id,
                 })
               }
             } else {
@@ -144,7 +143,7 @@ module.exports = {
               model: UserInscriptions,
               attributes: [],
               where: {
-                userId: userAddress.id,
+                userAddressId: userAddress.id,
               },
             },
           },
