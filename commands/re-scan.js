@@ -7,7 +7,6 @@ const { QueryTypes } = require('sequelize')
 const CollectionVerifications = require('./collection-verifications')
 
 const getOwnerAddress = async (inscriptionRef) => {
-  console.log(`${process.env.INSCRIPTION_API}/${inscriptionRef}`)
   const { data } = await axios.get(`${process.env.INSCRIPTION_API}/${inscriptionRef}`)
   return data.address
 }
