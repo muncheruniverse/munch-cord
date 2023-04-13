@@ -4,6 +4,7 @@ const errorEmbed = require('../embed/error-embed')
 const sequelize = require('../db/db-connect')
 const { QueryTypes } = require('sequelize')
 const CollectionVerifications = require('./collection-verifications')
+const UserInscriptions = require('../db/user-inscriptions')
 
 const getOwnerAddress = async (inscriptionRef) => {
   const { data } = await axios.get(`${process.env.INSCRIPTION_API}/${inscriptionRef}`)
@@ -18,6 +19,7 @@ module.exports = {
   async execute(interaction) {
     try {
       const query = `Select 
+        UserInscriptions.id as id,
         UserAddresses.walletAddress as walletAddress, 
         UserAddresses.userId as userId, 
         inscriptionInfos.inscriptionRef as inscriptionRef, 
@@ -45,7 +47,14 @@ module.exports = {
         if (ownerAddress !== insInfo.walletAddress) {
           const role = interaction.member.guild.roles.cache.find((roleItem) => roleItem.name === insInfo.role)
           const user = interaction.member.guild.members.cache.find((user) => user.user.id === insInfo.userId)
+          // Remove role
           await user.roles.remove(role)
+          // Retire inscription
+          await UserInscriptions.destroy({
+            where: {
+              id: insInfo.id,
+            },
+          })
         }
       }
       return CollectionVerifications.execute(interaction)

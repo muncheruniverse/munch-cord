@@ -5,6 +5,7 @@ const { GuildMemberRoleManager } = require('discord.js')
 const sequelize = require('../db/db-connect')
 const CollectionVerifications = require('../commands/collection-verifications')
 const reScan = require('../commands/re-scan')
+const UserInscriptions = require('../db/user-inscriptions')
 
 describe('re-scan', () => {
   afterEach(() => {
@@ -14,6 +15,7 @@ describe('re-scan', () => {
   it('should successfully rescan inscriptions and call CollectionVerifications.execute', async () => {
     // Mock axios.get
     const axiosGetStub = sinon.stub(axios, 'get').resolves({ data: { address: 'btcAddress2' } })
+    const userInscriptionsDestroyStub = sinon.stub(UserInscriptions, 'destroy').resolves()
 
     // Mock sequelize.query
     const sequelizeQueryStub = sinon.stub(sequelize, 'query').resolves([
@@ -52,11 +54,13 @@ describe('re-scan', () => {
     expect(collectionVerificationsStub.calledOnce).to.be.true
     expect(guildMemberRoleManagerStub.calledOnce).to.be.true
     expect(interaction.reply.calledOnce).to.be.false
+    expect(userInscriptionsDestroyStub.calledOnce).to.be.true
   })
 
   it('should unset the btcAddress1 role accordingly as inscription location changed', async () => {
     // Mock axios.get
     const axiosGetStub = sinon.stub(axios, 'get').resolves({ data: { address: 'btcAddress2' } })
+    const userInscriptionsDestroyStub = sinon.stub(UserInscriptions, 'destroy').resolves()
 
     // Mock sequelize.query
     const sequelizeQueryStub = sinon.stub(sequelize, 'query').resolves([
@@ -100,6 +104,7 @@ describe('re-scan', () => {
     expect(sequelizeQueryStub.calledOnce).to.be.true
     expect(collectionVerificationsStub.calledOnce).to.be.true
     expect(removeRoleStub.calledOnce).to.be.true
+    expect(userInscriptionsDestroyStub.calledOnce).to.be.true
   })
 
   it('should return a warning embed when a SequelizeUniqueConstraintError is thrown', async () => {
