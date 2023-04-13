@@ -5,6 +5,5 @@ config.json
 .vscode
 database.sqlite
 .nyc_output
-.mocharc.json
 coverage
 .DS_Store

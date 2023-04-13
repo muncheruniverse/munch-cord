@@ -1,0 +1,5 @@
+{
+  "spec": "**/*.test.js",
+  "ignore": "node_modules/**",
+  "require": "./test/test-setup.js"
+}
