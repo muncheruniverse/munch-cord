@@ -2,7 +2,7 @@ const { ModalBuilder, TextInputStyle, TextInputBuilder, ActionRowBuilder } = req
 const jwt = require('jsonwebtoken')
 const randomWords = require('random-words')
 const BipMessages = require('../db/bip-messages')
-const successEmbed = require('../embed/success-embed')
+const infoEmbed = require('../embed/info-embed')
 const errorEmbed = require('../embed/error-embed')
 
 const { VERIFY_SELECTOR, MANUAL_VERIFICATION, ADD_NEW_WALLET_ADDRESS } = require('../button/verify')
@@ -88,7 +88,7 @@ module.exports = {
 
       if (selected === ADD_NEW_WALLET_ADDRESS) {
         const generatedToken = generateAccessToken({ userId: interaction.user.id })
-        const embed = successEmbed(
+        const embed = infoEmbed(
           'Please open this link to verify',
           `Click [Here](${process.env.VERIFICATION_URL}?auth=${generatedToken})`
         )
