@@ -45,12 +45,16 @@ module.exports = {
       for (const insInfo of insInfos) {
         const ownerAddress = await getOwnerAddress(insInfo.inscriptionRef)
         if (ownerAddress !== insInfo.walletAddress) {
-          await UserInscriptions.destroy({
-            where: insInfo.id,
-          })
           const role = interaction.member.guild.roles.cache.find((roleItem) => roleItem.name === insInfo.role)
           const user = interaction.member.guild.members.cache.find((user) => user.user.id === insInfo.userId)
+          // Remove role
           await user.roles.remove(role)
+          // Retire inscription
+          await UserInscriptions.destroy({
+            where: {
+              id: insInfo.id,
+            },
+          })
         }
       }
       return CollectionVerifications.execute(interaction)
