@@ -37,7 +37,7 @@ module.exports = {
       where UserInscriptions.inscriptionId=inscriptionInfos.inscriptionId
         and UserAddresses.id=UserInscriptions.userId`
 
-      const [insInfos] = await sequelize.query(query, QueryTypes.SELECT)
+      const insInfos = await sequelize.query(query, QueryTypes.SELECT)
       for (const insInfo of insInfos) {
         const ownerAddress = await getOwnerAddress(insInfo.inscriptionRef)
         if (ownerAddress !== insInfo.walletAddress) {
