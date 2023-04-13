@@ -60,18 +60,20 @@ describe('re-scan', () => {
 
     // Mock sequelize.query
     const sequelizeQueryStub = sinon.stub(sequelize, 'query').resolves([
-      {
-        walletAddress: 'btcAddress1',
-        userId: '123456789012345678',
-        inscriptionRef: 'inscriptionRef',
-        role: 'role1',
-      },
-      {
-        walletAddress: 'btcAddress2',
-        userId: '123456789012345678',
-        inscriptionRef: 'inscriptionRef',
-        role: 'role2',
-      },
+      [
+        {
+          walletAddress: 'btcAddress1',
+          userId: '123456789012345678',
+          inscriptionRef: 'inscriptionRef',
+          role: 'role1',
+        },
+        {
+          walletAddress: 'btcAddress2',
+          userId: '123456789012345678',
+          inscriptionRef: 'inscriptionRef',
+          role: 'role2',
+        },
+      ],
     ])
 
     // Mock CollectionVerifications.execute
