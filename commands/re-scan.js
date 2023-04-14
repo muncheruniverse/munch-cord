@@ -40,7 +40,7 @@ module.exports = {
 
       const [insInfos] = await sequelize.query(query, QueryTypes.SELECT)
 
-      const affectedUsers = new Set()
+      const userRoles = []
 
       // We want to loop all of the inscriptions, find their current address and if it has moved we can remove the role
       // We then want to bucket all affected users, and re-run their validation for their remaining inscriptions
@@ -57,13 +57,20 @@ module.exports = {
               id: insInfo.id,
             },
           })
-          // Add to unique set of affected users
-          affectedUsers.add(insInfo.userId)
+        } else {
+          if (!userRoles.find((userRole) => userRole.role === insInfo.role && userRole.userId === insInfo.userId)) {
+            userRoles.push({ role: insInfo.role, userId: insInfo.userId })
+          }
         }
       }
 
       // We now need to re-scan the live inscriptions for each affected user to ensure we have the correct roles
-      console.log(affectedUsers)
+      for (const userRole of userRoles) {
+        const role = interaction.member.guild.roles.cache.find((roleItem) => roleItem.name === userRole.role)
+        const user = interaction.member.guild.members.cache.find((user) => user.user.id === userRole.userId)
+        // Add role
+        await user.roles.add(role)
+      }
 
       return CollectionVerifications.execute(interaction)
     } catch (error) {

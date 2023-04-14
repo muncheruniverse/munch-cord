@@ -85,6 +85,7 @@ describe('re-scan', () => {
 
     // Mock RolManger
     const removeRoleStub = sinon.stub(GuildMemberRoleManager.prototype, 'remove').resolves()
+    const addRoleStub = sinon.stub(GuildMemberRoleManager.prototype, 'add').resolves()
 
     // Mock Interaction
     const interaction = {
@@ -104,6 +105,7 @@ describe('re-scan', () => {
     expect(sequelizeQueryStub.calledOnce).to.be.true
     expect(collectionVerificationsStub.calledOnce).to.be.true
     expect(removeRoleStub.calledOnce).to.be.true
+    expect(addRoleStub.calledOnce).to.be.true
     expect(userInscriptionsDestroyStub.calledOnce).to.be.true
   })
 
