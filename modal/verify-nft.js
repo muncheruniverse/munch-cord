@@ -1,4 +1,4 @@
-const axios = require('axios')
+const axios = require('axios').default
 const errorEmbed = require('../embed/error-embed')
 const successEmbed = require('../embed/success-embed')
 const warningEmbed = require('../embed/warning-embed')

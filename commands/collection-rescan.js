@@ -1,4 +1,4 @@
-const axios = require('axios')
+const axios = require('axios').default
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js')
 const errorEmbed = require('../embed/error-embed')
 const sequelize = require('../db/db-connect')

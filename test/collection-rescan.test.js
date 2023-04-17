@@ -1,6 +1,6 @@
 const { expect } = require('chai')
 const sinon = require('sinon')
-const axios = require('axios')
+const axios = require('axios').default
 const { GuildMemberRoleManager } = require('discord.js')
 const sequelize = require('../db/db-connect')
 const { Collections } = require('../db/collections-inscriptions')
