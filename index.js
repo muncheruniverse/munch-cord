@@ -9,7 +9,7 @@ const ManageChannels = require('./db/manage-channels')
 const UserInscriptions = require('./db/user-inscriptions')
 const { Collections, Inscriptions } = require('./db/collections-inscriptions')
 const BipMessages = require('./db/bip-messages')
-const UserAddresses = require('./db/user-addresses')
+const { UserAddresses } = require('./db/user-addresses')
 
 // Import required modal interactions
 const addCollectionModal = require('./modal/add-collection')
@@ -36,7 +36,7 @@ client.commands = new Collection()
 
 // Find all files in the commands directory that end in .js
 const commandsPath = path.join(__dirname, 'commands')
-const commandFiles = fs.readdirSync(commandsPath).filter((file) => file.endsWith('.js'))
+const commandFiles = fs.readdirSync(commandsPath).filter((file) => file.endsWith('.js') && !file.endsWith('.test.js'))
 
 // Loop through each command file and add it to the bot's commands map
 for (const file of commandFiles) {
