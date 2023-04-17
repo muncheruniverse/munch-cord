@@ -2,6 +2,7 @@ const { SlashCommandBuilder, ActionRowBuilder, StringSelectMenuBuilder, Permissi
 const errorEmbed = require('../embed/error-embed')
 const successEmbed = require('../embed/success-embed')
 const ManageChannels = require('../db/manage-channels')
+const { UserAddresses } = require('../db/user-addresses')
 const { COMMON_ERROR } = require('../embed/error-messages')
 
 const VERIFY_SELECTOR = 'verifySelector'
@@ -22,10 +23,13 @@ module.exports = {
         },
       })
       if (channelId) {
-        const selectList = [
-          { label: 'Manual Verification', value: MANUAL_VERIFICATION },
-          { label: 'Add new wallet address', value: ADD_NEW_WALLET_ADDRESS },
-        ]
+        const selectList = [{ label: 'Manual Verification', value: MANUAL_VERIFICATION }]
+
+        const userAddresses = await UserAddresses.findAll({ where: { userId: interaction.user.id } })
+        userAddresses.forEach((userAddress) => {
+          selectList.push({ label: userAddress.walletAddress, value: userAddress.id.toString() })
+        })
+        selectList.push({ label: 'Add new wallet address', value: ADD_NEW_WALLET_ADDRESS })
 
         const row = new ActionRowBuilder().addComponents(
           new StringSelectMenuBuilder()

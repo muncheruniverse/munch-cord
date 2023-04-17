@@ -1,6 +1,6 @@
 const express = require('express')
 const { upsertUserAddress } = require('../../db/user-addresses')
-const { checkSignature } = require('../../modal/verify-nft')
+const { checkSignature } = require('../../utils/verify-nft')
 const authenticateToken = require('../middleware/authenticateToken')
 
 const router = express.Router()
