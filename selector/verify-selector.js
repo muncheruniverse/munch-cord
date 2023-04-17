@@ -97,7 +97,6 @@ module.exports = {
           'Please open this link to verify',
           `Click [Here](${process.env.VERIFICATION_URL}?auth=${generatedToken}&message=${message})`
         )
-        console.log('link', `${process.env.VERIFICATION_URL}?auth=${generatedToken}&message=${message}`)
         return interaction.update({ embeds: [embed], components: [], ephemeral: true })
       } else {
         await interaction.deferReply({
