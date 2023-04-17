@@ -17,6 +17,11 @@ module.exports = {
     .setDescription('Re scan all inscriptions')
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild),
   async execute(interaction) {
+    // This is a long query, we need to defer the reply so the user knows we are working on it
+    await interaction.deferReply({
+      ephemeral: true,
+    })
+
     try {
       const query = `Select 
         UserInscriptions.id as id,
@@ -36,7 +41,8 @@ module.exports = {
         ) 
         as inscriptionInfos
       where UserInscriptions.inscriptionId=inscriptionInfos.inscriptionId
-        and UserAddresses.id=UserInscriptions.userAddressId`
+        and UserAddresses.id=UserInscriptions.userAddressId
+        and UserInscriptions.deletedAt is null`
 
       const [insInfos] = await sequelize.query(query, QueryTypes.SELECT)
 
@@ -46,6 +52,7 @@ module.exports = {
       // We then want to bucket all affected users, and re-run their validation for their remaining inscriptions
       for (const insInfo of insInfos) {
         const ownerAddress = await getOwnerAddress(insInfo.inscriptionRef)
+        // If the owner address is different to the address we have stored, we need to remove the role
         if (ownerAddress !== insInfo.walletAddress) {
           const role = interaction.member.guild.roles.cache.find((roleItem) => roleItem.name === insInfo.role)
           const user = interaction.member.guild.members.cache.find((user) => user.user.id === insInfo.userId)
@@ -58,6 +65,7 @@ module.exports = {
             },
           })
         } else {
+          // We need to add the role to the userRoles array if it doesn't already exist
           if (!userRoles.find((userRole) => userRole.role === insInfo.role && userRole.userId === insInfo.userId)) {
             userRoles.push({ role: insInfo.role, userId: insInfo.userId })
           }

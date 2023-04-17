@@ -1,7 +1,7 @@
 const { expect } = require('chai')
 const sinon = require('sinon')
 const rewire = require('rewire')
-const collectionView = rewire('./collection-view')
+const collectionView = rewire('../commands/collection-view')
 const errorEmbed = require('../embed/error-embed')
 const infoEmbed = require('../embed/info-embed')
 

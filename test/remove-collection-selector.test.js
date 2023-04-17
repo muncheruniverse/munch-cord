@@ -1,7 +1,7 @@
 const { expect } = require('chai')
 const sinon = require('sinon')
 const rewire = require('rewire')
-const removeCollectionSelector = rewire('./remove-collection-selector')
+const removeCollectionSelector = rewire('../selector/remove-collection-selector')
 const successEmbed = require('../embed/success-embed')
 const warningEmbed = require('../embed/warning-embed')
 const errorEmbed = require('../embed/error-embed')

@@ -3,8 +3,8 @@ const sinon = require('sinon')
 const axios = require('axios')
 const { GuildMemberRoleManager } = require('discord.js')
 const sequelize = require('../db/db-connect')
-const CollectionVerifications = require('./collection-verifications')
-const reScan = require('./re-scan')
+const CollectionVerifications = require('../commands/collection-verifications')
+const reScan = require('../commands/re-scan')
 const UserInscriptions = require('../db/user-inscriptions')
 
 describe('re-scan', () => {
@@ -45,6 +45,7 @@ describe('re-scan', () => {
         },
       },
       reply: sinon.stub().resolves(),
+      deferReply: sinon.stub(),
     }
 
     await reScan.execute(interaction)
@@ -57,7 +58,7 @@ describe('re-scan', () => {
     expect(userInscriptionsDestroyStub.calledOnce).to.be.true
   })
 
-  it('should unset the btcAddress1 role accordingly as inscription location changed', async () => {
+  it('should unset the btcAddress1 role accordingly as inscription location changed and set the btcAddress2 role', async () => {
     // Mock axios.get
     const axiosGetStub = sinon.stub(axios, 'get').resolves({ data: { address: 'btcAddress2' } })
     const userInscriptionsDestroyStub = sinon.stub(UserInscriptions, 'destroy').resolves()
@@ -68,13 +69,13 @@ describe('re-scan', () => {
         {
           walletAddress: 'btcAddress1',
           userId: '123456789012345678',
-          inscriptionRef: 'inscriptionRef',
+          inscriptionRef: '123',
           role: 'role1',
         },
         {
           walletAddress: 'btcAddress2',
           userId: '123456789012345678',
-          inscriptionRef: 'inscriptionRef',
+          inscriptionRef: '456',
           role: 'role2',
         },
       ],
@@ -83,20 +84,38 @@ describe('re-scan', () => {
     // Mock CollectionVerifications.execute
     const collectionVerificationsStub = sinon.stub(CollectionVerifications, 'execute').resolves()
 
-    // Mock RolManger
+    // Mock RoleManager
     const removeRoleStub = sinon.stub(GuildMemberRoleManager.prototype, 'remove').resolves()
     const addRoleStub = sinon.stub(GuildMemberRoleManager.prototype, 'add').resolves()
 
     // Mock Interaction
+    const role1 = { name: 'role1', id: '123456789012345678' }
+    const role2 = { name: 'role2', id: '123456789012345679' }
+
     const interaction = {
       channelId: 'channelId',
       member: {
         guild: {
-          roles: { cache: { find: () => ({ id: '123456789012345678' }) } },
-          members: { cache: { find: () => ({ id: '123456789012345678', roles: GuildMemberRoleManager.prototype }) } },
+          roles: {
+            cache: {
+              find: (fn) => {
+                if (fn(role1)) {
+                  return role1
+                } else if (fn(role2)) {
+                  return role2
+                }
+              },
+            },
+          },
+          members: {
+            cache: {
+              find: () => ({ id: '123456789012345678', roles: GuildMemberRoleManager.prototype }),
+            },
+          },
         },
       },
       reply: sinon.stub().resolves(),
+      deferReply: sinon.stub(),
     }
 
     await reScan.execute(interaction)
@@ -105,11 +124,13 @@ describe('re-scan', () => {
     expect(sequelizeQueryStub.calledOnce).to.be.true
     expect(collectionVerificationsStub.calledOnce).to.be.true
     expect(removeRoleStub.calledOnce).to.be.true
+    expect(removeRoleStub.calledWithExactly(role1)).to.be.true
     expect(addRoleStub.calledOnce).to.be.true
+    expect(addRoleStub.calledWithExactly(role2)).to.be.true
     expect(userInscriptionsDestroyStub.calledOnce).to.be.true
   })
 
-  it('should return a warning embed when a SequelizeUniqueConstraintError is thrown', async () => {
+  it('should return an error embed when an unexpected error is thrown', async () => {
     // Mock axios.get
     const axiosGetStub = sinon.stub(axios, 'get').resolves({ data: { address: 'btcAddress2' } })
 
@@ -130,6 +151,7 @@ describe('re-scan', () => {
         },
       },
       reply: sinon.stub().resolves(),
+      deferReply: sinon.stub(),
     }
 
     await reScan.execute(interaction)
