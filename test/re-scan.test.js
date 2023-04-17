@@ -6,7 +6,6 @@ const sequelize = require('../db/db-connect')
 const { Collections } = require('../db/collections-inscriptions')
 const reScan = require('../commands/re-scan')
 const UserInscriptions = require('../db/user-inscriptions')
-const verifications = require('../utils/verifications')
 
 describe('re-scan', () => {
   afterEach(() => {
