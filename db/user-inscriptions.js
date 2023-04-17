@@ -28,10 +28,9 @@ const UserInscriptions = sequelize.define(
   }
 )
 
-Inscriptions.hasMany(UserInscriptions, { foreignKey: 'inscriptionId' })
+UserInscriptions.belongsTo(UserAddresses, { foreignKey: 'userAddressId' })
+UserAddresses.hasMany(UserInscriptions, { foreignKey: 'userAddressId' })
 UserInscriptions.belongsTo(Inscriptions, { foreignKey: 'inscriptionId' })
-
-UserAddresses.hasMany(UserInscriptions, { foreignKey: 'userId' })
-UserInscriptions.belongsTo(Inscriptions, { foreignKey: 'userId' })
+Inscriptions.hasMany(UserInscriptions, { foreignKey: 'inscriptionId' })
 
 module.exports = UserInscriptions

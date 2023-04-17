@@ -46,6 +46,7 @@ module.exports = {
 
       const [insInfos] = await sequelize.query(query, QueryTypes.SELECT)
 
+      const userRemoves = []
       const userRoles = []
 
       // We want to loop all of the inscriptions, find their current address and if it has moved we can remove the role
@@ -57,7 +58,15 @@ module.exports = {
           const role = interaction.member.guild.roles.cache.find((roleItem) => roleItem.name === insInfo.role)
           const user = interaction.member.guild.members.cache.find((user) => user.user.id === insInfo.userId)
           // Remove role
-          await user.roles.remove(role)
+          try {
+            // Add the user id to the userRemoves array if it doesn't already exist
+            if (!userRemoves.find((userRemove) => userRemove.userId === insInfo.userId)) {
+              userRemoves.push({ userId: insInfo.userId })
+            }
+            await user.roles.remove(role)
+          } catch (error) {
+            console.log('Error removing role ', insInfo.role, ' from user ', insInfo.userId)
+          }
           // Retire inscription
           await UserInscriptions.destroy({
             where: {
@@ -74,10 +83,17 @@ module.exports = {
 
       // We now need to re-scan the live inscriptions for each affected user to ensure we have the correct roles
       for (const userRole of userRoles) {
-        const role = interaction.member.guild.roles.cache.find((roleItem) => roleItem.name === userRole.role)
-        const user = interaction.member.guild.members.cache.find((user) => user.user.id === userRole.userId)
-        // Add role
-        await user.roles.add(role)
+        // Only if the user exists in userRemoves do we need to re-scan
+        if (userRemoves.find((userRemove) => userRemove.userId === userRole.userId)) {
+          const role = interaction.member.guild.roles.cache.find((roleItem) => roleItem.name === userRole.role)
+          const user = interaction.member.guild.members.cache.find((user) => user.user.id === userRole.userId)
+          // Add role
+          try {
+            await user.roles.add(role)
+          } catch (error) {
+            console.log('Error adding role ', userRole.role, ' to user ', userRole.userId)
+          }
+        }
       }
 
       const embed = await verifications(interaction)
