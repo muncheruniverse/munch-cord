@@ -3,19 +3,21 @@ const sinon = require('sinon')
 const axios = require('axios')
 const { GuildMemberRoleManager } = require('discord.js')
 const sequelize = require('../db/db-connect')
-const CollectionVerifications = require('../commands/collection-verifications')
+const { Collections } = require('../db/collections-inscriptions')
 const reScan = require('../commands/re-scan')
 const UserInscriptions = require('../db/user-inscriptions')
+const verifications = require('../utils/verifications')
 
 describe('re-scan', () => {
   afterEach(() => {
     sinon.restore()
   })
 
-  it('should successfully rescan inscriptions and call CollectionVerifications.execute', async () => {
+  it('should successfully rescan inscriptions and call verifications', async () => {
     // Mock axios.get
     const axiosGetStub = sinon.stub(axios, 'get').resolves({ data: { address: 'btcAddress2' } })
     const userInscriptionsDestroyStub = sinon.stub(UserInscriptions, 'destroy').resolves()
+    const collectionsFindAllStub = sinon.stub(Collections, 'findAll').resolves([])
 
     // Mock sequelize.query
     const sequelizeQueryStub = sinon.stub(sequelize, 'query').resolves([
@@ -29,9 +31,6 @@ describe('re-scan', () => {
       ],
     ])
 
-    // Mock CollectionVerifications.execute
-    const collectionVerificationsStub = sinon.stub(CollectionVerifications, 'execute').resolves()
-
     // Mock RolManger
     const guildMemberRoleManagerStub = sinon.stub(GuildMemberRoleManager.prototype, 'remove').resolves()
 
@@ -44,7 +43,7 @@ describe('re-scan', () => {
           members: { cache: { find: () => ({ id: '123456789012345678', roles: GuildMemberRoleManager.prototype }) } },
         },
       },
-      reply: sinon.stub().resolves(),
+      editReply: sinon.stub(),
       deferReply: sinon.stub(),
     }
 
@@ -52,9 +51,9 @@ describe('re-scan', () => {
 
     expect(axiosGetStub.calledOnce).to.be.true
     expect(sequelizeQueryStub.calledOnce).to.be.true
-    expect(collectionVerificationsStub.calledOnce).to.be.true
+    expect(collectionsFindAllStub.calledOnce).to.be.true
     expect(guildMemberRoleManagerStub.calledOnce).to.be.true
-    expect(interaction.reply.calledOnce).to.be.false
+    expect(interaction.editReply.calledOnce).to.be.true
     expect(userInscriptionsDestroyStub.calledOnce).to.be.true
   })
 
@@ -62,6 +61,7 @@ describe('re-scan', () => {
     // Mock axios.get
     const axiosGetStub = sinon.stub(axios, 'get').resolves({ data: { address: 'btcAddress2' } })
     const userInscriptionsDestroyStub = sinon.stub(UserInscriptions, 'destroy').resolves()
+    const collectionsFindAllStub = sinon.stub(Collections, 'findAll').resolves([])
 
     // Mock sequelize.query
     const sequelizeQueryStub = sinon.stub(sequelize, 'query').resolves([
@@ -80,9 +80,6 @@ describe('re-scan', () => {
         },
       ],
     ])
-
-    // Mock CollectionVerifications.execute
-    const collectionVerificationsStub = sinon.stub(CollectionVerifications, 'execute').resolves()
 
     // Mock RoleManager
     const removeRoleStub = sinon.stub(GuildMemberRoleManager.prototype, 'remove').resolves()
@@ -114,7 +111,7 @@ describe('re-scan', () => {
           },
         },
       },
-      reply: sinon.stub().resolves(),
+      editReply: sinon.stub(),
       deferReply: sinon.stub(),
     }
 
@@ -122,12 +119,13 @@ describe('re-scan', () => {
 
     expect(axiosGetStub.calledTwice).to.be.true
     expect(sequelizeQueryStub.calledOnce).to.be.true
-    expect(collectionVerificationsStub.calledOnce).to.be.true
+    expect(collectionsFindAllStub.calledOnce).to.be.true
     expect(removeRoleStub.calledOnce).to.be.true
     expect(removeRoleStub.calledWithExactly(role1)).to.be.true
     expect(addRoleStub.calledOnce).to.be.true
     expect(addRoleStub.calledWithExactly(role2)).to.be.true
     expect(userInscriptionsDestroyStub.calledOnce).to.be.true
+    expect(interaction.editReply.calledOnce).to.be.true
   })
 
   it('should return an error embed when an unexpected error is thrown', async () => {
