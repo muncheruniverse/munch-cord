@@ -13,8 +13,8 @@ const getOwnerAddress = async (inscriptionRef) => {
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName('re-scan')
-    .setDescription('Re scan all inscriptions')
+    .setName('collection-rescan')
+    .setDescription('Re-scan all verified inscriptions to check for ownership changes')
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild),
   async execute(interaction) {
     // This is a long query, we need to defer the reply so the user knows we are working on it

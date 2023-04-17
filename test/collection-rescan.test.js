@@ -4,7 +4,7 @@ const axios = require('axios')
 const { GuildMemberRoleManager } = require('discord.js')
 const sequelize = require('../db/db-connect')
 const { Collections } = require('../db/collections-inscriptions')
-const reScan = require('../commands/re-scan')
+const reScan = require('../commands/collection-rescan')
 const UserInscriptions = require('../db/user-inscriptions')
 
 describe('re-scan', () => {
