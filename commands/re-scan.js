@@ -3,7 +3,7 @@ const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js')
 const errorEmbed = require('../embed/error-embed')
 const sequelize = require('../db/db-connect')
 const { QueryTypes } = require('sequelize')
-const CollectionVerifications = require('./collection-verifications')
+const verifications = require('../utils/verifications')
 const UserInscriptions = require('../db/user-inscriptions')
 
 const getOwnerAddress = async (inscriptionRef) => {
@@ -80,10 +80,12 @@ module.exports = {
         await user.roles.add(role)
       }
 
-      return CollectionVerifications.execute(interaction)
+      const embed = await verifications(interaction)
+      return interaction.editReply({ embeds: [embed] })
     } catch (error) {
       const embed = errorEmbed(error)
-      return interaction.reply({ embeds: [embed], ephemeral: true })
+      if (interaction.replied) return interaction.editReply({ embeds: [embed], ephemeral: true })
+      else return interaction.reply({ embeds: [embed], ephemeral: true })
     }
   },
 }
