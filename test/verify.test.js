@@ -1,6 +1,6 @@
 const { expect } = require('chai')
 const sinon = require('sinon')
-const verify = require('./verify')
+const verify = require('../button/verify')
 const ManageChannels = require('../db/manage-channels')
 const BipMessages = require('../db/bip-messages')
 

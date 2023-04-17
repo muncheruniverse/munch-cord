@@ -1,7 +1,7 @@
 const { expect } = require('chai')
 const sinon = require('sinon')
 const rewire = require('rewire')
-const collectionMarketplace = rewire('./collection-marketplace')
+const collectionMarketplace = rewire('../commands/collection-marketplace')
 
 describe('collection-marketplace', () => {
   let ManageChannelsStub, CollectionsStub, InscriptionsStub, interactionStub, magicEdenStub

@@ -1,5 +1,5 @@
 const { EmbedBuilder } = require('discord.js')
-const axios = require('axios')
+const axios = require('axios').default
 
 const errorEmbed = (error) => {
   handleError(error)

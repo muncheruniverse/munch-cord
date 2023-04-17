@@ -1,7 +1,7 @@
 const { expect } = require('chai')
 const sinon = require('sinon')
 const rewire = require('rewire')
-const addCollection = rewire('./add-collection')
+const addCollection = rewire('../modal/add-collection')
 const errorEmbed = require('../embed/error-embed')
 
 describe('add-collections', () => {

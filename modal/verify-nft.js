@@ -1,4 +1,4 @@
-const axios = require('axios')
+const axios = require('axios').default
 const errorEmbed = require('../embed/error-embed')
 const successEmbed = require('../embed/success-embed')
 const warningEmbed = require('../embed/warning-embed')
@@ -183,14 +183,15 @@ module.exports = {
         // Valid error from the RPC node
         if (error.response && error.response.status === 500) {
           const warning = warningEmbed('Verify Problem', "Your BIP-322 signature couldn't be verified.")
-          return await interaction.reply({ embeds: [warning], ephemeral: true })
+          return await interaction.editReply({ embeds: [warning], ephemeral: true })
         }
         const embed = errorEmbed(error)
-        return interaction.reply({ embeds: [embed], ephemeral: true })
+        return interaction.editReply({ embeds: [embed], ephemeral: true })
       }
     } catch (error) {
       const embed = errorEmbed(error)
-      return interaction.reply({ embeds: [embed], ephemeral: true })
+      if (interaction.replied) return interaction.editReply({ embeds: [embed], ephemeral: true })
+      else return interaction.reply({ embeds: [embed], ephemeral: true })
     }
   },
 }
