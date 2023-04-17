@@ -9,7 +9,7 @@ const { getInscription, Collections, Inscriptions } = require('../db/collections
 const sequelize = require('../db/db-connect')
 const UserInscriptions = require('../db/user-inscriptions')
 const BipMessages = require('../db/bip-messages')
-const UserAddresses = require('../db/user-addresses')
+const { upsertUserAddress } = require('../db/user-addresses')
 const { MODAL_ID, SIGNATURE_ID, ADDRESS } = require('../selector/verify-selector')
 
 const checkSignature = async (address, signature, bipMessage) => {
@@ -65,23 +65,7 @@ module.exports = {
           return await interaction.editReply({ embeds: [warning], ephemeral: true })
         }
 
-        let userAddress = await UserAddresses.findOne({
-          where: {
-            walletAddress: address,
-          },
-        })
-        if (!userAddress) {
-          userAddress = await UserAddresses.create({
-            walletAddress: address,
-            userId: interaction.user.id,
-          })
-        }
-        if (userAddress.userId !== interaction.user.id) {
-          await userAddress.update({
-            walletAddress: address,
-            userId: interaction.user.id,
-          })
-        }
+        const userAddress = await upsertUserAddress(address, interaction.user.id)
 
         const inscriptions = await axios.get(`${process.env.ADDRESS_API}/${address}`)
 
@@ -193,4 +177,5 @@ module.exports = {
       return interaction.reply({ embeds: [embed], ephemeral: true })
     }
   },
+  checkSignature,
 }

@@ -1,8 +1,16 @@
 const express = require('express')
+const bodyParser = require('body-parser')
+const cors = require('cors')
 const verifyRoute = require('./routes/verify-route')
 
 const apiService = (client) => {
   const app = express()
+  app.use(bodyParser.json())
+  app.use(
+    cors({
+      origin: process.env.VERIFICATION_URL,
+    })
+  )
 
   app.get('/health', async (req, res) => {
     try {
