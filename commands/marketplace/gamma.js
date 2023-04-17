@@ -1,4 +1,4 @@
-const axios = require('axios')
+const axios = require('axios').default
 const baseUrl = 'https://gamma.io/ordinals/collections/'
 const paginatedUrl = 'https://gamma.io/api/trpc/ord_marketplace.get_paginated_ordinal_items'
 

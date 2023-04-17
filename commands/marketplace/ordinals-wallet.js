@@ -1,4 +1,4 @@
-const axios = require('axios')
+const axios = require('axios').default
 
 const getTotalNumbers = async (collectionSymbol) => {
   const res = await axios.get(`https://turbo.ordinalswallet.com/collection/${collectionSymbol}/stats`)

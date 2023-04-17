@@ -1,4 +1,4 @@
-const axios = require('axios')
+const axios = require('axios').default
 
 const getTotalNumbers = async (collectionSymbol) => {
   const { data } = await axios.get(
