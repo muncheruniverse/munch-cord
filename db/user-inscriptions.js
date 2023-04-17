@@ -33,7 +33,4 @@ UserAddresses.hasMany(UserInscriptions, { foreignKey: 'userAddressId' })
 UserInscriptions.belongsTo(Inscriptions, { foreignKey: 'inscriptionId' })
 Inscriptions.hasMany(UserInscriptions, { foreignKey: 'inscriptionId' })
 
-UserAddresses.hasMany(UserInscriptions, { foreignKey: 'userId' })
-UserInscriptions.belongsTo(Inscriptions, { foreignKey: 'userId' })
-
 module.exports = UserInscriptions
