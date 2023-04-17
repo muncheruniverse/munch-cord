@@ -1,5 +1,5 @@
 const { EmbedBuilder } = require('discord.js')
-const axios = require('axios')
+const axios = require('axios').default
 
 const errorEmbed = (error) => {
   handleError(error)
@@ -53,7 +53,7 @@ function handleError(error) {
     stack: error.stack,
   }
 
-  console.error('Error:', log)
+  if (process.env.NODE_ENV !== 'test') console.error('Error:', log)
   if (process.env.AXIOM_TOKEN && process.env.AXIOM_DATASET && typeof error.message !== 'undefined') {
     sendLogToAxiom(log)
   }

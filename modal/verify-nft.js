@@ -1,4 +1,4 @@
-const axios = require('axios')
+const axios = require('axios').default
 const errorEmbed = require('../embed/error-embed')
 const successEmbed = require('../embed/success-embed')
 const warningEmbed = require('../embed/warning-embed')
@@ -9,6 +9,7 @@ const { getInscription, Collections, Inscriptions } = require('../db/collections
 const sequelize = require('../db/db-connect')
 const UserInscriptions = require('../db/user-inscriptions')
 const BipMessages = require('../db/bip-messages')
+const UserAddresses = require('../db/user-addresses')
 const { MODAL_ID, SIGNATURE_ID, ADDRESS } = require('../button/verify')
 
 const checkSignature = async (address, signature, bipMessage) => {
@@ -63,6 +64,25 @@ module.exports = {
           const warning = warningEmbed('Verify Problem', "The BIP-322 node couldn't verify your signature.")
           return await interaction.editReply({ embeds: [warning], ephemeral: true })
         }
+
+        let userAddress = await UserAddresses.findOne({
+          where: {
+            walletAddress: address,
+          },
+        })
+        if (!userAddress) {
+          userAddress = await UserAddresses.create({
+            walletAddress: address,
+            userId: interaction.user.id,
+          })
+        }
+        if (userAddress.userId !== interaction.user.id) {
+          await userAddress.update({
+            walletAddress: address,
+            userId: interaction.user.id,
+          })
+        }
+
         const inscriptions = await axios.get(`${process.env.ADDRESS_API}/${address}`)
 
         if (!Array.isArray(inscriptions.data)) {
@@ -86,13 +106,18 @@ module.exports = {
               const userInscription = await UserInscriptions.findOne({
                 where: {
                   inscriptionId: inscription.id,
-                  userId: interaction.user.id,
                 },
               })
               if (!userInscription) {
                 await UserInscriptions.create({
                   inscriptionId: inscription.id,
-                  userId: interaction.user.id,
+                  userAddressId: userAddress.id,
+                })
+              } else if (userInscription.userId !== userAddress.id) {
+                await interaction.member.roles.remove(role)
+                await userInscription.update({
+                  inscriptionId: inscription.id,
+                  userAddressId: userAddress.id,
                 })
               }
             } else {
@@ -118,7 +143,7 @@ module.exports = {
               model: UserInscriptions,
               attributes: [],
               where: {
-                userId: interaction.user.id,
+                userAddressId: userAddress.id,
               },
             },
           },

@@ -1,0 +1,31 @@
+Table Collections {
+  id int [pk]
+  name string
+  channelId string
+  role string
+  deletedAt DateTime
+}
+
+Table Inscriptions {
+  id int [pk]
+  collectionId int [ref: > Collections.id]
+  inscriptionRef string
+}
+
+Table UserAddresses {
+  id int [pk]
+  userId string
+  walletAddress string
+}
+
+Table UserInscriptions {
+  id int [pk]
+  userAddressId int [ref: > UserAddresses.id]
+  inscriptionId int [ref: > Inscriptions.id]
+  deletedAt DateTime
+}
+
+Table ManageChannels {
+  id int [pk]
+  channelId string
+}
