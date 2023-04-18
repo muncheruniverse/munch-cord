@@ -41,44 +41,43 @@ const checkInscriptions = async (interaction, userAddress) => {
   const addedRoles = []
   const notFoundRoles = []
 
-  const ids = inscriptions.data.map((obj) => obj.id)
+  const inscriptionRefs = inscriptions.data.map((obj) => obj.id)
   const inscriptionsThatExist = await Inscriptions.findAll({
     where: {
-      id: ids,
+      inscriptionRef: inscriptionRefs,
+    },
+    include: {
+      model: Collections,
+      attributes: ['role'],
     },
   })
 
-  for (const insInfo of inscriptions.data) {
-    const inscription = inscriptionsThatExist.find((ins) => ins.id === insInfo.id)
-    if (inscription) {
-      const role = interaction.member.guild.roles.cache.find(
-        (roleItem) => roleItem.name === inscription.Collection.role
-      )
+  for (const inscription of inscriptionsThatExist) {
+    const role = interaction.member.guild.roles.cache.find((roleItem) => roleItem.name === inscription.Collection.role)
 
-      if (role) {
-        await interaction.member.roles.add(role)
-        addedRoles.push(roleEmbed(interaction, role.name))
-        // Everything has been allocated, lets upsert into the UserInscriptions table
-        const userInscription = await UserInscriptions.findOne({
-          where: {
-            inscriptionId: inscription.id,
-          },
+    if (role) {
+      await interaction.member.roles.add(role)
+      addedRoles.push(roleEmbed(interaction, role.name))
+      // Everything has been allocated, lets upsert into the UserInscriptions table
+      const userInscription = await UserInscriptions.findOne({
+        where: {
+          inscriptionId: inscription.id,
+        },
+      })
+      if (!userInscription) {
+        await UserInscriptions.create({
+          inscriptionId: inscription.id,
+          userAddressId: userAddress.id,
         })
-        if (!userInscription) {
-          await UserInscriptions.create({
-            inscriptionId: inscription.id,
-            userAddressId: userAddress.id,
-          })
-        } else if (userInscription.userAddressId !== userAddress.id) {
-          await interaction.member.roles.remove(role)
-          await userInscription.update({
-            inscriptionId: inscription.id,
-            userAddressId: userAddress.id,
-          })
-        }
-      } else {
-        notFoundRoles.push(role.name)
+      } else if (userInscription.userAddressId !== userAddress.id) {
+        await interaction.member.roles.remove(role)
+        await userInscription.update({
+          inscriptionId: inscription.id,
+          userAddressId: userAddress.id,
+        })
       }
+    } else {
+      notFoundRoles.push(role.name)
     }
   }
 
