@@ -134,3 +134,5 @@ client.once(Events.ClientReady, (client) => {
 
 // Log in to Discord with the bot token specified in the .env file
 client.login(process.env.TOKEN)
+
+module.exports = client

@@ -99,13 +99,14 @@ module.exports = {
 
         await interaction.showModal(modal)
       } else if (selected === ADD_NEW_WALLET_ADDRESS) {
-        const generatedToken = generateAccessToken({ userId: interaction.user.id })
+        const generatedToken = generateAccessToken({ userId: interaction.user.id, channelId: interaction.channelId })
         const embed = infoEmbed('Connect Wallet', 'Follow the link to our web app to add your wallet.')
 
         const connectBtn = new ButtonBuilder()
           .setLabel('Connect')
           .setStyle(ButtonStyle.Link)
           .setURL(`${process.env.VERIFICATION_URL}?auth=${generatedToken}&message=${message})`)
+        console.log(`${process.env.VERIFICATION_URL}?auth=${generatedToken}&message=${message})`)
         const connectActionRow = new ActionRowBuilder().addComponents(connectBtn)
 
         return interaction.update({ embeds: [embed], components: [connectActionRow], ephemeral: true })
