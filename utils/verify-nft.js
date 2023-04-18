@@ -4,7 +4,7 @@ const warningEmbed = require('../embed/warning-embed')
 const roleEmbed = require('../embed/role-embed')
 const commaNumber = require('comma-number')
 const { Op } = require('sequelize')
-const { getInscription, Collections, Inscriptions } = require('../db/collections-inscriptions')
+const { Collections, Inscriptions } = require('../db/collections-inscriptions')
 const sequelize = require('../db/db-connect')
 const UserInscriptions = require('../db/user-inscriptions')
 
@@ -37,11 +37,19 @@ const checkInscriptions = async (interaction, userAddress) => {
     const warning = warningEmbed('Verification Problem', 'There are no inscriptions in your wallet.')
     return await interaction.editReply({ embeds: [warning], ephemeral: true })
   }
+
   const addedRoles = []
   const notFoundRoles = []
 
+  const ids = inscriptions.data.map((obj) => obj.id)
+  const inscriptionsThatExist = await Inscriptions.findAll({
+    where: {
+      id: ids,
+    },
+  })
+
   for (const insInfo of inscriptions.data) {
-    const inscription = await getInscription(insInfo.id, interaction.channelId)
+    const inscription = inscriptionsThatExist.find((ins) => ins.id === insInfo.id)
     if (inscription) {
       const role = interaction.member.guild.roles.cache.find(
         (roleItem) => roleItem.name === inscription.Collection.role
