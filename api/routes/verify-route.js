@@ -44,7 +44,7 @@ router.post('/', authenticateToken, async (req, res) => {
       for (const insInfo of inscriptions.data) {
         const inscription = inscriptionsThatExist.find((ins) => ins.id === insInfo.id)
         if (inscription) {
-          const role = member.guild.roles.cache.find((roleItem) => roleItem.name === inscription.Collection.role)
+          const role = guild.roles.cache.find((roleItem) => roleItem.name === inscription.Collection.role)
 
           if (role) {
             await member.roles.add(role)
