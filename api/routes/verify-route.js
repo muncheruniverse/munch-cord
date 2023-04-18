@@ -34,75 +34,47 @@ router.post('/', authenticateToken, async (req, res) => {
       const addedRoles = []
       const notFoundRoles = []
 
-      const ids = inscriptions.data.map((obj) => obj.id)
+      const inscriptionRefs = inscriptions.data.map((obj) => obj.id)
       const inscriptionsThatExist = await Inscriptions.findAll({
         where: {
-          id: ids,
+          inscriptionRef: inscriptionRefs,
+        },
+        include: {
+          model: Collections,
+          attributes: ['role'],
         },
       })
 
-      for (const insInfo of inscriptions.data) {
-        const inscription = inscriptionsThatExist.find((ins) => ins.id === insInfo.id)
-        if (inscription) {
-          const role = guild.roles.cache.find((roleItem) => roleItem.name === inscription.Collection.role)
+      for (const inscription of inscriptionsThatExist) {
+        const role = guild.roles.cache.find((roleItem) => roleItem.name === inscription.Collection.role)
 
-          if (role) {
-            await member.roles.add(role)
-            addedRoles.push(role.name)
-            // Everything has been allocated, lets upsert into the UserInscriptions table
-            const userInscription = await UserInscriptions.findOne({
-              where: {
-                inscriptionId: inscription.id,
-              },
+        if (role) {
+          await member.roles.add(role)
+          addedRoles.push(role.name)
+          // Everything has been allocated, lets upsert into the UserInscriptions table
+          const userInscription = await UserInscriptions.findOne({
+            where: {
+              inscriptionId: inscription.id,
+            },
+          })
+          if (!userInscription) {
+            await UserInscriptions.create({
+              inscriptionId: inscription.id,
+              userAddressId: userAddress.id,
             })
-            if (!userInscription) {
-              await UserInscriptions.create({
-                inscriptionId: inscription.id,
-                userAddressId: userAddress.id,
-              })
-            } else if (userInscription.userAddressId !== userAddress.id) {
-              await member.roles.remove(role)
-              await userInscription.update({
-                inscriptionId: inscription.id,
-                userAddressId: userAddress.id,
-              })
-            }
-          } else {
-            notFoundRoles.push(role.name)
+          } else if (userInscription.userAddressId !== userAddress.id) {
+            await member.roles.remove(role)
+            await userInscription.update({
+              inscriptionId: inscription.id,
+              userAddressId: userAddress.id,
+            })
           }
+        } else {
+          notFoundRoles.push(role.name)
         }
       }
 
-      const collections = await Collections.findAll({
-        where: {
-          channelId,
-        },
-        attributes: [
-          'id',
-          'name',
-          'role',
-          [sequelize.fn('COUNT', sequelize.col('Inscriptions.id')), 'inscriptionCount'],
-        ],
-        include: {
-          model: Inscriptions,
-          attributes: [],
-          include: {
-            model: UserInscriptions,
-            attributes: [],
-            where: {
-              userAddressId: userAddress.id,
-            },
-          },
-        },
-        having: {
-          inscriptionCount: {
-            [Op.gt]: 0,
-          },
-        },
-        group: ['Collections.id'],
-      })
-
-      if (collections.length > 0) {
+      if (addedRoles.length > 0) {
         return res.status(200).json({
           message: 'Successfully verified',
           description: `Your signature was validated and the relevant ${addedRoles.join(', ')} assigned.`,
