@@ -20,7 +20,7 @@ const generateAccessToken = (userId) => {
 const getMessage = async (interaction) => {
   let message = ''
 
-  if (process.env.BIP_MESSAGE) message = process.env.BIP_MESSAGE
+  if (process.env.BIP_MESSAGE) message = encodeURIComponent(process.env.BIP_MESSAGE)
   else {
     message = 'munch-' + randomWords({ exactly: 3, join: '-' })
   }
