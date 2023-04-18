@@ -1,4 +1,11 @@
-const { ModalBuilder, TextInputStyle, TextInputBuilder, ActionRowBuilder } = require('discord.js')
+const {
+  ModalBuilder,
+  TextInputStyle,
+  TextInputBuilder,
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+} = require('discord.js')
 const jwt = require('jsonwebtoken')
 const randomWords = require('random-words')
 const BipMessages = require('../db/bip-messages')
@@ -93,11 +100,15 @@ module.exports = {
         await interaction.showModal(modal)
       } else if (selected === ADD_NEW_WALLET_ADDRESS) {
         const generatedToken = generateAccessToken({ userId: interaction.user.id })
-        const embed = infoEmbed(
-          'Please open this link to verify',
-          `Click [Here](${process.env.VERIFICATION_URL}?auth=${generatedToken}&message=${message})`
-        )
-        return interaction.update({ embeds: [embed], components: [], ephemeral: true })
+        const embed = infoEmbed('Connect Wallet', 'Follow the link to our web app to add your wallet.')
+
+        const connectBtn = new ButtonBuilder()
+          .setLabel('Connect')
+          .setStyle(ButtonStyle.Link)
+          .setURL(`${process.env.VERIFICATION_URL}?auth=${generatedToken}&message=${message})`)
+        const connectActionRow = new ActionRowBuilder().addComponents(connectBtn)
+
+        return interaction.update({ embeds: [embed], components: [connectActionRow], ephemeral: true })
       } else {
         await interaction.deferReply({
           ephemeral: true,
