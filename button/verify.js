@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, ActionRowBuilder, StringSelectMenuBuilder, PermissionFlagsBits } = require('discord.js')
 const errorEmbed = require('../embed/error-embed')
-const successEmbed = require('../embed/success-embed')
+const infoEmbed = require('../embed/info-embed')
 const ManageChannels = require('../db/manage-channels')
 const { UserAddresses } = require('../db/user-addresses')
 const { COMMON_ERROR } = require('../embed/error-messages')
@@ -34,11 +34,11 @@ module.exports = {
         const row = new ActionRowBuilder().addComponents(
           new StringSelectMenuBuilder()
             .setCustomId(VERIFY_SELECTOR)
-            .setPlaceholder('Select a action')
+            .setPlaceholder('Choose an option')
             .addOptions(selectList)
         )
 
-        const embed = successEmbed('Verify Your Ownership', 'Please select an action')
+        const embed = infoEmbed('Verify Your Ownership', 'Select your wallet address or add a new one.')
 
         return interaction.reply({
           embeds: [embed],
