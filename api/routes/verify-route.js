@@ -1,11 +1,11 @@
-const axios = require('axios')
+const axios = require('axios').default
 const express = require('express')
 const { upsertUserAddress } = require('../../db/user-addresses')
 const { checkSignature } = require('../../utils/verify-nft')
 const authenticateToken = require('../middleware/authenticateToken')
 const { Collections, Inscriptions } = require('../../db/collections-inscriptions')
 const UserInscriptions = require('../../db/user-inscriptions')
-
+const client = require('../../index')
 const router = express.Router()
 
 router.post('/', authenticateToken, async (req, res) => {
@@ -15,14 +15,14 @@ router.post('/', authenticateToken, async (req, res) => {
 
     const verificationResult = await checkSignature(address, signature, message)
     if (verificationResult === true) {
-      const client = require('../../index')
-      const userAddress = await upsertUserAddress(address, userId)
+      const userAddress = await upsertUserAddress(process.env.TEST_ADDRESS ?? address, userId)
       const inscriptions = await axios.get(`${process.env.ADDRESS_API}/${userAddress.walletAddress}`)
+      const abbreviatedAddress = `${userAddress.walletAddress.slice(0, 6)}...${userAddress.walletAddress.slice(-6)}`
 
       if (!Array.isArray(inscriptions.data)) {
         return res.status(200).json({
-          message: 'Verification Problem',
-          description: 'There are no inscriptions in your wallet.',
+          message: 'Wallet Linked',
+          description: `You successfully linked your empty wallet address ${abbreviatedAddress}.`,
           type: 'Warning',
         })
       }
@@ -75,17 +75,24 @@ router.post('/', authenticateToken, async (req, res) => {
       }
 
       if (addedRoles.length > 0) {
+        const formattedRoles = addedRoles.map((role) => `@${role}`)
+
+        const concatenatedRoles =
+          formattedRoles.length > 1
+            ? `${formattedRoles.slice(0, -1).join(', ')},${formattedRoles.slice(-2)}`
+            : formattedRoles[0]
+
         return res.status(200).json({
-          message: 'Successfully verified',
-          description: `Your signature was validated and the relevant ${addedRoles.join(', ')} assigned.`,
+          message: 'Successfully Linked and Verified',
+          description: `You successfully linked your wallet address ${abbreviatedAddress} and ${concatenatedRoles} assigned.`,
           type: 'Success',
         })
       }
 
       // Catch where no collections were matched
       return res.status(200).json({
-        message: 'Verify Problem',
-        description: "There's no matching collections for the inscriptions in your wallet.",
+        message: 'Wallet Linked',
+        description: `You successfully linked your wallet address ${abbreviatedAddress} but no matching collections were found on the Discord server.`,
         type: 'Warning',
       })
     }
