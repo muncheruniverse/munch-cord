@@ -78,11 +78,11 @@ router.post('/', authenticateToken, async (req, res) => {
         const formattedRoles = addedRoles.map((role) => `@${role}`)
         let description
         if (formattedRoles.length > 1) {
-          description = `You successfully linked wallet address ${abbreviatedAddress} and the ${formattedRoles
+          description = `You linked wallet address ${abbreviatedAddress} and the ${formattedRoles
             .slice(0, -1)
             .join(', ')},${formattedRoles.slice(-2)} roles were assigned to your Discord account.`
         } else {
-          description = `You successfully linked wallet address ${abbreviatedAddress} and the ${formattedRoles[0]} role was assigned to your Discord account.`
+          description = `You linked wallet address ${abbreviatedAddress} and the ${formattedRoles[0]} role was assigned to your Discord account.`
         }
 
         return res.status(200).json({
@@ -95,7 +95,7 @@ router.post('/', authenticateToken, async (req, res) => {
       // Catch where no collections were matched
       return res.status(200).json({
         message: 'Wallet Linked',
-        description: `You successfully linked your wallet address ${abbreviatedAddress} but no matching collections were found on the Discord server.`,
+        description: `You successfully linked your wallet address ${abbreviatedAddress} but no matching collections were found for your inscriptions.`,
         type: 'Warning',
       })
     }
