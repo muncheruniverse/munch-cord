@@ -31,7 +31,8 @@ const checkSignature = async (address, signature, bipMessage) => {
 }
 
 const checkInscriptions = async (interaction, userAddress) => {
-  const inscriptions = await axios.get(`${process.env.ADDRESS_API}/${userAddress.walletAddress}`)
+  const address = process.env.TEST_ADDRESS ?? userAddress.walletAddress
+  const inscriptions = await axios.get(`${process.env.ADDRESS_API}/${address}`)
 
   if (!Array.isArray(inscriptions.data)) {
     const warning = warningEmbed('Verification Problem', 'There are no inscriptions in your wallet.')

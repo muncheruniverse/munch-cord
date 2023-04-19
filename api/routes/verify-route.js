@@ -27,7 +27,6 @@ router.post('/', authenticateToken, async (req, res) => {
       }
 
       const client = require('../../index')
-      console.log(userId, channelId)
       const channel = client.channels.cache.get(channelId)
       const guild = channel.guild
       const member = await guild.members.fetch(userId)
