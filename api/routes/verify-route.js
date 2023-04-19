@@ -5,7 +5,6 @@ const { checkSignature } = require('../../utils/verify-nft')
 const authenticateToken = require('../middleware/authenticateToken')
 const { Collections, Inscriptions } = require('../../db/collections-inscriptions')
 const UserInscriptions = require('../../db/user-inscriptions')
-const client = require('../../index')
 const router = express.Router()
 
 router.post('/', authenticateToken, async (req, res) => {
@@ -27,6 +26,8 @@ router.post('/', authenticateToken, async (req, res) => {
         })
       }
 
+      const client = require('../../index')
+      console.log(userId, channelId)
       const channel = client.channels.cache.get(channelId)
       const guild = channel.guild
       const member = await guild.members.fetch(userId)
@@ -76,15 +77,18 @@ router.post('/', authenticateToken, async (req, res) => {
 
       if (addedRoles.length > 0) {
         const formattedRoles = addedRoles.map((role) => `@${role}`)
-
-        const concatenatedRoles =
-          formattedRoles.length > 1
-            ? `${formattedRoles.slice(0, -1).join(', ')},${formattedRoles.slice(-2)}`
-            : formattedRoles[0]
+        let description
+        if (formattedRoles.length > 1) {
+          description = `You successfully linked wallet address ${abbreviatedAddress} and the ${formattedRoles
+            .slice(0, -1)
+            .join(', ')},${formattedRoles.slice(-2)} roles were assigned to your Discord account.`
+        } else {
+          description = `You successfully linked wallet address ${abbreviatedAddress} and the ${formattedRoles[0]} role was assigned to your Discord account.`
+        }
 
         return res.status(200).json({
           message: 'Successfully Linked and Verified',
-          description: `You successfully linked your wallet address ${abbreviatedAddress} and ${concatenatedRoles} assigned.`,
+          description,
           type: 'Success',
         })
       }
