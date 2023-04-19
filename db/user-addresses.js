@@ -11,13 +11,13 @@ const UserAddresses = sequelize.define('UserAddresses', {
     allowNull: false,
   },
   provider: {
-    type: DataTypes.ENUM('Unisat', 'Hiro', 'Xverse', ''),
-    allowNull: false,
-    defaultValue: '',
+    type: DataTypes.ENUM('Unisat', 'Hiro', 'Xverse'),
+    allowNull: true,
+    defaultValue: null,
   },
 })
 
-const upsertUserAddress = async (address, userId, provider = '') => {
+const upsertUserAddress = async (address, userId, provider = null) => {
   let userAddress = await UserAddresses.findOne({
     where: {
       walletAddress: address,
