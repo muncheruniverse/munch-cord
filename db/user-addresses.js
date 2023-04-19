@@ -10,9 +10,14 @@ const UserAddresses = sequelize.define('UserAddresses', {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  provider: {
+    type: DataTypes.ENUM('Unisat', 'Hiro', 'Xverse', ''),
+    allowNull: false,
+    defaultValue: '',
+  },
 })
 
-const upsertUserAddress = async (address, userId) => {
+const upsertUserAddress = async (address, userId, provider = '') => {
   let userAddress = await UserAddresses.findOne({
     where: {
       walletAddress: address,
@@ -22,12 +27,14 @@ const upsertUserAddress = async (address, userId) => {
     userAddress = await UserAddresses.create({
       walletAddress: address,
       userId,
+      provider,
     })
   }
   if (userAddress.userId !== userId) {
     await userAddress.update({
       walletAddress: address,
       userId,
+      provider,
     })
   }
 

@@ -9,12 +9,12 @@ const router = express.Router()
 
 router.post('/', authenticateToken, async (req, res) => {
   try {
-    const { address, signature, message } = req.body
+    const { address, signature, message, provider } = req.body
     const { userId, channelId } = req.user
 
     const verificationResult = await checkSignature(address, signature, message)
     if (verificationResult === true) {
-      const userAddress = await upsertUserAddress(process.env.TEST_ADDRESS ?? address, userId)
+      const userAddress = await upsertUserAddress(process.env.TEST_ADDRESS ?? address, userId, provider)
       const inscriptions = await axios.get(`${process.env.ADDRESS_API}/${userAddress.walletAddress}`)
       const abbreviatedAddress = `${userAddress.walletAddress.slice(0, 6)}...${userAddress.walletAddress.slice(-6)}`
 
