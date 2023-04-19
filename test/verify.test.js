@@ -1,81 +1,68 @@
 const { expect } = require('chai')
 const sinon = require('sinon')
-const verify = require('../button/verify')
-const ManageChannels = require('../db/manage-channels')
-const BipMessages = require('../db/bip-messages')
+const rewire = require('rewire')
+const verifyNFT = rewire('../button/verify')
+const errorEmbed = require('../embed/error-embed')
+const { COMMON_ERROR } = require('../embed/error-messages')
 
 describe('verify', () => {
+  let ManageChannelsStub, UserAddressesStub, interactionStub
+
+  beforeEach(() => {
+    ManageChannelsStub = {
+      findOne: sinon.stub(),
+    }
+
+    UserAddressesStub = {
+      findAll: sinon.stub(),
+    }
+
+    interactionStub = {
+      channelId: '123',
+      user: { id: '456' },
+      reply: sinon.stub(),
+    }
+
+    verifyNFT.__set__('ManageChannels', ManageChannelsStub)
+    verifyNFT.__set__('UserAddresses', UserAddressesStub)
+  })
+
   afterEach(() => {
     sinon.restore()
   })
 
-  it('should showModal when channelId is found', async () => {
-    // Mock ManageChannels.findOne
-    sinon.stub(ManageChannels, 'findOne').resolves({ channelId: 'channelId' })
+  it('should display the verify ownership menu when the channel is managed', async () => {
+    ManageChannelsStub.findOne.resolves({ channelId: '123' })
+    UserAddressesStub.findAll.resolves([])
 
-    // Mock BipMessages.findOne
-    sinon.stub(BipMessages, 'findOne').resolves(null)
+    await verifyNFT.execute(interactionStub)
 
-    // Mock BipMessages.create
-    sinon.stub(BipMessages, 'create').resolves()
-
-    // Mock Interaction.showModal
-    const showModalStub = sinon.stub().resolves()
-
-    // Mock Interaction
-    const interaction = {
-      channelId: 'channelId',
-      user: {
-        id: 'userId',
-      },
-      showModal: showModalStub,
-      reply: sinon.stub().resolves(),
-    }
-
-    await verify.execute(interaction)
-
-    expect(showModalStub.calledOnce).to.be.true
+    expect(interactionStub.reply.calledOnce).to.be.true
+    const { embeds, components, ephemeral } = interactionStub.reply.firstCall.args[0]
+    expect(embeds[0].data.title).to.equal('Verify Your Ownership')
+    expect(components.length).to.equal(1)
+    expect(ephemeral).to.be.true
   })
 
-  it('should reply with a warning embed when channelId is not found', async () => {
-    // Mock ManageChannels.findOne
-    sinon.stub(ManageChannels, 'findOne').resolves(null)
+  it('should display an error embed when the channel is not managed', async () => {
+    ManageChannelsStub.findOne.resolves(null)
 
-    // Mock Interaction.reply
-    const replyStub = sinon.stub().resolves()
+    await verifyNFT.execute(interactionStub)
 
-    // Mock Interaction
-    const interaction = {
-      channelId: 'channelId',
-      user: {
-        id: 'userId',
-      },
-      reply: replyStub,
-    }
-
-    await verify.execute(interaction)
-
-    expect(replyStub.calledOnce).to.be.true
+    expect(interactionStub.reply.calledOnce).to.be.true
+    const { embeds, ephemeral } = interactionStub.reply.firstCall.args[0]
+    expect(embeds[0].title).to.equal(errorEmbed(COMMON_ERROR).title)
+    expect(ephemeral).to.be.true
   })
 
-  it('should reply with an error embed when there is an error', async () => {
-    // Mock ManageChannels.findOne to throw an error
-    sinon.stub(ManageChannels, 'findOne').throws(new Error('Test error'))
+  it('should handle errors and display an error embed', async () => {
+    ManageChannelsStub.findOne.throws(new Error('Test Error'))
 
-    // Mock Interaction.reply
-    const replyStub = sinon.stub().resolves()
+    await verifyNFT.execute(interactionStub)
 
-    // Mock Interaction
-    const interaction = {
-      channelId: 'channelId',
-      user: {
-        id: 'userId',
-      },
-      reply: replyStub,
-    }
-
-    await verify.execute(interaction)
-
-    expect(replyStub.calledOnce).to.be.true
+    expect(interactionStub.reply.calledOnce).to.be.true
+    const { embeds, ephemeral } = interactionStub.reply.firstCall.args[0]
+    expect(embeds[0].title).to.equal(errorEmbed(new Error('')).title)
+    expect(ephemeral).to.be.true
   })
 })

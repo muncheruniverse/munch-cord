@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, ActionRowBuilder, StringSelectMenuBuilder, PermissionFlagsBits } = require('discord.js')
+const { ActionRowBuilder, StringSelectMenuBuilder } = require('discord.js')
 const errorEmbed = require('../embed/error-embed')
 const infoEmbed = require('../embed/info-embed')
 const ManageChannels = require('../db/manage-channels')
@@ -10,11 +10,6 @@ const MANUAL_VERIFICATION = 'manualVerification'
 const ADD_NEW_WALLET_ADDRESS = 'addNewWalletAddress'
 
 module.exports = {
-  data: new SlashCommandBuilder()
-    .setName('collection-remove')
-    .setDescription('Remove a collection from the server')
-    .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild),
-
   async execute(interaction) {
     try {
       const channelId = await ManageChannels.findOne({
