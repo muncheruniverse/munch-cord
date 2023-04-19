@@ -5,12 +5,28 @@ const { checkSignature } = require('../../utils/verify-nft')
 const authenticateToken = require('../middleware/authenticateToken')
 const { Collections, Inscriptions } = require('../../db/collections-inscriptions')
 const UserInscriptions = require('../../db/user-inscriptions')
+const BipMessages = require('../../db/bip-messages')
 const router = express.Router()
 
 router.post('/', authenticateToken, async (req, res) => {
   try {
     const { address, signature, message, provider } = req.body
     const { userId, channelId } = req.user
+
+    const bipMessage = await BipMessages.findOne({
+      where: {
+        channelId,
+        userId,
+      },
+    })
+
+    if (bipMessage.message.localeCompare(message)) {
+      return res.status(200).json({
+        message: 'Can not match message',
+        description: 'You are using different message',
+        type: 'Warning',
+      })
+    }
 
     const verificationResult = await checkSignature(address, signature, message)
     if (verificationResult === true) {

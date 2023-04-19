@@ -27,7 +27,7 @@ const generateAccessToken = (userId) => {
 const getMessage = async (interaction) => {
   let message = ''
 
-  if (process.env.BIP_MESSAGE) message = encodeURIComponent(process.env.BIP_MESSAGE)
+  if (process.env.BIP_MESSAGE) message = process.env.BIP_MESSAGE
   else {
     message = 'munch-' + randomWords({ exactly: 3, join: '-' })
   }
@@ -105,7 +105,7 @@ module.exports = {
         const connectBtn = new ButtonBuilder()
           .setLabel('Connect')
           .setStyle(ButtonStyle.Link)
-          .setURL(`${process.env.VERIFICATION_URL}?auth=${generatedToken}&message=${message}`)
+          .setURL(`${process.env.VERIFICATION_URL}?auth=${generatedToken}&message=${encodeURIComponent(message)}`)
         const connectActionRow = new ActionRowBuilder().addComponents(connectBtn)
 
         return interaction.update({ embeds: [embed], components: [connectActionRow], ephemeral: true })
