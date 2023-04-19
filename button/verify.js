@@ -28,7 +28,7 @@ module.exports = {
         const userAddresses = await UserAddresses.findAll({ where: { userId: interaction.user.id } })
         userAddresses.forEach((userAddress) => {
           selectList.push({
-            label: `${userAddress.walletAddress}(${userAddress.provider})`,
+            label: `${userAddress.provider ?? 'Manual'}: ${userAddress.walletAddress}`,
             value: userAddress.id.toString(),
           })
         })
