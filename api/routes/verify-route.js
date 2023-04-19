@@ -1,12 +1,10 @@
 const axios = require('axios')
 const express = require('express')
-const { Op } = require('sequelize')
 const { upsertUserAddress } = require('../../db/user-addresses')
 const { checkSignature } = require('../../utils/verify-nft')
 const authenticateToken = require('../middleware/authenticateToken')
 const { Collections, Inscriptions } = require('../../db/collections-inscriptions')
 const UserInscriptions = require('../../db/user-inscriptions')
-const sequelize = require('../../db/db-connect')
 
 const router = express.Router()
 
@@ -22,9 +20,11 @@ router.post('/', authenticateToken, async (req, res) => {
       const inscriptions = await axios.get(`${process.env.ADDRESS_API}/${userAddress.walletAddress}`)
 
       if (!Array.isArray(inscriptions.data)) {
-        return res
-          .status(200)
-          .json({ message: 'Verification Problem', description: 'There are no inscriptions in your wallet.' })
+        return res.status(200).json({
+          message: 'Verification Problem',
+          description: 'There are no inscriptions in your wallet.',
+          type: 'Warning',
+        })
       }
 
       const channel = client.channels.cache.get(channelId)
@@ -78,6 +78,7 @@ router.post('/', authenticateToken, async (req, res) => {
         return res.status(200).json({
           message: 'Successfully verified',
           description: `Your signature was validated and the relevant ${addedRoles.join(', ')} assigned.`,
+          type: 'Success',
         })
       }
 
@@ -85,6 +86,7 @@ router.post('/', authenticateToken, async (req, res) => {
       return res.status(200).json({
         message: 'Verify Problem',
         description: "There's no matching collections for the inscriptions in your wallet.",
+        type: 'Warning',
       })
     }
   } catch (error) {
