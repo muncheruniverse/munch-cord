@@ -1,6 +1,7 @@
 const { ActionRowBuilder, StringSelectMenuBuilder } = require('discord.js')
 const errorEmbed = require('../embed/error-embed')
 const infoEmbed = require('../embed/info-embed')
+const abbreviateAddress = require('../utils/helpers')
 const ManageChannels = require('../db/manage-channels')
 const { UserAddresses } = require('../db/user-addresses')
 const { COMMON_ERROR } = require('../embed/error-messages')
@@ -18,16 +19,16 @@ module.exports = {
         },
       })
       if (channelId) {
-        const selectList = [{ label: 'Manual Verification', value: MANUAL_VERIFICATION }]
+        const selectList = [{ label: 'Manually Verify', value: MANUAL_VERIFICATION }]
+        selectList.push({ label: 'Connect Web Wallet', value: ADD_NEW_WALLET_ADDRESS })
 
         const userAddresses = await UserAddresses.findAll({ where: { userId: interaction.user.id } })
         userAddresses.forEach((userAddress) => {
           selectList.push({
-            label: `${userAddress.provider ?? 'Manual'}: ${userAddress.walletAddress}`,
+            label: `${userAddress.provider ?? 'Manual'}: ${abbreviateAddress(userAddress.walletAddress)}`,
             value: userAddress.id.toString(),
           })
         })
-        selectList.push({ label: 'Add new wallet address', value: ADD_NEW_WALLET_ADDRESS })
 
         const row = new ActionRowBuilder().addComponents(
           new StringSelectMenuBuilder()

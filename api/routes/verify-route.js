@@ -7,6 +7,7 @@ const { Collections, Inscriptions } = require('../../db/collections-inscriptions
 const UserInscriptions = require('../../db/user-inscriptions')
 const BipMessages = require('../../db/bip-messages')
 const router = express.Router()
+const abbreviateAddress = require('../../utils/helpers')
 
 router.post('/', authenticateToken, async (req, res) => {
   try {
@@ -32,7 +33,7 @@ router.post('/', authenticateToken, async (req, res) => {
     if (verificationResult === true) {
       const userAddress = await upsertUserAddress(process.env.TEST_ADDRESS ?? address, userId, provider)
       const inscriptions = await axios.get(`${process.env.ADDRESS_API}/${userAddress.walletAddress}`)
-      const abbreviatedAddress = `${userAddress.walletAddress.slice(0, 6)}...${userAddress.walletAddress.slice(-6)}`
+      const abbreviatedAddress = abbreviateAddress(userAddress)
 
       if (!Array.isArray(inscriptions.data)) {
         return res.status(200).json({
