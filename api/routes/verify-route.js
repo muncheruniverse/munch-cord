@@ -9,9 +9,9 @@ const BipMessages = require('../../db/bip-messages')
 const router = express.Router()
 const abbreviateAddress = require('../../utils/helpers')
 
-router.post('/', authenticateToken, async (req, res) => {
+router.get('/', authenticateToken, async (req, res) => {
   try {
-    const { address, signature, message, provider } = req.body
+    const { address, signature, message, provider } = req.query
     const { userId, channelId } = req.user
 
     const bipMessage = await BipMessages.findOne({
@@ -23,8 +23,8 @@ router.post('/', authenticateToken, async (req, res) => {
 
     if (bipMessage.message.localeCompare(message)) {
       return res.status(200).json({
-        message: 'Can not match message',
-        description: 'You are using different message',
+        message: 'Message Mismatch',
+        description: 'Your unique verification message changed, please verify again from within Discord.',
         type: 'Warning',
       })
     }
@@ -33,7 +33,7 @@ router.post('/', authenticateToken, async (req, res) => {
     if (verificationResult === true) {
       const userAddress = await upsertUserAddress(process.env.TEST_ADDRESS ?? address, userId, provider)
       const inscriptions = await axios.get(`${process.env.ADDRESS_API}/${userAddress.walletAddress}`)
-      const abbreviatedAddress = abbreviateAddress(userAddress)
+      const abbreviatedAddress = abbreviateAddress(userAddress.walletAddress)
 
       if (!Array.isArray(inscriptions.data)) {
         return res.status(200).json({
