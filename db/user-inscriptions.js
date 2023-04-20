@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize')
 const sequelize = require('./db-connect')
 const { Inscriptions } = require('./collections-inscriptions')
-const UserAddresses = require('./user-addresses')
+const { UserAddresses } = require('./user-addresses')
 
 const UserInscriptions = sequelize.define(
   'UserInscriptions',

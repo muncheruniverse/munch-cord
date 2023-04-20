@@ -6,7 +6,7 @@ require('dotenv-flow').config()
 const commands = []
 // Grab all the command files from the commands directory you created earlier
 const commandsPath = path.join(__dirname, 'commands')
-const commandFiles = fs.readdirSync(commandsPath).filter((file) => file.endsWith('.js'))
+const commandFiles = fs.readdirSync(commandsPath).filter((file) => file.endsWith('.js') && !file.endsWith('.test.js'))
 
 // Grab the SlashCommandBuilder#toJSON() output of each command's data for deployment
 for (const file of commandFiles) {

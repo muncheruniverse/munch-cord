@@ -16,6 +16,7 @@ Table UserAddresses {
   id int [pk]
   userId string
   walletAddress string
+  provider string
 }
 
 Table UserInscriptions {
