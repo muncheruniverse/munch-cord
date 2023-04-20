@@ -23,8 +23,8 @@ router.get('/', authenticateToken, async (req, res) => {
 
     if (bipMessage.message.localeCompare(message)) {
       return res.status(200).json({
-        message: 'Can not match message',
-        description: 'You are using different message',
+        message: 'Message Mismatch',
+        description: 'Your unique verification message changed, please verify again from within Discord.',
         type: 'Warning',
       })
     }
