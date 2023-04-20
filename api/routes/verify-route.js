@@ -9,9 +9,9 @@ const BipMessages = require('../../db/bip-messages')
 const router = express.Router()
 const abbreviateAddress = require('../../utils/helpers')
 
-router.get('/', authenticateToken, async (req, res) => {
+router.post('/', authenticateToken, async (req, res) => {
   try {
-    const { address, signature, message, provider } = req.query
+    const { address, signature, message, provider } = req.body
     const { userId, channelId } = req.user
 
     const bipMessage = await BipMessages.findOne({
