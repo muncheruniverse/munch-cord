@@ -23,7 +23,10 @@ module.exports = {
           PermissionFlagsBits.UseApplicationCommands,
         ])
       if (hasPermissions === false) {
-        const warning = warningEmbed('Need Permissions', 'Please check if the bot has permissions')
+        const warning = warningEmbed(
+          'Missing Permissions',
+          "The bot doesn't have the relevant permissions to respond, if this is a private channel you must specifically add the bot's role to the channel."
+        )
         return interaction.reply({
           embeds: [warning],
           ephemeral: true,
