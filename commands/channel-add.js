@@ -12,6 +12,24 @@ module.exports = {
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild),
   async execute(interaction) {
     try {
+      const channel = interaction.channel
+      const botMember = interaction.channel.guild.members.cache.get(interaction.client.user.id)
+      const hasPermissions = botMember
+        .permissionsIn(channel)
+        .has([
+          PermissionFlagsBits.ViewChannel,
+          PermissionFlagsBits.SendMessages,
+          PermissionFlagsBits.ManageRoles,
+          PermissionFlagsBits.UseApplicationCommands,
+        ])
+      if (hasPermissions === false) {
+        const warning = warningEmbed('Need Permissions', 'Please check if the bot has permissions')
+        return interaction.reply({
+          embeds: [warning],
+          ephemeral: true,
+        })
+      }
+
       await ManageChannels.create({
         channelId: interaction.channelId,
       })
