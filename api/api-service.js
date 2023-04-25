@@ -37,12 +37,7 @@ const apiService = (client) => {
 
   app.use('/verify', verifyRoute)
 
-  const port = process.env.PORT || 3000
-
-  // Set the server to listen for requests
-  app.listen(port, () => {
-    console.log(`Server is running on port ${port}`)
-  })
+  return app
 }
 
 module.exports = apiService

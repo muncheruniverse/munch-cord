@@ -123,7 +123,12 @@ client.once(Events.ClientReady, (client) => {
   ManageChannels.sync()
 
   // Api Service for health and verify
-  apiService(client)
+  const app = apiService(client)
+  const port = process.env.PORT || 3000
+  // Set the server to listen for requests
+  app.listen(port, () => {
+    console.log(`Server is running on port ${port}`)
+  })
 
   // Activity status for discord
   client.user.setActivity('Monster Mash 👹', { type: ActivityType.Listening })
