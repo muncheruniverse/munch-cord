@@ -99,7 +99,6 @@ describe('channel-add', () => {
 
     expect(interactionStub.reply.calledOnce).to.be.true
     const { embeds, ephemeral } = interactionStub.reply.firstCall.args[0]
-    console.log('embeds[0].data.title', embeds[0].data.title)
     expect(embeds[0].data.title).to.equal(warningEmbed('Missing Permissions', 'Description').data.title)
     expect(ephemeral).to.be.true
   })
