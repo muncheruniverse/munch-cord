@@ -8,21 +8,35 @@ const warningEmbed = require('../embed/warning-embed')
 const infoEmbed = require('../embed/info-embed')
 
 describe('channel-add', () => {
-  let ManageChannelsStub, interactionStub, channelStub
+  let ManageChannelsStub, interactionStub, channelStub, botMember
 
   beforeEach(() => {
+    botMember = {
+      permissionsIn: sinon.stub().returns({ has: sinon.stub().returns(true) }),
+    }
+
     ManageChannelsStub = {
       create: sinon.stub(),
     }
 
     channelStub = {
       send: sinon.stub(),
+      guild: {
+        members: {
+          cache: { get: sinon.stub().returns(botMember) },
+        },
+      },
     }
 
     interactionStub = {
       channelId: '12345',
       reply: sinon.stub(),
       channel: channelStub,
+      client: {
+        user: {
+          id: '123',
+        },
+      },
     }
 
     channelAdd.__set__('ManageChannels', ManageChannelsStub)
@@ -72,6 +86,21 @@ describe('channel-add', () => {
     expect(interactionStub.reply.calledOnce).to.be.true
     const { embeds, ephemeral } = interactionStub.reply.firstCall.args[0]
     expect(embeds[0].data.title).to.equal(errorEmbed(testError).data.title)
+    expect(ephemeral).to.be.true
+  })
+
+  it('should return a warning embed when the bot does not have the required permissions', async () => {
+    const botMember = {
+      permissionsIn: sinon.stub().returns({ has: sinon.stub().returns(false) }),
+    }
+
+    interactionStub.channel.guild.members.cache.get = sinon.stub().returns(botMember)
+    await channelAdd.execute(interactionStub)
+
+    expect(interactionStub.reply.calledOnce).to.be.true
+    const { embeds, ephemeral } = interactionStub.reply.firstCall.args[0]
+    console.log('embeds[0].data.title', embeds[0].data.title)
+    expect(embeds[0].data.title).to.equal(warningEmbed('Missing Permissions', 'Description').data.title)
     expect(ephemeral).to.be.true
   })
 })
