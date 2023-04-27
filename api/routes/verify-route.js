@@ -32,8 +32,9 @@ router.post('/', authenticateToken, async (req, res) => {
     const verificationResult = await checkSignature(address, signature, message)
     if (verificationResult === false) {
       return res.status(200).json({
-        message: 'Verify Problem',
-        description: "The BIP-322 node couldn't verify your signature.",
+        message: 'Signature Verification Problem',
+        description:
+          'The details could not be validated, please ensure the signature is generated using the unique message provided.',
         type: 'Error',
       })
     }
