@@ -7,21 +7,30 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName('community-random-pick')
     .setDescription('Pick random members')
-    .addNumberOption((option) => option.setName('number').setDescription('Choose the role to pick').setRequired(true))
+    .addNumberOption((option) => option.setName('number').setDescription('Input number to pick').setRequired(true))
     .addRoleOption((option) => option.setName('role').setDescription('Choose the role to pick').setRequired(false))
+    .addChannelOption((option) =>
+      option.setName('channel').setDescription('Choose the channel to pick').setRequired(false)
+    )
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild),
   async execute(interaction) {
     try {
-      const role = interaction.options.getRole('role')
       const number = interaction.options.getNumber('number')
+      const role = interaction.options.getRole('role')
+      const channel = interaction.options.getChannel('channel')
 
       await interaction.channel.guild.members.fetch()
 
-      let membersWithRole
+      let membersWithRole = interaction.channel.guild.members.cache
+
       if (role) {
-        membersWithRole = interaction.channel.guild.members.cache.filter((member) => member.roles.cache.has(role.id))
-      } else {
-        membersWithRole = interaction.channel.guild.members.cache
+        membersWithRole = membersWithRole.filter((member) => member.roles.cache.has(role.id))
+      }
+
+      if (channel) {
+        membersWithRole = membersWithRole.filter((member) =>
+          member.permissionsIn(channel).has(PermissionFlagsBits.ViewChannel)
+        )
       }
 
       const memberCount = membersWithRole.size
