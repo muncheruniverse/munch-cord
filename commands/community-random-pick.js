@@ -1,13 +1,14 @@
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js')
 const errorEmbed = require('../embed/error-embed')
 const successEmbed = require('../embed/success-embed')
-const warningEmbed = require('../embed/warning-embed')
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('community-random-pick')
     .setDescription('Pick random members')
-    .addNumberOption((option) => option.setName('number').setDescription('Input number to pick').setRequired(true))
+    .addNumberOption((option) =>
+      option.setName('number').setMaxValue(50).setMinValue(1).setDescription('Input number to pick').setRequired(true)
+    )
     .addRoleOption((option) => option.setName('role').setDescription('Choose the role to pick').setRequired(false))
     .addChannelOption((option) =>
       option.setName('channel').setDescription('Choose the channel to pick').setRequired(false)
@@ -31,16 +32,6 @@ module.exports = {
         membersWithRole = membersWithRole.filter((member) =>
           member.permissionsIn(channel).has(PermissionFlagsBits.ViewChannel)
         )
-      }
-
-      const memberCount = membersWithRole.size
-
-      if (memberCount < number) {
-        const embed = warningEmbed('Random members error', `The member count should be greater than ${number}`)
-        return interaction.reply({
-          embeds: [embed],
-          ephemeral: true,
-        })
       }
 
       const randomMembers = membersWithRole.random(number)
