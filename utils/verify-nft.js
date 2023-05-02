@@ -25,9 +25,12 @@ const checkSignature = async (address, signature, bipMessage) => {
       password: process.env.RPC_PASSWORD,
     },
   }
-
-  const res = await axios.post(`https://${process.env.RPC_HOST}:${process.env.RPC_PORT}/`, data, config)
-  return res.data.result
+  try {
+    const res = await axios.post(`https://${process.env.RPC_HOST}:${process.env.RPC_PORT}/`, data, config)
+    return res.data.result
+  } catch (err) {
+    return false
+  }
 }
 
 const checkInscriptions = async (interaction, userAddress) => {
