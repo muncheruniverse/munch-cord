@@ -40,7 +40,6 @@ module.exports = {
       const embed = successEmbed('Random members', `Selected members are ${membersEmbed}`)
       return interaction.reply({
         embeds: [embed],
-        ephemeral: true,
       })
     } catch (error) {
       const embed = errorEmbed(error)
