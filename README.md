@@ -43,7 +43,7 @@ You can add as many collections as you want, just call `/collection-add` to set 
 
 ## Using a private channel
 
-If you want to use the bot in a private channel, you must specifically add the `MunchBot` role to the private channel so that the bot can send messages. If not, you will see this message: 
+If you want to use the bot in a private channel, you must specifically add the `MunchBot` role to the private channel so that the bot can send messages. If not, you will see this message:
 
 <img width="531" alt="image" src="https://user-images.githubusercontent.com/127023971/234398040-32d1d42e-9cb1-4f27-a21e-61fddfb23571.png">
 
