@@ -7,6 +7,7 @@ const Brc20s = sequelize.define(
     name: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true,
     },
     channelId: {
       type: DataTypes.STRING,
