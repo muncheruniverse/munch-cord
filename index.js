@@ -13,7 +13,7 @@ const { UserAddresses } = require('./db/user-addresses')
 
 // Import required modal interactions
 const addCollectionModal = require('./modal/add-collection')
-const verifynft = require('./modal/verify-nft')
+const verifyNft = require('./modal/verify-nft')
 
 // Import required selector interactions
 const roleSelector = require('./selector/role-selector')
@@ -36,11 +36,17 @@ client.commands = new Collection()
 
 // Find all files in the commands directory that end in .js
 const commandsPath = path.join(__dirname, 'commands')
-const commandFiles = fs.readdirSync(commandsPath).filter((file) => file.endsWith('.js') && !file.endsWith('.test.js'))
+const commandFilePaths = []
+fs.readdirSync(commandsPath).forEach((dirName) => {
+  fs.readdirSync(path.join(commandsPath, dirName)).forEach((file) => {
+    if (file.endsWith('.js') && !file.endsWith('.test.js')) {
+      commandFilePaths.push(path.join(commandsPath, dirName, file))
+    }
+  })
+})
 
 // Loop through each command file and add it to the bot's commands map
-for (const file of commandFiles) {
-  const filePath = path.join(commandsPath, file)
+for (const filePath of commandFilePaths) {
   const command = require(filePath)
   if ('data' in command && 'execute' in command) {
     client.commands.set(command.data.name, command)
@@ -55,8 +61,8 @@ client.on(Events.InteractionCreate, async (interaction) => {
       // Modal interactions
       if (interaction.customId === addCollectionModal.data) {
         await addCollectionModal.execute(interaction)
-      } else if (interaction.customId === verifynft.data) {
-        await verifynft.execute(interaction)
+      } else if (interaction.customId === verifyNft.data) {
+        await verifyNft.execute(interaction)
       }
     } else if (interaction.isStringSelectMenu()) {
       // Selector interactions

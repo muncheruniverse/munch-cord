@@ -2,7 +2,7 @@ const { StringSelectMenuBuilder, ActionRowBuilder } = require('discord.js')
 const errorEmbed = require('../embed/error-embed')
 const successEmbed = require('../embed/success-embed')
 const { Collections, Inscriptions } = require('../db/collections-inscriptions')
-const { MODAL_ID, COLLECT_NAME_ID, INS_IDS_ID } = require('../commands/collection-add')
+const { MODAL_ID, COLLECT_NAME_ID, INS_IDS_ID } = require('../commands/collection/collection-add')
 
 const ROLE_SELECT_ID = 'roleSelectID'
 

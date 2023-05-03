@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js')
-const errorEmbed = require('../embed/error-embed')
-const successEmbed = require('../embed/success-embed')
+const errorEmbed = require('../../embed/error-embed')
+const successEmbed = require('../../embed/success-embed')
 
 module.exports = {
   data: new SlashCommandBuilder()

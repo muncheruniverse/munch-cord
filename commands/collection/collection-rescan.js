@@ -1,10 +1,10 @@
-const axios = require('axios').default
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js')
-const errorEmbed = require('../embed/error-embed')
-const sequelize = require('../db/db-connect')
+const axios = require('axios').default
 const { QueryTypes } = require('sequelize')
-const verifications = require('../utils/verifications')
-const UserInscriptions = require('../db/user-inscriptions')
+const errorEmbed = require('../../embed/error-embed')
+const verifications = require('../../utils/verifications')
+const UserInscriptions = require('../../db/user-inscriptions')
+const sequelize = require('../../db/db-connect')
 
 const getOwnerAddress = async (inscriptionRef) => {
   const { data } = await axios.get(`${process.env.INSCRIPTION_API}/${inscriptionRef}`)

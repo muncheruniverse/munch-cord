@@ -1,10 +1,10 @@
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js')
-const errorEmbed = require('../embed/error-embed')
-const infoEmbed = require('../embed/info-embed')
-const roleEmbed = require('../embed/role-embed')
-const { Collections, Inscriptions } = require('../db/collections-inscriptions')
-const sequelize = require('../db/db-connect')
 const commaNumber = require('comma-number')
+const errorEmbed = require('../../embed/error-embed')
+const infoEmbed = require('../../embed/info-embed')
+const roleEmbed = require('../../embed/role-embed')
+const { Collections, Inscriptions } = require('../../db/collections-inscriptions')
+const sequelize = require('../../db/db-connect')
 
 module.exports = {
   data: new SlashCommandBuilder()

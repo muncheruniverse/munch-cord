@@ -1,9 +1,9 @@
 const { SlashCommandBuilder, ActionRowBuilder, StringSelectMenuBuilder, PermissionFlagsBits } = require('discord.js')
-const errorEmbed = require('../embed/error-embed')
-const successEmbed = require('../embed/success-embed')
-const { Collections } = require('../db/collections-inscriptions')
-const ManageChannels = require('../db/manage-channels')
-const { COMMON_ERROR } = require('../embed/error-messages')
+const errorEmbed = require('../../embed/error-embed')
+const successEmbed = require('../../embed/success-embed')
+const { COMMON_ERROR } = require('../../embed/error-messages')
+const { Collections } = require('../../db/collections-inscriptions')
+const ManageChannels = require('../../db/manage-channels')
 
 const REMOVE_COLLECTION_SELECTOR = 'removeCollectionSelector'
 

@@ -2,8 +2,7 @@ const errorEmbed = require('../embed/error-embed')
 const successEmbed = require('../embed/success-embed')
 const warningEmbed = require('../embed/warning-embed')
 const { Collections } = require('../db/collections-inscriptions')
-
-const { REMOVE_COLLECTION_SELECTOR } = require('../commands/collection-remove')
+const { REMOVE_COLLECTION_SELECTOR } = require('../commands/collection/collection-remove')
 
 module.exports = {
   data: REMOVE_COLLECTION_SELECTOR,

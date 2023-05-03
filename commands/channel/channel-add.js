@@ -1,9 +1,9 @@
 const { SlashCommandBuilder, ButtonBuilder, ActionRowBuilder, ButtonStyle, PermissionFlagsBits } = require('discord.js')
-const errorEmbed = require('../embed/error-embed')
-const successEmbed = require('../embed/success-embed')
-const infoEmbed = require('../embed/info-embed')
-const warningEmbed = require('../embed/warning-embed')
-const ManageChannels = require('../db/manage-channels')
+const errorEmbed = require('../../embed/error-embed')
+const successEmbed = require('../../embed/success-embed')
+const infoEmbed = require('../../embed/info-embed')
+const warningEmbed = require('../../embed/warning-embed')
+const ManageChannels = require('../../db/manage-channels')
 
 module.exports = {
   data: new SlashCommandBuilder()

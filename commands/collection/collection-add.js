@@ -6,9 +6,9 @@ const {
   SlashCommandBuilder,
   PermissionFlagsBits,
 } = require('discord.js')
-const errorEmbed = require('../embed/error-embed')
-const ManageChannels = require('../db/manage-channels')
-const { COMMON_ERROR } = require('../embed/error-messages')
+const errorEmbed = require('../../embed/error-embed')
+const ManageChannels = require('../../db/manage-channels')
+const { COMMON_ERROR } = require('../../embed/error-messages')
 
 const MODAL_ID = 'addcollectionModal'
 const COLLECT_NAME_ID = 'collectName'
