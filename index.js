@@ -7,9 +7,11 @@ const { Client, Collection, Events, GatewayIntentBits, ActivityType } = require(
 // Import required model files
 const ManageChannels = require('./db/manage-channels')
 const UserInscriptions = require('./db/user-inscriptions')
-const { Collections, Inscriptions } = require('./db/collections-inscriptions')
 const BipMessages = require('./db/bip-messages')
+const Brc20s = require('./db/brc20s')
+const UserBrc20s = require('./db/user-brc20s')
 const { UserAddresses } = require('./db/user-addresses')
+const { Collections, Inscriptions } = require('./db/collections-inscriptions')
 
 // Import required modal interactions
 const addCollectionModal = require('./modal/add-collection')
@@ -122,6 +124,9 @@ client.once(Events.ClientReady, (client) => {
     Inscriptions.sync().then(() => {
       UserAddresses.sync().then(() => {
         UserInscriptions.sync()
+        Brc20s.sync().then(() => {
+          UserBrc20s.sync()
+        })
       })
     })
   })
