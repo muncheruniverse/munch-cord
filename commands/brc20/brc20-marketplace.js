@@ -12,7 +12,7 @@ const Unisat = require('./marketplace/unisat')
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('brc20-marketplace')
-    .setDescription('Automatically add a collection direct from a supported marketplace and assign role')
+    .setDescription('Automatically add a brc20 direct from a supported marketplace and assign role')
     .addRoleOption((option) => option.setName('role').setDescription('Choose the role to assign').setRequired(true))
     .addStringOption((option) => option.setName('link').setDescription('The link to the collection').setRequired(true))
     .addStringOption((option) =>
