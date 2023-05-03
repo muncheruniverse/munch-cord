@@ -21,6 +21,7 @@ const verifyNft = require('./modal/verify-nft')
 const roleSelector = require('./selector/role-selector')
 const verifySelector = require('./selector/verify-selector')
 const removeCollectionSelector = require('./selector/remove-collection-selector')
+const removeBrc20Selector = require('./selector/remove-brc20-selector')
 
 // Import required button action interactions
 const verify = require('./button/verify')
@@ -72,6 +73,8 @@ client.on(Events.InteractionCreate, async (interaction) => {
         roleSelector.execute(interaction)
       } else if (interaction.customId === removeCollectionSelector.data) {
         removeCollectionSelector.execute(interaction)
+      } else if (interaction.customId === removeBrc20Selector.data) {
+        removeBrc20Selector.execute(interaction)
       } else if (interaction.customId === verifySelector.data) {
         verifySelector.execute(interaction)
       }
