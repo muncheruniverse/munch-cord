@@ -1,10 +1,10 @@
 const { expect } = require('chai')
 const sinon = require('sinon')
 const rewire = require('rewire')
-const removeCollectionSelector = rewire('../selector/remove-collection-selector')
-const successEmbed = require('../embed/success-embed')
-const warningEmbed = require('../embed/warning-embed')
-const errorEmbed = require('../embed/error-embed')
+const removeCollectionSelector = rewire('../../selector/remove-collection-selector')
+const successEmbed = require('../../embed/success-embed')
+const warningEmbed = require('../../embed/warning-embed')
+const errorEmbed = require('../../embed/error-embed')
 
 describe('remove-collection-selector', () => {
   let CollectionsStub, interactionStub

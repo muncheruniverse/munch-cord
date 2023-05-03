@@ -1,8 +1,8 @@
 const chai = require('chai')
 const chaiHttp = require('chai-http')
-const apiService = require('../api/api-service')
+const apiService = require('../../api/api-service')
 const { expect } = require('chai')
-const packageInfo = require('../package.json')
+const packageInfo = require('../../package.json')
 
 const mockClient = {
   user: {

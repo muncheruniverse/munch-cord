@@ -1,9 +1,9 @@
 const { expect } = require('chai')
 const sinon = require('sinon')
 const rewire = require('rewire')
-const collectionView = rewire('../commands/collection-view')
-const errorEmbed = require('../embed/error-embed')
-const infoEmbed = require('../embed/info-embed')
+const collectionView = rewire('../../commands/collection/collection-view')
+const errorEmbed = require('../../embed/error-embed')
+const infoEmbed = require('../../embed/info-embed')
 
 describe('collection-view', () => {
   let CollectionsStub, interactionStub

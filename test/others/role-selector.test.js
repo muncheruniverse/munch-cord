@@ -1,8 +1,8 @@
 const { expect } = require('chai')
 const sinon = require('sinon')
 const rewire = require('rewire')
-const roleSelector = rewire('../selector/role-selector')
-const errorEmbed = require('../embed/error-embed')
+const roleSelector = rewire('../../selector/role-selector')
+const errorEmbed = require('../../embed/error-embed')
 
 describe('role-selector', () => {
   let CollectionsStub, interactionStub

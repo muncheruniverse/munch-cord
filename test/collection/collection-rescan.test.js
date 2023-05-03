@@ -2,10 +2,10 @@ const { expect } = require('chai')
 const sinon = require('sinon')
 const axios = require('axios').default
 const { GuildMemberRoleManager } = require('discord.js')
-const sequelize = require('../db/db-connect')
-const { Collections } = require('../db/collections-inscriptions')
-const reScan = require('../commands/collection-rescan')
-const UserInscriptions = require('../db/user-inscriptions')
+const sequelize = require('../../db/db-connect')
+const { Collections } = require('../../db/collections-inscriptions')
+const reScan = require('../../commands/collection/collection-rescan')
+const UserInscriptions = require('../../db/user-inscriptions')
 
 describe('re-scan', () => {
   afterEach(() => {

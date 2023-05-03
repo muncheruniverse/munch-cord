@@ -1,10 +1,10 @@
 const { expect } = require('chai')
 const sinon = require('sinon')
 const rewire = require('rewire')
-const channelCheck = rewire('../commands/channel-check')
-const errorEmbed = require('../embed/error-embed')
-const successEmbed = require('../embed/success-embed')
-const warningEmbed = require('../embed/warning-embed')
+const channelCheck = rewire('../../commands/channel/channel-check')
+const errorEmbed = require('../../embed/error-embed')
+const successEmbed = require('../../embed/success-embed')
+const warningEmbed = require('../../embed/warning-embed')
 
 describe('channel-check', () => {
   let ManageChannelsStub, interactionStub

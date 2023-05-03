@@ -1,9 +1,9 @@
 const { expect } = require('chai')
 const sinon = require('sinon')
 const rewire = require('rewire')
-const verifyNFT = rewire('../button/verify')
-const errorEmbed = require('../embed/error-embed')
-const { COMMON_ERROR } = require('../embed/error-messages')
+const verifyNFT = rewire('../../button/verify')
+const errorEmbed = require('../../embed/error-embed')
+const { COMMON_ERROR } = require('../../embed/error-messages')
 
 describe('verify', () => {
   let ManageChannelsStub, UserAddressesStub, interactionStub

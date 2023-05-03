@@ -2,11 +2,11 @@
 const { expect } = require('chai')
 const { Client, GatewayIntentBits, MessageComponentInteraction } = require('discord.js')
 const sinon = require('sinon')
-const roleSelector = require('../selector/role-selector')
-const removeCollectionSelector = require('../selector/remove-collection-selector')
-const addCollectionModal = require('../modal/add-collection')
-const verifynft = require('../modal/verify-nft')
-const verify = require('../button/verify')
+const roleSelector = require('../../selector/role-selector')
+const removeCollectionSelector = require('../../selector/remove-collection-selector')
+const addCollectionModal = require('../../modal/add-collection')
+const verifynft = require('../../modal/verify-nft')
+const verify = require('../../button/verify')
 
 describe('Interactions', () => {
   let client

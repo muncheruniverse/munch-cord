@@ -1,8 +1,8 @@
 const { expect } = require('chai')
 const sinon = require('sinon')
 const rewire = require('rewire')
-const addCollection = rewire('../modal/add-collection')
-const errorEmbed = require('../embed/error-embed')
+const addCollection = rewire('../../modal/add-collection')
+const errorEmbed = require('../../embed/error-embed')
 
 describe('add-collections', () => {
   let interactionStub, CollectionsStub, InscriptionsStub

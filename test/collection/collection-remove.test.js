@@ -1,9 +1,9 @@
 const { expect } = require('chai')
 const sinon = require('sinon')
 const rewire = require('rewire')
-const collectionRemove = rewire('../commands/collection-remove')
-const errorEmbed = require('../embed/error-embed')
-const successEmbed = require('../embed/success-embed')
+const collectionRemove = rewire('../../commands/collection/collection-remove')
+const errorEmbed = require('../../embed/error-embed')
+const successEmbed = require('../../embed/success-embed')
 
 describe('collection-remove', () => {
   let CollectionsStub, ManageChannelsStub, interactionStub
