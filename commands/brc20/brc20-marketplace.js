@@ -14,10 +14,8 @@ module.exports = {
     .setName('brc20-marketplace')
     .setDescription('Automatically add a brc20 direct from a supported marketplace and assign role')
     .addRoleOption((option) => option.setName('role').setDescription('Choose the role to assign').setRequired(true))
-    .addStringOption((option) => option.setName('link').setDescription('The link to the collection').setRequired(true))
-    .addStringOption((option) =>
-      option.setName('name').setDescription('Override the collection name').setRequired(false)
-    )
+    .addStringOption((option) => option.setName('link').setDescription('The link to the brc20').setRequired(true))
+    .addStringOption((option) => option.setName('name').setDescription('Override the brc20 name').setRequired(false))
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild),
 
   async execute(interaction) {
@@ -37,13 +35,13 @@ module.exports = {
       const url = interaction.options.getString('link')
       const pattern = /(\/|=)([^/=]*)$/
       const match = url.match(pattern)
-      const collectionSymbol = match ? match[2] : url
-      const name = interaction.options.getString('name') ?? capitalCase(collectionSymbol)
+      const brc20Symbol = match ? match[2] : url
+      const name = interaction.options.getString('name') ?? capitalCase(brc20Symbol)
 
-      const isValid = await Unisat.isValidBrc20(collectionSymbol)
+      const isValid = await Unisat.isValidBrc20(brc20Symbol)
 
       if (isValid === false) {
-        const embed = warningEmbed("Can't find collection", "The supplied link doesn't point to a valid")
+        const embed = warningEmbed("Can't find brc20", "The supplied link doesn't point to a valid")
         return interaction.reply({ embeds: [embed], ephemeral: true })
       }
 

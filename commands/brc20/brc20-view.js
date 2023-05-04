@@ -29,12 +29,10 @@ module.exports = {
 
       const embed = infoEmbed('View Brc20s', 'Brc20s, their associated role and brc20 count.')
 
-      brc20s.forEach((collection) => {
+      brc20s.forEach((brc20) => {
         embed.addFields({
-          name: collection.dataValues.name,
-          value: `${roleEmbed(interaction, collection.dataValues.role)} (${commaNumber(
-            collection.dataValues.brc20Count
-          )})`,
+          name: brc20.dataValues.name,
+          value: `${roleEmbed(interaction, brc20.dataValues.role)} (${commaNumber(brc20.dataValues.brc20Count)})`,
           inline: true,
         })
       })
