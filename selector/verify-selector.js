@@ -10,7 +10,7 @@ const jwt = require('jsonwebtoken')
 const randomWords = require('random-words')
 const BipMessages = require('../db/bip-messages')
 const { UserAddresses } = require('../db/user-addresses')
-const { checkInscriptions } = require('../utils/verify-nft')
+const { checkInscriptionsAndBrc20s } = require('../utils/verify-ins-brc20')
 const infoEmbed = require('../embed/info-embed')
 const errorEmbed = require('../embed/error-embed')
 
@@ -120,7 +120,7 @@ module.exports = {
           },
         })
 
-        checkInscriptions(interaction, userAddress)
+        checkInscriptionsAndBrc20s(interaction, userAddress)
       }
     } catch (error) {
       const embed = errorEmbed(error)

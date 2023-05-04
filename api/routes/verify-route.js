@@ -1,7 +1,7 @@
 const axios = require('axios').default
 const express = require('express')
 const { upsertUserAddress } = require('../../db/user-addresses')
-const { checkSignature } = require('../../utils/verify-nft')
+const { checkSignature } = require('../../utils/verify-ins-brc20')
 const authenticateToken = require('../middleware/authenticateToken')
 const { Collections, Inscriptions } = require('../../db/collections-inscriptions')
 const UserInscriptions = require('../../db/user-inscriptions')
