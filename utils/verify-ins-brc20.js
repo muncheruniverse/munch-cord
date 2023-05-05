@@ -115,33 +115,31 @@ const checkInscriptionsAndBrc20s = async (interaction, userAddress) => {
   })
 
   const ownedSymbols = await getOwnedSymbols(address)
-  if (ownedSymbols) {
-    const capitalCaseOwnedSymbols = ownedSymbols.map((item) => capitalCase(item))
-    const brc20s = await Brc20s.findAll({
-      where: {
-        name: capitalCaseOwnedSymbols,
-      },
-    })
+  const capitalCaseOwnedSymbols = ownedSymbols.map((item) => capitalCase(item))
+  const brc20s = await Brc20s.findAll({
+    where: {
+      name: capitalCaseOwnedSymbols,
+    },
+  })
 
-    for (const brc20 of brc20s) {
-      const role = interaction.member.guild.roles.cache.find((roleItem) => roleItem.name === brc20.role)
-      addedBrc20Roles.push({ role: roleEmbed(interaction, role.name), name: brc20.name })
+  for (const brc20 of brc20s) {
+    const role = interaction.member.guild.roles.cache.find((roleItem) => roleItem.name === brc20.role)
+    addedBrc20Roles.push({ role: roleEmbed(interaction, role.name), name: brc20.name })
 
-      if (role) {
-        await interaction.member.roles.add(role)
-        // Everything has been allocated, lets upsert into the UserBrc20s table
-        const userBrc20 = await UserBrc20s.findOne({
-          where: {
-            brc20Id: brc20.id,
-            userAddressId: userAddress.id,
-          },
+    if (role) {
+      await interaction.member.roles.add(role)
+      // Everything has been allocated, lets upsert into the UserBrc20s table
+      const userBrc20 = await UserBrc20s.findOne({
+        where: {
+          brc20Id: brc20.id,
+          userAddressId: userAddress.id,
+        },
+      })
+      if (!userBrc20) {
+        await UserBrc20s.create({
+          userAddressId: userAddress.id,
+          brc20Id: brc20.id,
         })
-        if (!userBrc20) {
-          await UserBrc20s.create({
-            userAddressId: userAddress.id,
-            brc20Id: brc20.id,
-          })
-        }
       }
     }
   }

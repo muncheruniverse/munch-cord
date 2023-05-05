@@ -1,11 +1,13 @@
+const commaNumber = require('comma-number')
 const infoEmbed = require('../embed/info-embed')
 const roleEmbed = require('../embed/role-embed')
 const { Collections, Inscriptions } = require('../db/collections-inscriptions')
 const sequelize = require('../db/db-connect')
-const commaNumber = require('comma-number')
 const UserInscriptions = require('../db/user-inscriptions')
+const Brc20s = require('../db/brc20s')
+const UserBrc20s = require('../db/user-brc20s')
 
-const verifications = async (interaction) => {
+const insVerifications = async (interaction) => {
   const collections = await Collections.findAll({
     where: {
       channelId: interaction.channelId,
@@ -42,4 +44,29 @@ const verifications = async (interaction) => {
   return embed
 }
 
-module.exports = verifications
+const brc20Verifications = async (interaction) => {
+  const brc20s = await Brc20s.findAll({
+    where: {
+      channelId: interaction.channelId,
+    },
+    attributes: ['id', 'name', 'role', [sequelize.fn('COUNT', sequelize.col('UserBrc20s.id')), 'brc20Count']],
+    include: {
+      model: UserBrc20s,
+      attributes: [],
+    },
+    group: ['Brc20s.id'],
+  })
+
+  const embed = infoEmbed('View Brc20s', 'Brc20s, their associated role and brc20 count.')
+
+  brc20s.forEach((brc20) => {
+    embed.addFields({
+      name: brc20.dataValues.name,
+      value: `${roleEmbed(interaction, brc20.dataValues.role)} (${commaNumber(brc20.dataValues.brc20Count)})`,
+      inline: true,
+    })
+  })
+  return embed
+}
+
+module.exports = { insVerifications, brc20Verifications }

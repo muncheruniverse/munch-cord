@@ -16,7 +16,7 @@ const getTotalBrc20Numbers = async (address) => {
 const getOwnedSymbols = async (address) => {
   const ownedSymbols = []
   const totalNumber = await getTotalBrc20Numbers(address)
-  if (totalNumber === 0) return false
+  if (totalNumber === 0) return ownedSymbols
   let start = 0
   const limit = PAGINATED_AMOUNT
   while (1) {

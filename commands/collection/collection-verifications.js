@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js')
 const errorEmbed = require('../../embed/error-embed')
-const verifications = require('../../utils/verifications')
+const { insVerifications } = require('../../utils/verifications')
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -10,7 +10,7 @@ module.exports = {
 
   async execute(interaction) {
     try {
-      const embed = await verifications(interaction)
+      const embed = await insVerifications(interaction)
       return interaction.reply({ embeds: [embed], ephemeral: true })
     } catch (error) {
       const embed = errorEmbed(error)

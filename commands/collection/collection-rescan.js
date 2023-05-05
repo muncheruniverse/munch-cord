@@ -2,7 +2,7 @@ const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js')
 const axios = require('axios').default
 const { QueryTypes } = require('sequelize')
 const errorEmbed = require('../../embed/error-embed')
-const verifications = require('../../utils/verifications')
+const { insVerifications } = require('../../utils/verifications')
 const UserInscriptions = require('../../db/user-inscriptions')
 const sequelize = require('../../db/db-connect')
 
@@ -96,7 +96,7 @@ module.exports = {
         }
       }
 
-      const embed = await verifications(interaction)
+      const embed = await insVerifications(interaction)
       return interaction.editReply({ embeds: [embed] })
     } catch (error) {
       const embed = errorEmbed(error)
