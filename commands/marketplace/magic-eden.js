@@ -1,7 +1,10 @@
 const axios = require('axios').default
 
 const getUrl = (paginatedAmount, offset, collectionSymbol) => {
-  return `https://api-mainnet.magiceden.io/v2/ord/btc/tokens?limit=${paginatedAmount}&offset=${offset}&sortBy=priceAsc&minPrice=0&maxPrice=0&collectionSymbol=${collectionSymbol}`
+  // Specific case for sub-10k collections
+  return collectionSymbol === 'sub-10k'
+    ? `https://api-mainnet.magiceden.io/v2/ord/btc/tokens?limit=${paginatedAmount}&offset=${offset}&sortBy=inscriptionNumberAsc&minPrice=0&maxPrice=0&inscriptionMax=10000&inscriptionMin=0`
+    : `https://api-mainnet.magiceden.io/v2/ord/btc/tokens?limit=${paginatedAmount}&offset=${offset}&sortBy=inscriptionNumberAsc&minPrice=0&maxPrice=0&collectionSymbol=${collectionSymbol}`
 }
 
 const getTotalNumbers = async (collectionSymbol) => {

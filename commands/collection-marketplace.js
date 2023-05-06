@@ -8,35 +8,17 @@ const ManageChannels = require('../db/manage-channels')
 const { Collections, Inscriptions } = require('../db/collections-inscriptions')
 const { COMMON_ERROR } = require('../embed/error-messages')
 const MagicEden = require('./marketplace/magic-eden')
-const Ordswap = require('./marketplace/ordswap')
-const OrdinalsWallet = require('./marketplace/ordinals-wallet')
-const OpenOrdex = require('./marketplace/open-ordex')
 const Gamma = require('./marketplace/gamma')
 const commaNumber = require('comma-number')
 const { capitalCase } = require('change-case')
 
-const PAGINATED_AMOUNT = 20
+const PAGINATED_AMOUNT = 100
 
 const MARKET_PLACES = [
   {
     name: MagicEden.name,
     value: MagicEden.name,
     marketPlace: MagicEden,
-  },
-  {
-    name: Ordswap.name,
-    value: Ordswap.name,
-    marketPlace: Ordswap,
-  },
-  {
-    name: OrdinalsWallet.name,
-    value: OrdinalsWallet.name,
-    marketPlace: OrdinalsWallet,
-  },
-  {
-    name: OpenOrdex.name,
-    value: OpenOrdex.name,
-    marketPlace: OpenOrdex,
   },
   {
     name: Gamma.name,
@@ -100,7 +82,7 @@ module.exports = {
         return interaction.editReply({ embeds: [embed], ephemeral: true })
       }
 
-      if (totalCount > 10000) {
+      if (totalCount > 10001) {
         const embed = warningEmbed(
           'Collection too large',
           `Maximum supported collection size is ${commaNumber(10000)}. ${name} has ${commaNumber(
