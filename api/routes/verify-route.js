@@ -107,9 +107,9 @@ router.post('/', authenticateToken, async (req, res) => {
       if (formattedRoles.length > 1) {
         description = `You linked wallet address ${abbreviatedAddress} and the ${formattedRoles.join(
           ', '
-        )} roles were assigned to your Discord account.`
+        )} roles are assigned to your Discord account.`
       } else {
-        description = `You linked wallet address ${abbreviatedAddress} and the ${formattedRoles[0]} role was assigned to your Discord account 🔥`
+        description = `You linked wallet address ${abbreviatedAddress} and the ${formattedRoles[0]} role is assigned to your Discord account 🔥`
       }
 
       return res.status(200).json({
