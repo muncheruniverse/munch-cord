@@ -99,12 +99,15 @@ router.post('/', authenticateToken, async (req, res) => {
     }
 
     if (addedRoles.length > 0) {
-      const formattedRoles = addedRoles.map((role) => `@${role}`)
+      const formattedRoles = addedRoles
+        .map((role) => `@${role}`)
+        .filter((value, index, array) => array.indexOf(value) === index)
       let description
+
       if (formattedRoles.length > 1) {
-        description = `You linked wallet address ${abbreviatedAddress} and the ${formattedRoles
-          .slice(0, -1)
-          .join(', ')},${formattedRoles.slice(-2)} roles were assigned to your Discord account.`
+        description = `You linked wallet address ${abbreviatedAddress} and the ${formattedRoles.join(
+          ', '
+        )} roles were assigned to your Discord account.`
       } else {
         description = `You linked wallet address ${abbreviatedAddress} and the ${formattedRoles[0]} role was assigned to your Discord account 🔥`
       }
