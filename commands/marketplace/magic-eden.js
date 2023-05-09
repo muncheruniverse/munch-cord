@@ -1,10 +1,15 @@
 const axios = require('axios').default
 
 const getUrl = (paginatedAmount, offset, collectionSymbol) => {
-  // Specific case for sub-10k collections
-  return collectionSymbol === 'sub-10k'
-    ? `https://api-mainnet.magiceden.io/v2/ord/btc/tokens?limit=${paginatedAmount}&offset=${offset}&sortBy=inscriptionNumberAsc&minPrice=0&maxPrice=0&inscriptionMax=10000&inscriptionMin=0`
-    : `https://api-mainnet.magiceden.io/v2/ord/btc/tokens?limit=${paginatedAmount}&offset=${offset}&sortBy=inscriptionNumberAsc&minPrice=0&maxPrice=0&collectionSymbol=${collectionSymbol}`
+  // Switch statement for the return based on collectionSymbol
+  switch (collectionSymbol) {
+    case 'sub-10k':
+      return `https://api-mainnet.magiceden.io/v2/ord/btc/tokens?limit=${paginatedAmount}&offset=${offset}&sortBy=inscriptionNumberAsc&minPrice=0&maxPrice=0&inscriptionMax=10000&inscriptionMin=0`
+    case 'sub-1k':
+      return `https://api-mainnet.magiceden.io/v2/ord/btc/tokens?limit=${paginatedAmount}&offset=${offset}&sortBy=inscriptionNumberAsc&minPrice=0&maxPrice=0&inscriptionMax=1000&inscriptionMin=0`
+    default:
+      return `https://api-mainnet.magiceden.io/v2/ord/btc/tokens?limit=${paginatedAmount}&offset=${offset}&sortBy=inscriptionNumberAsc&minPrice=0&maxPrice=0&collectionSymbol=${collectionSymbol}`
+  }
 }
 
 const getTotalNumbers = async (collectionSymbol) => {
