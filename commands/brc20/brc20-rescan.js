@@ -40,7 +40,6 @@ module.exports = {
         const ownedSymbols = await getOwnedSymbols(userBrc20.UserAddress.walletAddress)
         const capitalCaseOwnedSymbols = ownedSymbols.map((item) => capitalCase(item))
         const isValid = capitalCaseOwnedSymbols.includes(userBrc20.Brc20.name)
-        console.log('isValid', isValid)
         if (isValid === false) {
           await UserBrc20s.destroy({
             where: {

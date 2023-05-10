@@ -23,8 +23,6 @@ describe('brc20-marketplace', () => {
         getString: sinon.stub(),
         getRole: sinon.stub(),
       },
-      deferReply: sinon.stub(),
-      editReply: sinon.stub(),
       reply: sinon.stub(),
       guild: {
         roles: {
@@ -54,18 +52,17 @@ describe('brc20-marketplace', () => {
     sinon.restore()
   })
 
-  it('should successfully add a collection from MagicEden and assign a role', async () => {
+  it('should successfully add a brc20', async () => {
     // Prepare stubs and interaction options
-    interactionStub.options.getString.onFirstCall().returns('https://example.com/collection/mnch')
-    interactionStub.options.getString.onSecondCall().returns('mnch')
+    ManageChannelsStub.findOne.resolves({ channelId: '12345' })
+    interactionStub.options.getString.onFirstCall().returns('https://example.com/brc20/link')
     interactionStub.options.getRole.returns({ name: 'TestRole' })
 
     // Call the function and check the result
     await brc20Marketplace.execute(interactionStub)
 
-    expect(interactionStub.deferReply.calledOnce).to.be.false
-    expect(interactionStub.editReply.callCount).to.equal(3)
-    expect(interactionStub.reply.called).to.be.true
+    expect(interactionStub.reply.calledOnce).to.be.true
     expect(Brc20sStub.create.calledOnce).to.be.true
+    expect(ManageChannelsStub.findOne.calledOnce).to.be.true
   })
 })

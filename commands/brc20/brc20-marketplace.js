@@ -15,7 +15,6 @@ module.exports = {
     .setDescription('Automatically add a brc20 direct from a supported marketplace and assign role')
     .addRoleOption((option) => option.setName('role').setDescription('Choose the role to assign').setRequired(true))
     .addStringOption((option) => option.setName('link').setDescription('The link to the brc20').setRequired(true))
-    .addStringOption((option) => option.setName('name').setDescription('Override the brc20 name').setRequired(false))
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild),
 
   async execute(interaction) {
@@ -36,7 +35,6 @@ module.exports = {
       const pattern = /(\/|=)([^/=]*)$/
       const match = url.match(pattern)
       const brc20Symbol = match ? match[2] : url
-      const name = interaction.options.getString('name') ?? capitalCase(brc20Symbol)
 
       const isValid = await Unisat.isValidBrc20(brc20Symbol)
 
@@ -46,7 +44,7 @@ module.exports = {
       }
 
       await Brc20s.create({
-        name,
+        name: capitalCase(brc20Symbol),
         channelId: interaction.channelId,
         role: role.name,
       })
