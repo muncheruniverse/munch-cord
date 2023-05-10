@@ -43,7 +43,6 @@ const checkInscriptions = async (interaction, userAddress) => {
   }
 
   const addedRoles = []
-  const notFoundRoles = []
 
   const inscriptionRefs = inscriptions.data.map((obj) => obj.id)
   const inscriptionsThatExist = await Inscriptions.findAll({
@@ -80,8 +79,6 @@ const checkInscriptions = async (interaction, userAddress) => {
           userAddressId: userAddress.id,
         })
       }
-    } else {
-      notFoundRoles.push(role.name)
     }
   }
 
