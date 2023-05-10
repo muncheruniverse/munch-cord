@@ -12,11 +12,26 @@ const getCollectionId = async (collectionSymbol) => {
   gammaCollectionId = match[1]
 }
 
+const getCount = (data) => {
+  switch (gammaCollectionId) {
+    case '10k':
+      return 10000
+    case '1k':
+      return 1000
+    default:
+      return data.result.data.json.items[0].collection.collection_size
+  }
+}
+
 const getEncodedParams = () => {
   if (cursorInscriptionId === undefined) {
-    return `?input=%7B%22json%22%3A%7B%22collection_id%22%3A%22${gammaCollectionId}%22%7D%7D`
+    return gammaCollectionId === '10k' || gammaCollectionId === '1k'
+      ? `{"json":{"category_id":"${gammaCollectionId}","inscription_id":null,"sort_by":"lowest-id","availability":"all","cursor":null},"meta":{"values":{"inscription_id":["undefined"],"attributes":["undefined"],"cursor":["undefined"]}}}`
+      : `{"json":{"collection_id":"${gammaCollectionId}","inscription_id":null,"sort_by":"lowest-id","availability":"all","attributes":null,"cursor":null},"meta":{"values":{"inscription_id":["undefined"],"attributes":["undefined"],"cursor":["undefined"]}}}`
   } else {
-    return `?input=%7B%22json%22%3A%7B%22collection_id%22%3A%22${gammaCollectionId}%22%2C%22cursor%22%3A%7B%22inscription_id%22%3A%22${cursorInscriptionId}%22%7D%7D%7D`
+    return gammaCollectionId === '10k' || gammaCollectionId === '1k'
+      ? `{"json":{"category_id":"${gammaCollectionId}","inscription_id":null,"sort_by":"lowest-id","availability":"all","attributes":null,"cursor":{"inscription_id":"${cursorInscriptionId}"}},"meta":{"values":{"inscription_id":["undefined"],"attributes":["undefined"],"cursor":["undefined"]}}}`
+      : `{"json":{"collection_id":"${gammaCollectionId}","inscription_id":null,"sort_by":"lowest-id","availability":"all","attributes":null,"cursor":{"inscription_id":"${cursorInscriptionId}"}},"meta":{"values":{"inscription_id":["undefined"],"attributes":["undefined"],"cursor":["undefined"]}}}`
   }
 }
 
@@ -24,14 +39,14 @@ const getTotalNumbers = async (collectionSymbol) => {
   cursorInscriptionId = undefined
   await getCollectionId(collectionSymbol)
   const encodedParams = getEncodedParams()
-  const { data } = await axios.get(`${paginatedUrl}${encodedParams}`)
-  return data.result.data.json.items[0].collection.collection_size
+  const { data } = await axios.get(`${paginatedUrl}?input=${encodeURIComponent(encodedParams)}`)
+  return getCount(data)
 }
 
 const getInsInfos = async (collectionId, PAGINATED_AMOUNT, offset, collectionSymbol) => {
   const paginatedInscriptions = []
   const encodedParams = getEncodedParams()
-  const { data } = await axios.get(`${paginatedUrl}${encodedParams}`)
+  const { data } = await axios.get(`${paginatedUrl}?input=${encodeURIComponent(encodedParams)}`)
 
   data.result.data.json.items.forEach((inscription) => {
     paginatedInscriptions.push({ collectionId, inscriptionRef: inscription.inscription_id })
