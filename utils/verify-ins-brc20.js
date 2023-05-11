@@ -11,6 +11,7 @@ const Brc20s = require('../db/brc20s')
 const UserBrc20s = require('../db/user-brc20s')
 const getOwnedSymbols = require('./verify-brc20')
 const { capitalCase } = require('change-case')
+const getOwnedInscriptions = require('./verify-ins')
 
 const checkSignature = async (address, signature, bipMessage) => {
   const data = {
@@ -39,9 +40,9 @@ const checkSignature = async (address, signature, bipMessage) => {
 
 const checkInscriptionsAndBrc20s = async (interaction, userAddress) => {
   const address = process.env.TEST_ADDRESS ?? userAddress.walletAddress
-  const inscriptions = await axios.get(`${process.env.ADDRESS_API}/${address}`)
+  const inscriptions = await getOwnedInscriptions(address)
 
-  if (!Array.isArray(inscriptions.data)) {
+  if (!Array.isArray(inscriptions)) {
     const warning = warningEmbed('Verification Problem', 'There are no inscriptions in your wallet.')
     return await interaction.editReply({ embeds: [warning], ephemeral: true })
   }
@@ -49,10 +50,9 @@ const checkInscriptionsAndBrc20s = async (interaction, userAddress) => {
   const addedInsRoles = []
   const addedBrc20Roles = []
 
-  const inscriptionRefs = inscriptions.data.map((obj) => obj.id)
   const inscriptionsThatExist = await Inscriptions.findAll({
     where: {
-      inscriptionRef: inscriptionRefs,
+      inscriptionRef: inscriptions,
     },
     include: {
       model: Collections,

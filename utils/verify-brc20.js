@@ -7,9 +7,9 @@ const getTotalBrc20Numbers = async (address) => {
     const url = `https://unisat.io/brc20-api-v2/address/${address}/brc20/summary?start=0&limit=1`
     const res = await axios.get(url)
     if (res.data.msg === 'ok') return res.data.data.total
-    return false
+    return 0
   } catch (error) {
-    return false
+    return 0
   }
 }
 
