@@ -9,10 +9,24 @@ const Brc20s = require('../../db/brc20s')
 const { COMMON_ERROR } = require('../../embed/error-messages')
 const Unisat = require('./marketplace/unisat')
 
+const MARKET_PLACES = [
+  {
+    name: 'unisat',
+    value: 'unisat',
+  },
+]
+
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('brc20-marketplace')
     .setDescription('Automatically add a brc20 direct from a supported marketplace and assign role')
+    .addStringOption((option) =>
+      option
+        .setName('venue')
+        .setDescription('Choose the marketplace')
+        .addChoices(...MARKET_PLACES)
+        .setRequired(true)
+    )
     .addRoleOption((option) => option.setName('role').setDescription('Choose the role to assign').setRequired(true))
     .addStringOption((option) => option.setName('link').setDescription('The link to the brc20').setRequired(true))
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild),
