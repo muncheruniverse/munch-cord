@@ -7,8 +7,13 @@ const verifications = require('../utils/verifications')
 const UserInscriptions = require('../db/user-inscriptions')
 
 const getOwnerAddress = async (inscriptionRef) => {
-  const { data } = await axios.get(`https://api.hiro.so/ordinals/v1/inscriptions/${inscriptionRef}`)
-  return data.address
+  if (process.env.API_PROVIDER === 'HIRO') {
+    const { data } = await axios.get(`https://api.hiro.so/ordinals/v1/inscriptions/${inscriptionRef}`)
+    return data.address
+  } else if (process.env.API_PROVIDER === 'ORDAPI') {
+    const { data } = await axios.get(`https://ordapi.xyz/inscription/${inscriptionRef}`)
+    return data.address
+  }
 }
 
 module.exports = {
