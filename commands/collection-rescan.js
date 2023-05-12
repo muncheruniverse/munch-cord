@@ -1,20 +1,10 @@
-const axios = require('axios').default
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js')
 const errorEmbed = require('../embed/error-embed')
 const sequelize = require('../db/db-connect')
 const { QueryTypes } = require('sequelize')
 const verifications = require('../utils/verifications')
 const UserInscriptions = require('../db/user-inscriptions')
-
-const getOwnerAddress = async (inscriptionRef) => {
-  if (process.env.API_PROVIDER === 'HIRO') {
-    const { data } = await axios.get(`https://api.hiro.so/ordinals/v1/inscriptions/${inscriptionRef}`)
-    return data.address
-  } else if (process.env.API_PROVIDER === 'ORDAPI') {
-    const { data } = await axios.get(`https://ordapi.xyz/inscription/${inscriptionRef}`)
-    return data.address
-  }
-}
+const { getOwnerAddress } = require('../utils/verify-ins')
 
 module.exports = {
   data: new SlashCommandBuilder()

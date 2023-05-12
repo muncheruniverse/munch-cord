@@ -7,7 +7,7 @@ const { Op } = require('sequelize')
 const { Collections, Inscriptions } = require('../db/collections-inscriptions')
 const sequelize = require('../db/db-connect')
 const UserInscriptions = require('../db/user-inscriptions')
-const getOwnedInscriptions = require('./verify-ins')
+const { getOwnedInscriptions } = require('./verify-ins')
 
 const checkSignature = async (address, signature, bipMessage) => {
   const data = {

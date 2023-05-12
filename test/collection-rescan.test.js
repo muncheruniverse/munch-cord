@@ -1,10 +1,11 @@
 const { expect } = require('chai')
 const sinon = require('sinon')
+const rewire = require('rewire')
 const axios = require('axios').default
 const { GuildMemberRoleManager } = require('discord.js')
 const sequelize = require('../db/db-connect')
 const { Collections } = require('../db/collections-inscriptions')
-const reScan = require('../commands/collection-rescan')
+const reScan = rewire('../commands/collection-rescan')
 const UserInscriptions = require('../db/user-inscriptions')
 
 describe('re-scan', () => {
@@ -13,8 +14,8 @@ describe('re-scan', () => {
   })
 
   it('should successfully rescan inscriptions and call verifications', async () => {
-    // Mock axios.get
-    const axiosGetStub = sinon.stub(axios, 'get').resolves({ data: { address: 'btcAddress2' } })
+    // Mock getOwnerAddress
+    const getOwnerAddressStub = sinon.stub().resolves('btcAddress2')
     const userInscriptionsDestroyStub = sinon.stub(UserInscriptions, 'destroy').resolves()
     const collectionsFindAllStub = sinon.stub(Collections, 'findAll').resolves([])
 
@@ -46,9 +47,11 @@ describe('re-scan', () => {
       deferReply: sinon.stub(),
     }
 
+    reScan.__set__('getOwnerAddress', getOwnerAddressStub)
+
     await reScan.execute(interaction)
 
-    expect(axiosGetStub.calledOnce).to.be.true
+    expect(getOwnerAddressStub.calledOnce).to.be.true
     expect(sequelizeQueryStub.calledOnce).to.be.true
     expect(collectionsFindAllStub.calledOnce).to.be.true
     expect(guildMemberRoleManagerStub.calledOnce).to.be.true
@@ -57,8 +60,8 @@ describe('re-scan', () => {
   })
 
   it('should unset the btcAddress1 role accordingly as inscription location changed and set the btcAddress2 role', async () => {
-    // Mock axios.get
-    const axiosGetStub = sinon.stub(axios, 'get').resolves({ data: { address: 'btcAddress2' } })
+    // Mock getOwnerAddress
+    const getOwnerAddressStub = sinon.stub().resolves('btcAddress2')
     const userInscriptionsDestroyStub = sinon.stub(UserInscriptions, 'destroy').resolves()
     const collectionsFindAllStub = sinon.stub(Collections, 'findAll').resolves([])
 
@@ -114,9 +117,10 @@ describe('re-scan', () => {
       deferReply: sinon.stub(),
     }
 
+    reScan.__set__('getOwnerAddress', getOwnerAddressStub)
     await reScan.execute(interaction)
 
-    expect(axiosGetStub.calledTwice).to.be.true
+    expect(getOwnerAddressStub.calledTwice).to.be.true
     expect(sequelizeQueryStub.calledOnce).to.be.true
     expect(collectionsFindAllStub.calledOnce).to.be.true
     expect(removeRoleStub.calledOnce).to.be.true
