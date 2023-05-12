@@ -1,4 +1,3 @@
-const axios = require('axios').default
 const express = require('express')
 const { upsertUserAddress } = require('../../db/user-addresses')
 const { checkSignature } = require('../../utils/verify-nft')
@@ -8,6 +7,7 @@ const UserInscriptions = require('../../db/user-inscriptions')
 const BipMessages = require('../../db/bip-messages')
 const router = express.Router()
 const abbreviateAddress = require('../../utils/helpers')
+const getOwnedInscriptions = require('../../utils/verify-ins')
 
 router.post('/', authenticateToken, async (req, res) => {
   try {
@@ -39,10 +39,10 @@ router.post('/', authenticateToken, async (req, res) => {
       })
     }
     const userAddress = await upsertUserAddress(process.env.TEST_ADDRESS ?? address, userId, provider)
-    const inscriptions = await axios.get(`${process.env.ADDRESS_API}/${userAddress.walletAddress}`)
+    const inscriptions = await getOwnedInscriptions('userAddress.walletAddress')
     const abbreviatedAddress = abbreviateAddress(userAddress.walletAddress)
 
-    if (!Array.isArray(inscriptions.data)) {
+    if (!Array.isArray(inscriptions)) {
       return res.status(200).json({
         message: 'Wallet Linked',
         description: `You successfully linked address ${abbreviatedAddress}. There were no inscriptions detected, but you can easily re-scan from within Discord 🎉`,
@@ -58,10 +58,9 @@ router.post('/', authenticateToken, async (req, res) => {
     const addedRoles = []
     const notFoundRoles = []
 
-    const inscriptionRefs = inscriptions.data.map((obj) => obj.id)
     const inscriptionsThatExist = await Inscriptions.findAll({
       where: {
-        inscriptionRef: inscriptionRefs,
+        inscriptionRef: inscriptions,
       },
       include: {
         model: Collections,
