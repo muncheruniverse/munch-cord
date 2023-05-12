@@ -7,7 +7,7 @@ const verifications = require('../utils/verifications')
 const UserInscriptions = require('../db/user-inscriptions')
 
 const getOwnerAddress = async (inscriptionRef) => {
-  const { data } = await axios.get(`${process.env.INSCRIPTION_API}/${inscriptionRef}`)
+  const { data } = await axios.get(`https://api.hiro.so/ordinals/v1/inscriptions/${inscriptionRef}`)
   return data.address
 }
 

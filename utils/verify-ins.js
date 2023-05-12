@@ -1,14 +1,15 @@
 const axios = require('axios').default
 
 const PAGINATED_AMOUNT = 50
+const HIRO_API_URL = 'https://api.hiro.so/ordinals/v1/inscriptions'
 
 const getUrl = (address, limit, offset) => {
-  return `${process.env.INSCRIPTION_API}?address=${address}&limit=${limit}&offset=${offset}`
+  return `${HIRO_API_URL}?address=${address}&limit=${limit}&offset=${offset}`
 }
 
 const getTotalInsNumbers = async (address) => {
   try {
-    const url = `${process.env.INSCRIPTION_API}?address=${address}&limit=1`
+    const url = `${HIRO_API_URL}?address=${address}&limit=1`
     const res = axios.get(url)
     if (res.data.total) return res.data.total
     return 0
@@ -18,10 +19,10 @@ const getTotalInsNumbers = async (address) => {
 }
 
 const getOwnedInscriptions = async (address) => {
-  if (process.env.ADDRESS_API === 'ORDAPI') {
+  if (process.env.API_PROVIDER === 'ORDAPI') {
     const { data } = await axios.get(`https://ordapi.xyz/address/${address}`)
     return data.map((inscription) => inscription.id)
-  } else if (process.env.ADDRESS_API === 'HIRO') {
+  } else if (process.env.API_PROVIDER === 'HIRO') {
     const inscriptions = []
     let offset = 0
     const total = await getTotalInsNumbers(address)
