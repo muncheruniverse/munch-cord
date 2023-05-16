@@ -44,7 +44,6 @@ const checkInscriptions = async (interaction, userAddress) => {
   }
 
   const addedRoles = []
-  const notFoundRoles = []
 
   const inscriptionsThatExist = await Inscriptions.findAll({
     where: {
@@ -80,8 +79,6 @@ const checkInscriptions = async (interaction, userAddress) => {
           userAddressId: userAddress.id,
         })
       }
-    } else {
-      notFoundRoles.push(role.name)
     }
   }
 
