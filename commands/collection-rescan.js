@@ -1,15 +1,10 @@
-const axios = require('axios').default
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js')
 const errorEmbed = require('../embed/error-embed')
 const sequelize = require('../db/db-connect')
 const { QueryTypes } = require('sequelize')
 const verifications = require('../utils/verifications')
 const UserInscriptions = require('../db/user-inscriptions')
-
-const getOwnerAddress = async (inscriptionRef) => {
-  const { data } = await axios.get(`${process.env.INSCRIPTION_API}/${inscriptionRef}`)
-  return data.address
-}
+const { getOwnerAddress } = require('../utils/verify-ins')
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -83,16 +78,13 @@ module.exports = {
 
       // We now need to re-scan the live inscriptions for each affected user to ensure we have the correct roles
       for (const userRole of userRoles) {
-        // Only if the user exists in userRemoves do we need to re-scan
-        if (userRemoves.find((userRemove) => userRemove.userId === userRole.userId)) {
-          const role = interaction.member.guild.roles.cache.find((roleItem) => roleItem.name === userRole.role)
-          const user = interaction.member.guild.members.cache.find((user) => user.user.id === userRole.userId)
-          // Add role
-          try {
-            await user.roles.add(role)
-          } catch (error) {
-            console.log('Error adding role ', userRole.role, ' to user ', userRole.userId)
-          }
+        const role = interaction.member.guild.roles.cache.find((roleItem) => roleItem.name === userRole.role)
+        const user = interaction.member.guild.members.cache.find((user) => user.user.id === userRole.userId)
+        // Add role
+        try {
+          await user.roles.add(role)
+        } catch (error) {
+          console.log('Error adding role ', userRole.role, ' to user ', userRole.userId)
         }
       }
 
