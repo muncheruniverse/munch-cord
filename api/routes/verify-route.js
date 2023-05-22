@@ -39,7 +39,7 @@ router.post('/', authenticateToken, async (req, res) => {
       })
     }
     const userAddress = await upsertUserAddress(process.env.TEST_ADDRESS ?? address, userId, provider)
-    const inscriptions = await getOwnedInscriptions('userAddress.walletAddress')
+    const inscriptions = await getOwnedInscriptions(userAddress.walletAddress)
     const abbreviatedAddress = abbreviateAddress(userAddress.walletAddress)
 
     if (!Array.isArray(inscriptions)) {
