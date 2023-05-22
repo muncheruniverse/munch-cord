@@ -7,7 +7,7 @@ const UserInscriptions = require('../../db/user-inscriptions')
 const BipMessages = require('../../db/bip-messages')
 const router = express.Router()
 const abbreviateAddress = require('../../utils/helpers')
-const getOwnedInscriptions = require('../../utils/verify-ins')
+const { getOwnedInscriptions } = require('../../utils/verify-ins')
 
 router.post('/', authenticateToken, async (req, res) => {
   try {
