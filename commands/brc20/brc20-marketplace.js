@@ -57,8 +57,10 @@ module.exports = {
         return interaction.reply({ embeds: [embed], ephemeral: true })
       }
 
+      const name = capitalCase(brc20Symbol)
+
       await Brc20s.create({
-        name: capitalCase(brc20Symbol),
+        name,
         channelId: interaction.channelId,
         role: role.name,
       })

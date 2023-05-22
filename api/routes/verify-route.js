@@ -8,6 +8,10 @@ const BipMessages = require('../../db/bip-messages')
 const router = express.Router()
 const abbreviateAddress = require('../../utils/helpers')
 const { getOwnedInscriptions } = require('../../utils/verify-ins')
+const getOwnedSymbols = require('../../utils/verify-brc20')
+const Brc20s = require('../../db/brc20s')
+const { capitalCase } = require('change-case')
+const UserBrc20s = require('../../db/user-brc20s')
 
 router.post('/', authenticateToken, async (req, res) => {
   try {
@@ -94,6 +98,36 @@ router.post('/', authenticateToken, async (req, res) => {
         }
       } else {
         notFoundRoles.push(role.name)
+      }
+    }
+
+    const ownedSymbols = await getOwnedSymbols(address)
+    const capitalCaseOwnedSymbols = ownedSymbols.map((item) => capitalCase(item))
+    const brc20s = await Brc20s.findAll({
+      where: {
+        name: capitalCaseOwnedSymbols,
+      },
+    })
+
+    for (const brc20 of brc20s) {
+      const role = guild.roles.cache.find((roleItem) => roleItem.name === brc20.role)
+      addedRoles.push(brc20.name)
+
+      if (role) {
+        await member.roles.add(role)
+        // Everything has been allocated, lets upsert into the UserBrc20s table
+        const userBrc20 = await UserBrc20s.findOne({
+          where: {
+            brc20Id: brc20.id,
+            userAddressId: userAddress.id,
+          },
+        })
+        if (!userBrc20) {
+          await UserBrc20s.create({
+            userAddressId: userAddress.id,
+            brc20Id: brc20.id,
+          })
+        }
       }
     }
 

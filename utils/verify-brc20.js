@@ -1,13 +1,16 @@
 const axios = require('axios').default
 
-const PAGINATED_AMOUNT = 100
+const PAGINATED_AMOUNT = 50
+
+const header = {
+  'Ok-Access-Key': process.env.OKLINK_API_KEY,
+}
 
 const getTotalBrc20Numbers = async (address) => {
   try {
-    const url = `https://unisat.io/brc20-api-v2/address/${address}/brc20/summary?start=0&limit=1`
-    const res = await axios.get(url)
-    if (res.data.msg === 'ok') return res.data.data.total
-    return 0
+    const url = `https://www.oklink.com/api/v5/explorer/btc/address-balance-list?address=${address}&limit=1`
+    const res = await axios.get(url, { headers: header })
+    return res.data.data[0].totalPage
   } catch (error) {
     return 0
   }
@@ -15,23 +18,18 @@ const getTotalBrc20Numbers = async (address) => {
 
 const getOwnedSymbols = async (address) => {
   const ownedSymbols = []
-  const totalNumber = await getTotalBrc20Numbers(address)
-  if (totalNumber === 0) return ownedSymbols
-  let start = 0
-  const limit = PAGINATED_AMOUNT
-  while (1) {
-    try {
-      const url = `https://unisat.io/brc20-api-v2/address/${address}/brc20/summary?start=${start}&limit=${limit}`
-      const res = await axios.get(url)
-      for (const brc20sData of res.data.data.detail) {
-        ownedSymbols.push(brc20sData.ticker)
-      }
-      if (res.data.data.detail.length === 0) return ownedSymbols
-      start += limit
-    } catch (error) {
-      return ownedSymbols
+  const totalPageNumber = await getTotalBrc20Numbers(address)
+  if (totalPageNumber === 0) return ownedSymbols
+
+  for (let i = 1; i < totalPageNumber + 1; i++) {
+    const url = `https://www.oklink.com/api/v5/explorer/btc/address-balance-list?address=${address}&limit=${PAGINATED_AMOUNT}&page=${i}`
+    const res = await axios.get(url, { headers: header })
+    for (const brc20sData of res.data.data[0].balanceList) {
+      ownedSymbols.push(brc20sData.token)
     }
   }
+
+  return ownedSymbols
 }
 
 module.exports = getOwnedSymbols
