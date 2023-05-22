@@ -9,26 +9,12 @@ const Brc20s = require('../../db/brc20s')
 const { COMMON_ERROR } = require('../../embed/error-messages')
 const Unisat = require('./marketplace/unisat')
 
-const MARKET_PLACES = [
-  {
-    name: 'unisat',
-    value: 'unisat',
-  },
-]
-
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('brc20-marketplace')
     .setDescription('Automatically add a brc20 direct from a supported marketplace and assign role')
-    .addStringOption((option) =>
-      option
-        .setName('venue')
-        .setDescription('Choose the marketplace')
-        .addChoices(...MARKET_PLACES)
-        .setRequired(true)
-    )
     .addRoleOption((option) => option.setName('role').setDescription('Choose the role to assign').setRequired(true))
-    .addStringOption((option) => option.setName('link').setDescription('The link to the brc20').setRequired(true))
+    .addStringOption((option) => option.setName('ticker').setDescription('The ticker to the brc20').setRequired(true))
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild),
 
   async execute(interaction) {
@@ -45,7 +31,7 @@ module.exports = {
       }
 
       const role = interaction.options.getRole('role')
-      const url = interaction.options.getString('link')
+      const url = interaction.options.getString('ticker')
       const pattern = /(\/|=)([^/=]*)$/
       const match = url.match(pattern)
       const brc20Symbol = match ? match[2] : url
