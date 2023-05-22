@@ -4,7 +4,7 @@ const rewire = require('rewire')
 const brc20Marketplace = rewire('../../commands/brc20/brc20-marketplace')
 
 describe('brc20-marketplace', () => {
-  let Brc20sStub, interactionStub, ManageChannelsStub
+  let Brc20sStub, interactionStub, ManageChannelsStub, UnisatStub
 
   beforeEach(() => {
     // Stub necessary dependencies
@@ -14,6 +14,10 @@ describe('brc20-marketplace', () => {
 
     ManageChannelsStub = {
       findOne: sinon.stub(),
+    }
+
+    UnisatStub = {
+      isValidBrc20: sinon.stub(),
     }
 
     // Stub interaction
@@ -46,6 +50,7 @@ describe('brc20-marketplace', () => {
     // Set stubs
     brc20Marketplace.__set__('Brc20s', Brc20sStub)
     brc20Marketplace.__set__('ManageChannels', ManageChannelsStub)
+    brc20Marketplace.__set__('Unisat', UnisatStub)
   })
 
   afterEach(() => {
@@ -55,8 +60,9 @@ describe('brc20-marketplace', () => {
   it('should successfully add a brc20', async () => {
     // Prepare stubs and interaction options
     ManageChannelsStub.findOne.resolves({ channelId: '12345' })
-    interactionStub.options.getString.onFirstCall().returns('https://example.com/brc20/link')
+    interactionStub.options.getString.onFirstCall().returns('https://example.com/brc20/mnch')
     interactionStub.options.getRole.returns({ name: 'TestRole' })
+    UnisatStub.isValidBrc20.resolves(true)
 
     // Call the function and check the result
     await brc20Marketplace.execute(interactionStub)
@@ -64,5 +70,6 @@ describe('brc20-marketplace', () => {
     expect(interactionStub.reply.calledOnce).to.be.true
     expect(Brc20sStub.create.calledOnce).to.be.true
     expect(ManageChannelsStub.findOne.calledOnce).to.be.true
+    expect(UnisatStub.isValidBrc20.calledOnce).to.be.true
   })
 })
