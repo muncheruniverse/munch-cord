@@ -30,7 +30,7 @@ const getTotalInsNumbers = async (address) => {
 
 const getOwnedInscriptions = async (address) => {
   if (process.env.API_PROVIDER === 'ORDAPI') {
-    const { data } = await axios.get(`${API_URLS.ordapi.inscription}/${address}`)
+    const { data } = await axios.get(`${API_URLS.ordapi.address}/${address}`)
     return data.map((inscription) => inscription.id)
   } else if (process.env.API_PROVIDER === 'HIRO') {
     const inscriptions = []
