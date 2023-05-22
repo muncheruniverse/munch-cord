@@ -12,6 +12,7 @@ const apiService = (client) => {
     })
   )
 
+  // Test
   app.get('/health', async (req, res) => {
     try {
       const packageInfo = require('../package.json')
