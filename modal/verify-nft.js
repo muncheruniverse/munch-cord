@@ -3,7 +3,7 @@ const warningEmbed = require('../embed/warning-embed')
 const BipMessages = require('../db/bip-messages')
 const { upsertUserAddress } = require('../db/user-addresses')
 const { MODAL_ID, SIGNATURE_ID, ADDRESS } = require('../selector/verify-selector')
-const { checkInscriptions, checkSignature } = require('../utils/verify-nft')
+const { checkInscriptionsAndBrc20s, checkSignature } = require('../utils/verify-ins-brc20')
 
 module.exports = {
   data: MODAL_ID,
@@ -38,7 +38,7 @@ module.exports = {
 
         const userAddress = await upsertUserAddress(address, interaction.user.id)
 
-        await checkInscriptions(interaction, userAddress)
+        await checkInscriptionsAndBrc20s(interaction, userAddress)
       } catch (error) {
         // Valid error from the RPC node
         if (error.response && error.response.status === 500) {

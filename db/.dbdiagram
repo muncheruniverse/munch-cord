@@ -30,3 +30,18 @@ Table ManageChannels {
   id int [pk]
   channelId string
 }
+
+Table Brc20s {
+  id int [pk]
+  name string
+  channelId string
+  role string
+  deletedAt DateTime
+}
+
+Table UserBrc20s {
+  id int [pk]
+  userAddressId int [ref: > UserAddresses.id]
+  brc20Id int [ref: > Brc20s.id]
+  deletedAt DateTime
+}

@@ -7,18 +7,21 @@ const { Client, Collection, Events, GatewayIntentBits, ActivityType } = require(
 // Import required model files
 const ManageChannels = require('./db/manage-channels')
 const UserInscriptions = require('./db/user-inscriptions')
-const { Collections, Inscriptions } = require('./db/collections-inscriptions')
 const BipMessages = require('./db/bip-messages')
+const Brc20s = require('./db/brc20s')
+const UserBrc20s = require('./db/user-brc20s')
 const { UserAddresses } = require('./db/user-addresses')
+const { Collections, Inscriptions } = require('./db/collections-inscriptions')
 
 // Import required modal interactions
 const addCollectionModal = require('./modal/add-collection')
-const verifynft = require('./modal/verify-nft')
+const verifyNft = require('./modal/verify-nft')
 
 // Import required selector interactions
 const roleSelector = require('./selector/role-selector')
 const verifySelector = require('./selector/verify-selector')
 const removeCollectionSelector = require('./selector/remove-collection-selector')
+const removeBrc20Selector = require('./selector/remove-brc20-selector')
 
 // Import required button action interactions
 const verify = require('./button/verify')
@@ -36,11 +39,17 @@ client.commands = new Collection()
 
 // Find all files in the commands directory that end in .js
 const commandsPath = path.join(__dirname, 'commands')
-const commandFiles = fs.readdirSync(commandsPath).filter((file) => file.endsWith('.js') && !file.endsWith('.test.js'))
+const commandFilePaths = []
+fs.readdirSync(commandsPath).forEach((dirName) => {
+  fs.readdirSync(path.join(commandsPath, dirName)).forEach((file) => {
+    if (file.endsWith('.js') && !file.endsWith('.test.js')) {
+      commandFilePaths.push(path.join(commandsPath, dirName, file))
+    }
+  })
+})
 
 // Loop through each command file and add it to the bot's commands map
-for (const file of commandFiles) {
-  const filePath = path.join(commandsPath, file)
+for (const filePath of commandFilePaths) {
   const command = require(filePath)
   if ('data' in command && 'execute' in command) {
     client.commands.set(command.data.name, command)
@@ -55,8 +64,8 @@ client.on(Events.InteractionCreate, async (interaction) => {
       // Modal interactions
       if (interaction.customId === addCollectionModal.data) {
         await addCollectionModal.execute(interaction)
-      } else if (interaction.customId === verifynft.data) {
-        await verifynft.execute(interaction)
+      } else if (interaction.customId === verifyNft.data) {
+        await verifyNft.execute(interaction)
       }
     } else if (interaction.isStringSelectMenu()) {
       // Selector interactions
@@ -64,6 +73,8 @@ client.on(Events.InteractionCreate, async (interaction) => {
         roleSelector.execute(interaction)
       } else if (interaction.customId === removeCollectionSelector.data) {
         removeCollectionSelector.execute(interaction)
+      } else if (interaction.customId === removeBrc20Selector.data) {
+        removeBrc20Selector.execute(interaction)
       } else if (interaction.customId === verifySelector.data) {
         verifySelector.execute(interaction)
       }
@@ -116,6 +127,9 @@ client.once(Events.ClientReady, (client) => {
     Inscriptions.sync().then(() => {
       UserAddresses.sync().then(() => {
         UserInscriptions.sync()
+        Brc20s.sync().then(() => {
+          UserBrc20s.sync()
+        })
       })
     })
   })
