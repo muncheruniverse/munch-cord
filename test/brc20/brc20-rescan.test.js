@@ -43,7 +43,7 @@ describe('brc20-re-scan', () => {
         {
           id: 1234,
           Brc20: {
-            name: 'Mnch',
+            name: 'mnch',
           },
           UserAddress: {
             walletAddress: '1234',
