@@ -4,8 +4,8 @@ const errorEmbed = require('../../embed/error-embed')
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName('brc20-view')
-    .setDescription('View all brc20s')
+    .setName('brc20-verifications')
+    .setDescription('View all collection verifications for this channel')
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild),
 
   async execute(interaction) {
