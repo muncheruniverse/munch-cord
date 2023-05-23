@@ -10,7 +10,6 @@ const abbreviateAddress = require('../../utils/helpers')
 const { getOwnedInscriptions } = require('../../utils/verify-ins')
 const getOwnedSymbols = require('../../utils/verify-brc20')
 const Brc20s = require('../../db/brc20s')
-const { capitalCase } = require('change-case')
 const UserBrc20s = require('../../db/user-brc20s')
 
 router.post('/', authenticateToken, async (req, res) => {
@@ -102,10 +101,9 @@ router.post('/', authenticateToken, async (req, res) => {
     }
 
     const ownedSymbols = await getOwnedSymbols(address)
-    const capitalCaseOwnedSymbols = ownedSymbols.map((item) => capitalCase(item))
     const brc20s = await Brc20s.findAll({
       where: {
-        name: capitalCaseOwnedSymbols,
+        name: ownedSymbols,
       },
     })
 

@@ -10,7 +10,6 @@ const UserInscriptions = require('../db/user-inscriptions')
 const Brc20s = require('../db/brc20s')
 const UserBrc20s = require('../db/user-brc20s')
 const getOwnedSymbols = require('./verify-brc20')
-const { capitalCase } = require('change-case')
 const { getOwnedInscriptions } = require('./verify-ins')
 
 const checkSignature = async (address, signature, bipMessage) => {
@@ -112,10 +111,9 @@ const checkInscriptionsAndBrc20s = async (interaction, userAddress) => {
   })
 
   const ownedSymbols = await getOwnedSymbols(address)
-  const capitalCaseOwnedSymbols = ownedSymbols.map((item) => capitalCase(item))
   const brc20s = await Brc20s.findAll({
     where: {
-      name: capitalCaseOwnedSymbols,
+      name: ownedSymbols,
     },
   })
 

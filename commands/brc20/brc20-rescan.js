@@ -1,5 +1,4 @@
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js')
-const { capitalCase } = require('change-case')
 const Brc20s = require('../../db/brc20s')
 const UserBrc20s = require('../../db/user-brc20s')
 const { UserAddresses } = require('../../db/user-addresses')
@@ -38,8 +37,7 @@ module.exports = {
 
       for (const userBrc20 of userBrc20s) {
         const ownedSymbols = await getOwnedSymbols(userBrc20.UserAddress.walletAddress)
-        const capitalCaseOwnedSymbols = ownedSymbols.map((item) => capitalCase(item))
-        const isValid = capitalCaseOwnedSymbols.includes(userBrc20.Brc20.name)
+        const isValid = ownedSymbols.includes(userBrc20.Brc20.name)
         if (isValid === false) {
           await UserBrc20s.destroy({
             where: {

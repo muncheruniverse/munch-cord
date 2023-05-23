@@ -1,6 +1,5 @@
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js')
 const commaNumber = require('comma-number')
-const { capitalCase } = require('change-case')
 const errorEmbed = require('../../embed/error-embed')
 const successEmbed = require('../../embed/success-embed')
 const warningEmbed = require('../../embed/warning-embed')
@@ -64,7 +63,7 @@ module.exports = {
       const pattern = /(\/|=)([^/=]*)$/
       const match = url.match(pattern)
       const collectionSymbol = match ? match[2] : url
-      const name = interaction.options.getString('name') ?? capitalCase(collectionSymbol)
+      const name = interaction.options.getString('name') ?? collectionSymbol
 
       const selectedMarketplace = MARKET_PLACES.find((item) => item.name === venue)
 

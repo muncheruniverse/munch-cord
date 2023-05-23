@@ -1,5 +1,4 @@
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js')
-const { capitalCase } = require('change-case')
 const errorEmbed = require('../../embed/error-embed')
 const successEmbed = require('../../embed/success-embed')
 const warningEmbed = require('../../embed/warning-embed')
@@ -43,7 +42,7 @@ module.exports = {
         return interaction.reply({ embeds: [embed], ephemeral: true })
       }
 
-      const name = capitalCase(brc20Symbol)
+      const name = brc20Symbol
 
       await Brc20s.create({
         name,
