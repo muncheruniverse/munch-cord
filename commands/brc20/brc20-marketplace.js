@@ -11,7 +11,7 @@ const Unisat = require('./marketplace/unisat')
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('brc20-marketplace')
-    .setDescription('Automatically add a brc20 direct from a supported marketplace and assign role')
+    .setDescription('Automatically add a brc20 and assign a specific role')
     .addRoleOption((option) => option.setName('role').setDescription('Choose the role to assign').setRequired(true))
     .addStringOption((option) => option.setName('ticker').setDescription('The ticker to the brc20').setRequired(true))
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild),
@@ -38,7 +38,7 @@ module.exports = {
       const isValid = await Unisat.isValidBrc20(brc20Symbol)
 
       if (isValid === false) {
-        const embed = warningEmbed("Can't find brc20", "The supplied link doesn't point to a valid")
+        const embed = warningEmbed("Can't Validate", `The ticker ${brc20Symbol} doesn't point to a valid brc-20.`)
         return interaction.reply({ embeds: [embed], ephemeral: true })
       }
 
@@ -51,8 +51,8 @@ module.exports = {
       })
 
       const endEmbed = successEmbed(
-        `${name} Brc20 Complete`,
-        `${name} brc20 have been added and will assign the ${roleEmbed(interaction, role.name)} role.`
+        `Succefully added the brc20`,
+        `The $${name} brc20 has been added and will assign the ${roleEmbed(interaction, role.name)} role.`
       )
       return await interaction.reply({
         embeds: [endEmbed],
@@ -60,7 +60,7 @@ module.exports = {
       })
     } catch (error) {
       if (error.name === 'SequelizeUniqueConstraintError') {
-        const embed = warningEmbed('Add brc20', 'The brc20 is already in the channel.')
+        const embed = warningEmbed('Add brc20', 'The brc20 bot is already in the channel.')
         return interaction.reply({ embeds: [embed], ephemeral: true })
       }
 
