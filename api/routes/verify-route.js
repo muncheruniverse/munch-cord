@@ -109,7 +109,7 @@ router.post('/', authenticateToken, async (req, res) => {
 
     for (const brc20 of brc20s) {
       const role = guild.roles.cache.find((roleItem) => roleItem.name === brc20.role)
-      addedRoles.push(brc20.name)
+      addedRoles.push(brc20.role)
 
       if (role) {
         await member.roles.add(role)
