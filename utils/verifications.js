@@ -57,7 +57,7 @@ const brc20Verifications = async (interaction) => {
     group: ['Brc20s.id'],
   })
 
-  const embed = infoEmbed('View Brc20s', 'Brc20s, their associated role and brc20 count.')
+  const embed = infoEmbed('Verifications Brc20s', 'Brc20s, their associated role and brc20 count.')
 
   brc20s.forEach((brc20) => {
     embed.addFields({

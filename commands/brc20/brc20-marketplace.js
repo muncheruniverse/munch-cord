@@ -38,7 +38,7 @@ module.exports = {
       const isValid = await Unisat.isValidBrc20(brc20Symbol)
 
       if (isValid === false) {
-        const embed = warningEmbed("Can't find brc20", "The supplied link doesn't point to a valid")
+        const embed = warningEmbed("Can't find brc20", "The supplied ticker doesn't point to a valid")
         return interaction.reply({ embeds: [embed], ephemeral: true })
       }
 
