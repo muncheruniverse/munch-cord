@@ -19,11 +19,17 @@ const getTotalBrc20Numbers = async (address) => {
 const getOwnedSymbols = async (address) => {
   const ownedSymbols = []
   if (process.env.BRC20_API_PROVIDER === 'oklink') {
-    const totalPageNumber = await getTotalBrc20Numbers(address)
-    if (totalPageNumber === 0) return ownedSymbols
+    // This is the total number of unique BRC20s in the wallet
+    const totalBrcNumber = await getTotalBrc20Numbers(address)
+    if (totalBrcNumber === 0) return ownedSymbols
 
-    for (let i = 1; i < totalPageNumber + 1; i++) {
-      const url = `https://www.oklink.com/api/v5/explorer/btc/address-balance-list?address=${address}&limit=${PAGINATED_AMOUNT}&page=${i}`
+    // This is the total number of pages we need to paginate through based on the paginated amount
+    const totalPageNumber = Math.ceil(totalBrcNumber / PAGINATED_AMOUNT)
+
+    for (let i = 0; i < totalPageNumber; i++) {
+      const url = `https://www.oklink.com/api/v5/explorer/btc/address-balance-list?address=${address}&limit=${PAGINATED_AMOUNT}&page=${
+        i + 1
+      }`
       const res = await axios.get(url, { headers: header })
       for (const brc20sData of res.data.data[0].balanceList) {
         ownedSymbols.push(brc20sData.token)

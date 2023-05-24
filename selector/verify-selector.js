@@ -106,7 +106,6 @@ module.exports = {
           .setLabel("Let's Go")
           .setStyle(ButtonStyle.Link)
           .setURL(`${process.env.VERIFICATION_URL}?auth=${generatedToken}&message=${encodeURIComponent(message)}`)
-        console.log(`${process.env.VERIFICATION_URL}?auth=${generatedToken}&message=${encodeURIComponent(message)}`)
         const connectActionRow = new ActionRowBuilder().addComponents(connectBtn)
 
         return interaction.update({ embeds: [embed], components: [connectActionRow], ephemeral: true })
