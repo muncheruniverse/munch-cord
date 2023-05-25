@@ -46,6 +46,9 @@ module.exports = {
           })
           const role = interaction.member.guild.roles.cache.find((roleItem) => roleItem.name === userBrc20.Brc20.role)
           await interaction.member.roles.remove(role)
+        } else {
+          const role = interaction.member.guild.roles.cache.find((roleItem) => roleItem.name === userBrc20.Brc20.role)
+          await interaction.member.roles.add(role)
         }
       }
 
