@@ -18,14 +18,10 @@ const getUrl = (address, limit, offset) => {
 }
 
 const getTotalInsNumbers = async (address) => {
-  try {
-    const url = `${API_URLS.hiro.inscription}?address=${address}&limit=1`
-    const res = axios.get(url)
-    if (res.data.total) return res.data.total
-    return 0
-  } catch (err) {
-    return false
-  }
+  const url = `${API_URLS.hiro.inscription}?address=${address}&limit=1`
+  const res = await axios.get(url)
+  if (res.data.total) return res.data.total
+  return 0
 }
 
 const getOwnedInscriptions = async (address) => {
