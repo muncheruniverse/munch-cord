@@ -9,7 +9,7 @@ const sequelize = require('../db/db-connect')
 const UserInscriptions = require('../db/user-inscriptions')
 const Brc20s = require('../db/brc20s')
 const UserBrc20s = require('../db/user-brc20s')
-const getOwnedSymbols = require('./verify-brc20')
+const { getOwnedSymbols } = require('./verify-brc20')
 const { getOwnedInscriptions } = require('./verify-ins')
 
 const checkSignature = async (address, signature, bipMessage) => {

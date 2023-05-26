@@ -1,25 +1,29 @@
 const { SlashCommandBuilder, PermissionFlagsBits, AttachmentBuilder } = require('discord.js')
 const errorEmbed = require('../../embed/error-embed')
 const infoEmbed = require('../../embed/info-embed')
-const { Collections, Inscriptions } = require('../../db/collections-inscriptions')
-const { getOwnerAddress } = require('../../utils/verify-ins')
+const Brc20s = require('../../db/brc20s')
+const UserBrc20s = require('../../db/user-brc20s')
+const { UserAddresses } = require('../../db/user-addresses')
+const { getBrc20Balance } = require('../../utils/verify-brc20')
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName('collection-addresses')
-    .setDescription('View all inscriptions and addresses')
+    .setName('brc20-addresses')
+    .setDescription('View all holders addresses and amount')
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild),
 
   async execute(interaction) {
     try {
-      const collections = await Collections.findAll({
+      const brc20s = await Brc20s.findAll({
         where: {
           channelId: interaction.channelId,
         },
         attributes: ['id', 'name', 'role'],
         include: {
-          model: Inscriptions,
-          attributes: ['inscriptionRef'],
+          model: UserBrc20s,
+          include: {
+            model: UserAddresses,
+          },
         },
       })
 
@@ -29,14 +33,15 @@ module.exports = {
         ephemeral: true,
       })
 
-      for (const collection of collections) {
-        for (const inscription of collection.Inscriptions) {
-          const owner = await getOwnerAddress(inscription.inscriptionRef)
+      for (const brc20 of brc20s) {
+        for (const userBrc20 of brc20.UserBrc20s) {
+          const address = userBrc20.UserAddress.walletAddress
+          const balance = await getBrc20Balance(address, brc20.name)
           data.push({
-            id: inscription.inscriptionRef,
-            owner,
-            role: collection.role,
-            name: collection.name,
+            balance,
+            address,
+            role: brc20.role,
+            name: brc20.name,
           })
         }
       }

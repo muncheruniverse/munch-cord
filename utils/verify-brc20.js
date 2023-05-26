@@ -45,4 +45,19 @@ const getOwnedSymbols = async (address) => {
   return ownedSymbols
 }
 
-module.exports = getOwnedSymbols
+const getBrc20Balance = async (address, ticker) => {
+  if (process.env.BRC20_API_PROVIDER === 'oklink') {
+    const url = `https://www.oklink.com/api/v5/explorer/btc/address-balance-details?address=${address}&token=${ticker}`
+    const res = await axios.get(url, { headers: header })
+    console.log(res)
+
+    return res.data.data[0].balance
+  } else if (process.env.BRC20_API_PROVIDER === 'bestinslot') {
+    const url = `https://brc20api.bestinslot.xyz/v1/get_brc20_balance/${address}`
+    const res = await axios.get(url)
+    const data = res.data.find((item) => item.tick === ticker)
+    return data.overall_balance
+  }
+}
+
+module.exports = { getOwnedSymbols, getBrc20Balance }
