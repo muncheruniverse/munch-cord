@@ -11,6 +11,7 @@ const Brc20s = require('../db/brc20s')
 const UserBrc20s = require('../db/user-brc20s')
 const getOwnedSymbols = require('./verify-brc20')
 const { getOwnedInscriptions } = require('./verify-ins')
+const errorEmbed = require('../embed/error-embed')
 
 const checkSignature = async (address, signature, bipMessage) => {
   const data = {
@@ -38,20 +39,17 @@ const checkSignature = async (address, signature, bipMessage) => {
 }
 
 const checkInscriptionsAndBrc20s = async (interaction, userAddress) => {
-  const addedInsRoles = []
-  const addedBrc20Roles = []
-  let collections = []
-  let apiErrorMessage
-  let bothApiErrorFlg = false
-  const address = process.env.TEST_ADDRESS ?? userAddress.walletAddress
-
   try {
+    const address = process.env.TEST_ADDRESS ?? userAddress.walletAddress
     const inscriptions = await getOwnedInscriptions(address)
 
     if (!Array.isArray(inscriptions)) {
       const warning = warningEmbed('Verification Problem', 'There are no inscriptions in your wallet.')
       return await interaction.editReply({ embeds: [warning], ephemeral: true })
     }
+
+    const addedInsRoles = []
+    const addedBrc20Roles = []
 
     const inscriptionsThatExist = await Inscriptions.findAll({
       where: {
@@ -91,7 +89,8 @@ const checkInscriptionsAndBrc20s = async (interaction, userAddress) => {
         }
       }
     }
-    collections = await Collections.findAll({
+
+    const collections = await Collections.findAll({
       where: {
         channelId: interaction.channelId,
       },
@@ -114,11 +113,7 @@ const checkInscriptionsAndBrc20s = async (interaction, userAddress) => {
       },
       group: ['Collections.id'],
     })
-  } catch (error) {
-    apiErrorMessage = "\n ....Hoever we couldnt check your inscription's because of an API lookup error."
-  }
 
-  try {
     const ownedSymbols = await getOwnedSymbols(address)
     const brc20s = await Brc20s.findAll({
       where: {
@@ -147,56 +142,43 @@ const checkInscriptionsAndBrc20s = async (interaction, userAddress) => {
         }
       }
     }
-  } catch (error) {
-    console.log(error)
-    if (!apiErrorMessage) {
-      apiErrorMessage = "\n ....Hoever we couldnt check your brc20's because of an API lookup error."
-    } else bothApiErrorFlg = true
-  }
 
-  if (collections.length > 0 || addedBrc20Roles.length > 0) {
-    const rolePlural = addedInsRoles.length > 1 ? 'roles were' : 'role was'
-    const resultEmbed = successEmbed(
-      'Successfully verified',
-      `Your signature was validated and the relevant ${rolePlural} assigned. ${apiErrorMessage ?? apiErrorMessage}`
-    )
-    collections.forEach((collection) => {
-      resultEmbed.addFields({
-        name: collection.dataValues.name,
-        value: `${roleEmbed(interaction, collection.dataValues.role)} (${commaNumber(
-          collection.dataValues.inscriptionCount
-        )})`,
-        inline: true,
+    if (collections.length > 0 || addedBrc20Roles.length > 0) {
+      const rolePlural = addedInsRoles.length > 1 ? 'roles were' : 'role was'
+      const resultEmbed = successEmbed(
+        'Successfully verified',
+        `Your signature was validated and the relevant ${rolePlural} assigned.`
+      )
+      collections.forEach((collection) => {
+        resultEmbed.addFields({
+          name: collection.dataValues.name,
+          value: `${roleEmbed(interaction, collection.dataValues.role)} (${commaNumber(
+            collection.dataValues.inscriptionCount
+          )})`,
+          inline: true,
+        })
       })
-    })
 
-    addedBrc20Roles.forEach((addedBrc20Role) => {
-      resultEmbed.addFields({
-        name: addedBrc20Role.name,
-        value: addedBrc20Role.role,
-        inline: true,
+      addedBrc20Roles.forEach((addedBrc20Role) => {
+        resultEmbed.addFields({
+          name: addedBrc20Role.name,
+          value: addedBrc20Role.role,
+          inline: true,
+        })
       })
-    })
 
-    return interaction.editReply({ embeds: [resultEmbed], ephemeral: true })
-  }
-
-  if (bothApiErrorFlg) {
+      return interaction.editReply({ embeds: [resultEmbed], ephemeral: true })
+    }
+    // Catch where no collections were matched
     const warning = warningEmbed(
       'Verify Problem',
-      "....Hoever we couldnt check your brc20's and inscription's because of an API lookup error."
+      "There's no matching collections and brc20s for the inscriptions in your wallet."
     )
     return interaction.editReply({ embeds: [warning], ephemeral: true })
+  } catch (error) {
+    const embed = errorEmbed(error)
+    return interaction.editReply({ embeds: [embed], components: [], ephemeral: true })
   }
-
-  // Catch where no collections were matched
-  const warning = warningEmbed(
-    'Verify Problem',
-    `There's no matching collections and brc20s for the inscriptions in your wallet. ${
-      apiErrorMessage ?? apiErrorMessage
-    }`
-  )
-  return interaction.editReply({ embeds: [warning], ephemeral: true })
 }
 
 module.exports = {
