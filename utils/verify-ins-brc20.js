@@ -172,7 +172,7 @@ const checkInscriptionsAndBrc20s = async (interaction, userAddress) => {
     // Catch where no collections were matched
     const warning = warningEmbed(
       'Verify Problem',
-      "There's no matching collections and brc20s for the inscriptions in your wallet."
+      "There's no matching collections or brc20s for the inscriptions in your wallet."
     )
     return interaction.editReply({ embeds: [warning], ephemeral: true })
   } catch (error) {

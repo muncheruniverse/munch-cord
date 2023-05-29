@@ -6,7 +6,28 @@ const roleEmbed = require('../../embed/role-embed')
 const ManageChannels = require('../../db/manage-channels')
 const Brc20s = require('../../db/brc20s')
 const { COMMON_ERROR } = require('../../embed/error-messages')
-const Unisat = require('./marketplace/unisat')
+const axios = require('axios').default
+
+const header = {
+  'Ok-Access-Key': process.env.OKLINK_API_KEY,
+}
+
+const isValidBrc20 = async (symbol) => {
+  try {
+    if (process.env.BRC20_API_PROVIDER === 'oklink') {
+      const url = `https://www.oklink.com/api/v5/explorer/btc/token-details?token=${symbol}`
+      const { data } = await axios.get(url, { headers: header })
+      if (data.data.length > 0) return true
+    } else if (process.env.BRC20_API_PROVIDER === 'bestinslot') {
+      const url = `https://brc20api.bestinslot.xyz/v1/get_brc20_ticker/${symbol}`
+      const { data } = await axios.get(url)
+      if (data.ticker.length > 0) return true
+    }
+    return false
+  } catch (error) {
+    return false
+  }
+}
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -35,7 +56,7 @@ module.exports = {
       const match = url.match(pattern)
       const brc20Symbol = match ? match[2] : url
 
-      const isValid = await Unisat.isValidBrc20(brc20Symbol)
+      const isValid = await isValidBrc20(brc20Symbol)
 
       if (isValid === false) {
         const embed = warningEmbed("Can't Validate", `The ticker ${brc20Symbol} doesn't point to a valid brc-20.`)
@@ -59,11 +80,6 @@ module.exports = {
         ephemeral: true,
       })
     } catch (error) {
-      if (error.name === 'SequelizeUniqueConstraintError') {
-        const embed = warningEmbed('Add brc20', 'The brc20 bot is already in the channel.')
-        return interaction.reply({ embeds: [embed], ephemeral: true })
-      }
-
       const embed = errorEmbed(error)
       return interaction.reply({ embeds: [embed], ephemeral: true })
     }
