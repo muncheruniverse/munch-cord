@@ -7,13 +7,9 @@ const header = {
 }
 
 const getTotalBrc20Numbers = async (address) => {
-  try {
-    const url = `https://www.oklink.com/api/v5/explorer/btc/address-balance-list?address=${address}&limit=1`
-    const res = await axios.get(url, { headers: header })
-    return res.data.data[0].totalPage
-  } catch (error) {
-    return 0
-  }
+  const url = `https://www.oklink.com/api/v5/explorer/btc/address-balance-list?address=${address}&limit=1`
+  const res = await axios.get(url, { headers: header })
+  return res.data.data[0].totalPage
 }
 
 const getOwnedSymbols = async (address) => {
