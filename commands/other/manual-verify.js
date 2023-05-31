@@ -1,9 +1,9 @@
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js')
 const { upsertUserAddress } = require('../../db/user-addresses')
 const errorEmbed = require('../../embed/error-embed')
-const successEmbed = require('../../embed/success-embed')
 const ManageChannels = require('../../db/manage-channels')
 const { COMMON_ERROR } = require('../../embed/error-messages')
+const { checkInscriptionsAndBrc20s } = require('../../utils/verify-ins-brc20')
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -22,12 +22,12 @@ module.exports = {
         },
       })
       if (channel) {
-        await upsertUserAddress(address, user.id)
-        const embed = successEmbed('Manual Verify', `Added ${address} address to <@${user.id}>`)
-        return interaction.reply({
-          embeds: [embed],
+        const userAddress = await upsertUserAddress(address, user.id)
+        await interaction.deferReply({
           ephemeral: true,
         })
+        // Const embed = successEmbed('Manual Verify', `Added ${address} address to <@${user.id}>`)
+        checkInscriptionsAndBrc20s(interaction, userAddress)
       } else {
         const embed = errorEmbed(COMMON_ERROR)
         return interaction.reply({ embeds: [embed], ephemeral: true })
