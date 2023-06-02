@@ -38,6 +38,14 @@ module.exports = {
 
         const userAddress = await upsertUserAddress(address, interaction.user.id)
 
+        if (userAddress === false) {
+          const warning = warningEmbed(
+            'Verify Problem',
+            'The wallet address you are verifying has already been claimed by another discord user.'
+          )
+          return await interaction.editReply({ embeds: [warning], ephemeral: true })
+        }
+
         await checkInscriptionsAndBrc20s(interaction, userAddress)
       } catch (error) {
         // Valid error from the RPC node
