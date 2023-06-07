@@ -52,14 +52,38 @@ const getOwnerAddress = async (inscriptionRef) => {
   if (process.env.API_PROVIDER === 'HIRO') {
     const uri = `${API_URLS.hiro.address}/${inscriptionRef}`
     console.log(`Getting owner address for ${uri}`)
-    const { data } = await axios.get(uri)
-    return data.address
+    try {
+      const { data } = await axios.get(uri)
+      return data.address
+    } catch (error) {
+      if (error.response && error.response.status === 429) {
+        // Retry logic
+        let retryCount = 0
+        while (retryCount < 3) {
+          console.log('Received 429 response. Retrying after 10 seconds...')
+          await sleep(10000) // Pause for 10 seconds
+          try {
+            console.log(`Retrying ${uri} for the ${retryCount + 1} time`)
+            const { data } = await axios.get(uri)
+            return data.address
+          } catch (error) {
+            retryCount++
+          }
+        }
+      }
+      throw error // Throw the error if retries are exhausted or it's not a 429 response
+    }
   } else if (process.env.API_PROVIDER === 'ORDAPI') {
     const uri = `${API_URLS.ordapi.address}/${inscriptionRef}`
     console.log(`Getting owner address for ${uri}`)
     const { data } = await axios.get(uri)
     return data.address
   }
+}
+
+// Helper function to pause execution
+const sleep = (ms) => {
+  return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
 module.exports = { getOwnedInscriptions, getOwnerAddress }
