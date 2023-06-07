@@ -62,9 +62,10 @@ module.exports = {
             if (!userRemoves.find((userRemove) => userRemove.userId === insInfo.userId)) {
               userRemoves.push({ userId: insInfo.userId })
             }
+            console.log(`Removing role ${insInfo.role} from user ${insInfo.userId}`)
             await user.roles.remove(role)
           } catch (error) {
-            console.log('Error removing role ', insInfo.role, ' from user ', insInfo.userId)
+            console.log(error)
           }
           // Retire inscription
           await UserInscriptions.destroy({
@@ -87,9 +88,10 @@ module.exports = {
         const user = interaction.member.guild.members.cache.find((user) => user.user.id === userRole.userId)
         // Add role
         try {
+          console.log(`Adding role ${userRole.role} to user ${userRole.userId}`)
           await user.roles.add(role)
         } catch (error) {
-          console.log('Error adding role ', userRole.role, ' to user ', userRole.userId)
+          console.log(error)
         }
       }
 
