@@ -54,8 +54,7 @@ module.exports = {
         // If the owner address is different to the address we have stored, we need to remove the role
         if (ownerAddress !== insInfo.walletAddress) {
           console.log(`Owner address ${ownerAddress} is different to stored address ${insInfo.walletAddress}`)
-          const role = interaction.member.guild.roles.cache.find((roleItem) => roleItem.name === insInfo.role)
-          const user = interaction.member.guild.members.cache.find((user) => user.user.id === insInfo.userId)
+
           // Remove role
           try {
             // Add the user id to the userRemoves array if it doesn't already exist
@@ -63,7 +62,14 @@ module.exports = {
               userRemoves.push({ userId: insInfo.userId })
             }
             console.log(`Removing role ${insInfo.role} from user ${insInfo.userId}`)
-            await user.roles.remove(role)
+
+            const role = interaction.member.guild.roles.cache.find((roleItem) => roleItem.name === insInfo.role)
+            const user = interaction.member.guild.members.cache.find((user) => user.user.id === insInfo.userId)
+
+            // Some users may have left the server
+            if (user) {
+              await user.roles.remove(role)
+            }
           } catch (error) {
             console.log(error)
           }
@@ -84,12 +90,18 @@ module.exports = {
 
       // We now need to re-scan the live inscriptions for each affected user to ensure we have the correct roles
       for (const userRole of userRoles) {
-        const role = interaction.member.guild.roles.cache.find((roleItem) => roleItem.name === userRole.role)
-        const user = interaction.member.guild.members.cache.find((user) => user.user.id === userRole.userId)
         // Add role
         try {
           console.log(`Adding role ${userRole.role} to user ${userRole.userId}`)
-          await user.roles.add(role)
+          const role = interaction.member.guild.roles.cache.find((roleItem) => roleItem.name === userRole.role)
+          const user = interaction.member.guild.members.cache.find((user) => user.user.id === userRole.userId)
+
+          // Some users may have left the server
+          if (user) {
+            await user.roles.add(role)
+          } else {
+            console.log(`Looks like user ${userRole.userId} has left the server`)
+          }
         } catch (error) {
           console.log(error)
         }
