@@ -50,10 +50,14 @@ const getOwnedInscriptions = async (address) => {
 
 const getOwnerAddress = async (inscriptionRef) => {
   if (process.env.API_PROVIDER === 'HIRO') {
-    const { data } = await axios.get(`${API_URLS.hiro.address}/${inscriptionRef}`)
+    const uri = `${API_URLS.hiro.address}/${inscriptionRef}`
+    console.log(`Getting owner address for ${uri}`)
+    const { data } = await axios.get(uri)
     return data.address
   } else if (process.env.API_PROVIDER === 'ORDAPI') {
-    const { data } = await axios.get(`${API_URLS.ordapi.address}/${inscriptionRef}`)
+    const uri = `${API_URLS.ordapi.address}/${inscriptionRef}`
+    console.log(`Getting owner address for ${uri}`)
+    const { data } = await axios.get(uri)
     return data.address
   }
 }
