@@ -9,20 +9,14 @@ const ManageChannels = require('../../db/manage-channels')
 const { Collections, Inscriptions } = require('../../db/collections-inscriptions')
 const { COMMON_ERROR } = require('../../embed/error-messages')
 const MagicEden = require('./marketplace/magic-eden')
-const Gamma = require('./marketplace/gamma')
 
-const PAGINATED_AMOUNT = 100
+const PAGINATED_AMOUNT = 40
 
 const MARKET_PLACES = [
   {
     name: MagicEden.name,
     value: MagicEden.name,
     marketPlace: MagicEden,
-  },
-  {
-    name: Gamma.name,
-    value: Gamma.name,
-    marketPlace: Gamma,
   },
 ]
 
@@ -76,7 +70,7 @@ module.exports = {
       } catch (error) {
         const embed = warningEmbed(
           "Can't find collection",
-          `The supplied link doesn't point to a valid ${venue} collection.`
+          `The supplied link doesn't point to a valid ${venue} collection or their API is unresponsive.`
         )
         return interaction.editReply({ embeds: [embed], ephemeral: true })
       }
@@ -119,6 +113,17 @@ module.exports = {
 
         // This usually happens if API is down or rate limit is hit
         if (paginatedInscriptions.length === 0) {
+          // Lets clean up the orphaned collection
+          try {
+            await Collections.destroy({
+              where: {
+                id: collection.id,
+              },
+            })
+          } catch (error) {
+            console.log(error)
+          }
+
           const embed = errorEmbed('The marketplace api is not responding, it may be unavailable or rate limited.')
           return interaction.editReply({
             embeds: [embed],
