@@ -15,6 +15,10 @@ module.exports = {
 
   async execute(interaction) {
     try {
+      await interaction.deferReply({
+        ephemeral: true,
+      })
+
       const brc20s = await Brc20s.findAll({
         where: {
           channelId: interaction.channelId,
@@ -31,10 +35,6 @@ module.exports = {
       })
 
       const data = []
-
-      await interaction.deferReply({
-        ephemeral: true,
-      })
 
       for (const brc20 of brc20s) {
         for (const userBrc20 of brc20.UserBrc20s) {
@@ -71,7 +71,7 @@ module.exports = {
       return interaction.editReply({ embeds: [embed], ephemeral: true, files: [json, csv] })
     } catch (error) {
       const embed = errorEmbed(error)
-      return interaction.reply({ embeds: [embed], ephemeral: true })
+      return interaction.editReply({ embeds: [embed], ephemeral: true })
     }
   },
 }

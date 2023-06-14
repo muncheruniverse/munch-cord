@@ -14,6 +14,10 @@ module.exports = {
 
   async execute(interaction) {
     try {
+      await interaction.deferReply({
+        ephemeral: true,
+      })
+
       const query = `
         SELECT ua.userId, ua.walletAddress, i.inscriptionRef
         FROM Collections c
@@ -34,10 +38,6 @@ module.exports = {
         // Check if the user is still in the server
         row.username = user ? user.user.username : 'User left server'
       }
-
-      await interaction.deferReply({
-        ephemeral: true,
-      })
 
       const json = new AttachmentBuilder(Buffer.from(JSON.stringify(result, 0, 2)), { name: 'collection.json' })
 
@@ -61,7 +61,7 @@ module.exports = {
       return interaction.editReply({ embeds: [embed], ephemeral: true, files: [json, csv] })
     } catch (error) {
       const embed = errorEmbed(error)
-      return interaction.reply({ embeds: [embed], ephemeral: true })
+      return interaction.editReply({ embeds: [embed], ephemeral: true })
     }
   },
 }

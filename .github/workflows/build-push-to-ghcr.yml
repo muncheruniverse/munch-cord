@@ -5,7 +5,7 @@ on:
     tags:
       - '*'
     branches:
-      - 'main'
+      - 'unknown'
 
 jobs:
   build-and-push-image:
