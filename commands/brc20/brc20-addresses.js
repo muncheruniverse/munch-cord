@@ -36,16 +36,20 @@ module.exports = {
 
       const data = []
 
+      await interaction.channel.guild.members.fetch()
+      const members = interaction.channel.guild.members.cache
+
       for (const brc20 of brc20s) {
         for (const userBrc20 of brc20.UserBrc20s) {
           const address = userBrc20.UserAddress.walletAddress
           const balance = await getBrc20Balance(address, brc20.name)
-          const user = await interaction.guild.members.fetch(userBrc20.UserAddress.userId)
+          // Get the user from the cache
+          const user = members.get(userBrc20.UserAddress.userId)
           data.push({
             userId: userBrc20.UserAddress.userId,
             walletAddress: address,
             balance,
-            username: user ? user.user.username : 'User left server',
+            username: user ? user.user.username : 'user left server',
           })
         }
       }

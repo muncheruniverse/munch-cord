@@ -32,11 +32,14 @@ module.exports = {
 
       const result = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT })
 
+      await interaction.channel.guild.members.fetch()
+      const members = interaction.channel.guild.members.cache
+
       // Loop result and add the discord username to the object
       for (const row of result) {
-        const user = await interaction.guild.members.fetch(row.userId)
+        const user = members.get(row.userId)
         // Check if the user is still in the server
-        row.username = user ? user.user.username : 'User left server'
+        row.username = user ? user.user.username : 'user left server'
       }
 
       const json = new AttachmentBuilder(Buffer.from(JSON.stringify(result, 0, 2)), { name: 'collection.json' })
