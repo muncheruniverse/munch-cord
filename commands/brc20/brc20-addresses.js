@@ -40,10 +40,12 @@ module.exports = {
         for (const userBrc20 of brc20.UserBrc20s) {
           const address = userBrc20.UserAddress.walletAddress
           const balance = await getBrc20Balance(address, brc20.name)
+          const user = await interaction.guild.members.fetch(userBrc20.UserAddress.userId)
           data.push({
             userId: userBrc20.UserAddress.userId,
             walletAddress: address,
             balance,
+            username: user ? user.user.username : 'User left server',
           })
         }
       }
@@ -54,7 +56,7 @@ module.exports = {
       const csv = new AttachmentBuilder(
         Buffer.from(
           data
-            .map((row) => `${row.userId},${row.walletAddress},${row.balance}`)
+            .map((row) => `${row.userId},${row.username},${row.walletAddress},${row.balance}`)
             .join('\n')
             .concat('\n'),
           'utf-8'

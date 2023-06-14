@@ -28,6 +28,13 @@ module.exports = {
 
       const result = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT })
 
+      // Loop result and add the discord username to the object
+      for (const row of result) {
+        const user = await interaction.guild.members.fetch(row.userId)
+        // Check if the user is still in the server
+        row.username = user ? user.user.username : 'User left server'
+      }
+
       await interaction.deferReply({
         ephemeral: true,
       })
@@ -38,7 +45,7 @@ module.exports = {
       const csv = new AttachmentBuilder(
         Buffer.from(
           result
-            .map((row) => `${row.userId},${row.walletAddress},${row.inscriptionRef}`)
+            .map((row) => `${row.userId},${row.username},${row.walletAddress},${row.inscriptionRef}`)
             .join('\n')
             .concat('\n'),
           'utf-8'
