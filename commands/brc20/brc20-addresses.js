@@ -10,19 +10,22 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName('brc20-addresses')
     .setDescription('View all holders addresses and amount')
-    .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild),
+    .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
+    .addStringOption((option) => option.setName('name').setDescription('The brc20 name to search').setRequired(true)),
 
   async execute(interaction) {
     try {
       const brc20s = await Brc20s.findAll({
         where: {
           channelId: interaction.channelId,
+          name: interaction.options.getString('name'),
         },
-        attributes: ['id', 'name', 'role'],
+        attributes: ['id', 'name'],
         include: {
           model: UserBrc20s,
           include: {
             model: UserAddresses,
+            attributes: ['userId', 'walletAddress'],
           },
         },
       })
@@ -38,19 +41,32 @@ module.exports = {
           const address = userBrc20.UserAddress.walletAddress
           const balance = await getBrc20Balance(address, brc20.name)
           data.push({
+            userId: userBrc20.UserAddress.userId,
+            walletAddress: address,
             balance,
-            address,
-            role: brc20.role,
-            name: brc20.name,
           })
         }
       }
 
-      const file = new AttachmentBuilder(Buffer.from(JSON.stringify(data, 0, 2)), { name: 'info.json' })
+      const json = new AttachmentBuilder(Buffer.from(JSON.stringify(data, 0, 2)), { name: 'brc20.json' })
 
-      const embed = infoEmbed('View Collection addresses', 'Collections, their inscriptions and addresses')
+      // Create a csv from the result in the format of userId, walletAddress, balance
+      const csv = new AttachmentBuilder(
+        Buffer.from(
+          data
+            .map((row) => `${row.userId},${row.walletAddress},${row.balance}`)
+            .join('\n')
+            .concat('\n'),
+          'utf-8'
+        ),
+        { name: 'brc20.csv' }
+      )
 
-      return interaction.editReply({ embeds: [embed], ephemeral: true, files: [file] })
+      const embed = infoEmbed(
+        'View Brc20 Addresses',
+        `Verified owners of the the ${interaction.options.getString('name')} brc20 are attached above.`
+      )
+      return interaction.editReply({ embeds: [embed], ephemeral: true, files: [json, csv] })
     } catch (error) {
       const embed = errorEmbed(error)
       return interaction.reply({ embeds: [embed], ephemeral: true })

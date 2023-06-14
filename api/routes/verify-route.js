@@ -42,6 +42,14 @@ router.post('/', authenticateToken, async (req, res) => {
       })
     }
     const userAddress = await upsertUserAddress(process.env.TEST_ADDRESS ?? address, userId, provider)
+    if (userAddress === false) {
+      return res.status(200).json({
+        message: 'Wallet Address Already Claimed',
+        description: 'The wallet address you are verifying has already been claimed by another discord user.',
+        type: 'Error',
+      })
+    }
+
     const inscriptions = await getOwnedInscriptions(userAddress.walletAddress)
     const abbreviatedAddress = abbreviateAddress(userAddress.walletAddress)
 

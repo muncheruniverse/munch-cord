@@ -11,7 +11,7 @@ const UserAddresses = sequelize.define('UserAddresses', {
     allowNull: false,
   },
   provider: {
-    type: DataTypes.ENUM('Unisat', 'Hiro', 'Xverse'),
+    type: DataTypes.ENUM('Unisat', 'Hiro', 'Xverse', 'OrdinalSafe', 'Ordswap', 'Ordinals Wallet', 'Manual'),
     allowNull: true,
     defaultValue: null,
   },
@@ -30,12 +30,13 @@ const upsertUserAddress = async (address, userId, provider = null) => {
       provider,
     })
   }
+
+  // We shouldnt allow a user to claim an address that is already claimed by another user
   if (userAddress.userId !== userId) {
-    await userAddress.update({
-      walletAddress: address,
-      userId,
-      provider,
-    })
+    console.log(
+      `User ${userId} attempting to claim address ${address} is already registered to user ${userAddress.userId}`
+    )
+    return false
   }
 
   return userAddress
