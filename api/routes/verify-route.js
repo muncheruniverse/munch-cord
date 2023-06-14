@@ -8,7 +8,7 @@ const BipMessages = require('../../db/bip-messages')
 const router = express.Router()
 const abbreviateAddress = require('../../utils/helpers')
 const { getOwnedInscriptions } = require('../../utils/verify-ins')
-const getOwnedSymbols = require('../../utils/verify-brc20')
+const { getOwnedSymbols } = require('../../utils/verify-brc20')
 const Brc20s = require('../../db/brc20s')
 const UserBrc20s = require('../../db/user-brc20s')
 
